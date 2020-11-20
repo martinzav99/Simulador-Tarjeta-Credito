@@ -34,7 +34,7 @@ importantes.
 También, se puede incluir una descripción general del programa—cómo
 funciona.
 
-=dificultades y procedimientos
+*dificultades y procedimientos
 
 _parte1_
 
