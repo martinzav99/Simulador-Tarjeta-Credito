@@ -20,7 +20,7 @@ autorizacion de compra, generar resumenes o alertar a los clientes de posibles
 problemas.
 
 Ademas,como el usuario tendra la posibilidad de borrar todas las identifiaciones
-primareas y foraneas...
+primareas y foraneas
  
 
 
@@ -34,15 +34,15 @@ importantes.
 También, se puede incluir una descripción general del programa—cómo
 funciona.
 
-*dificultades y procedimientos
+* dificultades y procedimientos:
 
 _parte1_
 
 Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
-entre las entidades...
+entre las entidades
  
-
+image:https://gitlab.com/maxischmidt2011/schmidt-sosa-zavalla-tp/-/blob/master/diagrama_base.png[alt="diagrama.",width=128,height=128]
 
 
 == Implementación
