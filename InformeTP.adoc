@@ -9,18 +9,19 @@ v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
 
 == Introducción
 
-En este trabajo se realizara una base de datos en postgreSQL mediante Go.
-Donde se representa un modelo de datos que se usa para almacenar
-informacion relativa a una tarjeta de credito donde se destacan los detalles
-de compra ,total de gastos , infomacion del comercion y el producto , rechazos
-o alertas e informacion sobre la propia tarjeta y su propietario. 
+En este trabajo se realizará una base de datos en postgreSQL mediante Go, 
+donde se representa un modelo de datos que se usa para almacenar
+informacion relativa a clientes de tarjetas de credito, donde se destacan los detalles
+de compra, total de gastos, infomación del comercio y el producto, rechazos
+o alertas e incluso, información sobre la propia tarjeta y su propietario. 
 
 El objetivo del programa es que reconozca y actuae ante situaciones tales como 
 autorizacion de compra, generar resumenes o alertar a los clientes de posibles
-problemas.
+problemas. Para ello, se deberá previamente crear una base de datos respetando 
+las propiedades de cada tabla (PK's y FK's), e instanciar datos competentes.
 
-Ademas,como el usuario tendra la posibilidad de borrar todas las identifiaciones
-primareas y foraneas
+Además, como el usuario tendrá la posibilidad de borrar todas las identifiaciones
+primareas y foraneas.
  
 
 
