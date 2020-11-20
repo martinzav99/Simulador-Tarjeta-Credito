@@ -1,23 +1,28 @@
 = Base de Datos: Trabajo Práctico 1
-Cristina Fernández_de_Kirchner <cfk@gmail.com>; Nestor Kirchner <nestor@gmail.com>
+Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>;Martin Zavalla <martin.zav99@gmail.com>
 v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
 :title-page:
 :numbered:
 :source-highlighter: coderay
 :tabsize: 4
 
-El texto debe ser breve, conciso, simple, y directo. Se debe incluir
-sólo lo relevante que ayude a entender el trabajo práctico.
-
-Se recomiendan oraciones y párrafos cortos.
-
-Por último, no olvidar utilizar signos de puntuación y checkear la
-ortografía.
 
 == Introducción
 
-Descripción del trabajo práctico. Aquí se puede copiar textual el [ó
-parte del] enunciado del trabajo práctico de considerarse necesario.
+En este trabajo se realizara una base de datos en postgreSQL mediante Go.
+Donde se representa un modelo de datos que se usa para almacenar
+informacion relativa a una tarjeta de credito donde se destacan los detalles
+de compra ,total de gastos , infomacion del comercion y el producto , rechazos
+o alertas e informacion sobre la propia tarjeta y su propietario. 
+
+El objetivo del programa es que reconozca y actuae ante situaciones tales como 
+autorizacion de compra, generar resumenes o alertar a los clientes de posibles
+problemas.
+
+Ademas,como el usuario tendra la posibilidad de borrar todas las identifiaciones
+primareas y foraneas...
+ 
+
 
 == Descripción
 
@@ -28,6 +33,17 @@ importantes.
 
 También, se puede incluir una descripción general del programa—cómo
 funciona.
+
+=dificultades y procedimientos
+
+_parte1_
+
+Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
+debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
+entre las entidades...
+ 
+
+
 
 == Implementación
 
