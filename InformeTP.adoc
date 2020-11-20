@@ -1,6 +1,6 @@
-= Introducción a la Programación: Trabajo Práctico 1
+= Base de Datos: Trabajo Práctico 1
 Cristina Fernández_de_Kirchner <cfk@gmail.com>; Nestor Kirchner <nestor@gmail.com>
-v1, {docdate}. Docentes Eva Perón y Juan Perón (COM-08)
+v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
 :title-page:
 :numbered:
 :source-highlighter: coderay
