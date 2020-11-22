@@ -4,9 +4,26 @@ declare
 
 i record;
 
+ultcompra record
+ultrechaz record
+
+nrorechaz int; 
+nrocompr int;
+
 X "monto total" ;???
 
 begin
+
+
+select max(nrocompra) into ultcompra from compra where nrotarjeta = nrotarj;
+if not found then
+ nrocompr := 0
+end if;
+
+select max(nrorechazo) into ultrechaz from rechazo where nrotarjeta = nrotarj;
+if not found then
+ nrorechaz := 0
+end if;
 
 for i in select * from tarjeta loop
 	if i.nrotarjeta = nrotarj then
@@ -30,7 +47,7 @@ for i in select * from tarjeta loop
 				raise notice 'supera limite de tarjeta';
 				return false;
 			else 
-				insert into compra values (1,nrotarj,nrocomerc,current_date,monto+X,true);
+				insert into compra values (nrcompr+1,nrotarj,nrocomerc,current_timestamp,monto+X,true);
 				return true;
 			end if;
 				
