@@ -58,7 +58,7 @@ func Creartablas(db *sql.DB) {
 
 						create table alerta (nroalerta int, nrotarjeta varchar(16), fecha timestamp, nrorechazo int, codalerta int, descripcion text)
 
-						create table consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2))`)
+						create table consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
     if err != nil {
         log.Fatal(err)
     }
