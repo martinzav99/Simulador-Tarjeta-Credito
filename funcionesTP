@@ -1,44 +1,58 @@
 create or replace function a_de_compra(nrotarj char , codsegur char , nrocomerc int , mont decimal) returns boolean as $$
 
 declare
- 
-a record;
-b record;
-c record;
 
+i record;
+
+X "monto total" ;???
 
 begin
 
-select * into a from tarjeta where nrotarjeta = nrotarj;
-if not found then
+for i in select * from tarjeta loop
+	if i.nrotarjeta = nrotarj then
+				
+		if i.codseguridad = codsegur then
+			
+			if b.estado = 'anulado' then
+				insert into rechazo values ();
+				raise notice 'plazo de vigencia expirado';
+				return false;
+			end if;
+			
+			if b.estado = 'vencido' then
+				insert into rechazo values ();
+				raise notice 'la tarjeta se encuentra suspendida';
+				return false;
+			end if;
+			
+			if b.limitecompra > monto + X then
+				insert into rechazo values ();
+				raise notice 'supera limite de tarjeta';
+				return false;
+			else 
+				insert into compra values (1,nrotarj,nrocomerc,current_date,monto+X,true);
+				return true;
+			end if;
+				
+			
+		else
+			insert into rechazo values ();
+			raise notice 'codigo de seguridad invalido';
+			return false;
+		end if;
+	else
+		raise notice 'tarjeta no valida o no vigente';
+		insert into rechazo values ();
+		return false;
 	
-	raise notice 'tarjeta no valida o no vigente';
-	
-end if;
- 
-select * into b from tarjeta where nrotarjeta = nrotarj and codseguridad = codsegur;
-if not found then 
+	end if;	
+end loop;
 
-	raise notice 'codigo de seguridad invalido';	
-
-end if;
-
-select * into c from tarjeta where nrotarjeta = nrotarj and codseguridad = codsegur;
-
-
-// falta monto y reordenar...
-
-if  c.estado = 'anulado' then
-	raise notice 'plazo de vigencia expirado';
-end if;
-
-if  c.estado = 'vencido' then
-	raise notice 'la tarjeta se encuentra suspendida';
-end if;
-
-end;
 
 $$ language pgplsql;
+
+
+
 
 
 
