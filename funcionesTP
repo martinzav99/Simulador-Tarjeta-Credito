@@ -1,0 +1,61 @@
+create or replace function a_de_compra(nrotarj char , codsegur char , nrocomerc int , mont decimal) returns boolean as $$
+
+declare
+ 
+a record;
+b record;
+c record;
+
+
+begin
+
+select * into a from tarjeta where nrotarjeta = nrotarj;
+if not found then
+	
+	raise notice 'tarjeta no valida o no vigente';
+	
+end if;
+ 
+select * into b from tarjeta where nrotarjeta = nrotarj and codseguridad = codsegur;
+if not found then 
+
+	raise notice 'codigo de seguridad invalido';	
+
+end if;
+
+select * into c from tarjeta where nrotarjeta = nrotarj and codseguridad = codsegur;
+
+
+// falta monto y reordenar...
+
+if  c.estado = 'anulado' then
+	raise notice 'plazo de vigencia expirado';
+end if;
+
+if  c.estado = 'vencido' then
+	raise notice 'la tarjeta se encuentra suspendida';
+end if;
+
+end;
+
+$$ language pgplsql;
+
+
+
+create or replace function generar_resumen(nroclien int , peridoyear date) returns void as $$
+
+declare 
+t record
+
+begin 
+
+select * from tarjeta where
+
+end;
+
+$$ language psplsql;
+
+
+
+
+
