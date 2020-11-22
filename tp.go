@@ -65,8 +65,7 @@ func Creartablas(db *sql.DB) {
 }
 
 func AgregarClientes(db *sql.DB) {
-	_, err = db.Exec
-		(`	insert into cliente values (1, 'Leandro', 	'Sosa', 	'Marco Sastre 4540','541152774600');
+	_, err = db.Exec(`	insert into cliente values (1, 'Leandro', 	'Sosa', 	'Marco Sastre 4540','541152774600');
 			insert into cliente values (2, 'Leonardo', 	'Sanabria', 'Gaspar Campos 1815','541148611570')
 			insert into cliente values (3, 'Florencia', 'Knol', 	'Zapiola 2825', 	'541148913800')
 			insert into cliente values (4, 'Romina', 	'Subelza', 	'Libertad 3113', 	'541149422726')
@@ -94,8 +93,7 @@ func AgregarClientes(db *sql.DB) {
 }
 
 func AgregarNegocios(db *sql.DB) {
-	_, err = db.Exec
-		(`	insert into comercio values (1, 'Farmacia Tell','Juncal 699',		'B1663',	'541157274612');
+	_, err = db.Exec(`	insert into comercio values (1, 'Farmacia Tell','Juncal 699',		'B1663',	'541157274612');
 			insert into comercio values (2, 'Optica Bedini','Peron 781', 		'B1871',	'541174654172')
 			insert into comercio values (3, 'Terravision',	'Urquiza 1361',	 	'B1221',	'541183910808')
 			insert into comercio values (4, 'Optica Lutz', 	'Libertad 3113', 	'B1636',	'541149476322')
