@@ -9,18 +9,23 @@ import (
 )
 
 var (
-	db   *sql.DB
-	err  error
-	user = "postgres"
-	host = "localhost"
+	db       *sql.DB
+	err      error
+	user     = "postgres"
+	host     = "localhost"
+	exitBool = false
 )
 
 func main() {
 	defer exit()
 	login(user, host)
 	bienvenida()
-
-	menu()
+	for {
+		menu()
+		if exitBool == true {
+			break
+		}
+	}
 }
 
 func bienvenida() {
@@ -47,7 +52,6 @@ func login(user string, host string) {
 	db, err = sql.Open("postgres", "user="+user+" password=1234 host="+host+" dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
-		exit()
 	}
 	fmt.Println("Conectado con postgres")
 }
@@ -80,7 +84,6 @@ func createDatabase() {
 		exit()
 	}
 	fmt.Println("Conectado con tpgossz")
-	menu()
 }
 
 func creartablas() {
@@ -104,7 +107,6 @@ func creartablas() {
 	if err != nil {
 		log.Fatal()
 	}
-	menu()
 }
 
 func agregarClientes() {
@@ -181,18 +183,15 @@ func menu() {
 
 	switch eleccion {
 	case 1:
-		fmt.Println("Crear Base")
 		createDatabase()
 	case 2:
 		creartablas()
-		fmt.Println("Crear Tablas")
 	case 3:
 		agregarClientes()
-		fmt.Println("Agregar Clientes")
 	case 4:
 		agregarNegocios()
-		fmt.Println("Agregar Negocios")
 	case 5:
+		exitBool = true
 		fmt.Println("Hasta Luego")
 	default:
 		fmt.Println("No elegiste ninguno")
