@@ -35,15 +35,6 @@ func bienvenida() {
 	`, user)
 }
 
-func connectPostgres() {
-	fmt.Println("  Connecting to postgres database before disconnecting tpgossz users")
-	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("  Connected to postgres!")
-}
-
 func login(user string, password string) {
 	fmt.Println("Connecting to postgres database...")
 	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
@@ -57,82 +48,6 @@ func exit() {
 	fmt.Println("Closing connection...")
 	db.Close()
 	fmt.Println("Closed!")
-}
-
-func connectDatabase() {
-	fmt.Println("Connecting to tpgossz database...")
-
-	//https://notathoughtexperiment.me/blog/how-to-do-create-database-dbname-if-not-exists-in-postgres-in-golang/
-	row := db.QueryRow(`SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = 'tpgossz');`)
-	var exists bool
-	err = row.Scan(&exists)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if exists == false {
-		fmt.Println("tpgossz database doesn't exist!")
-		createDatabase()
-
-	} else {
-		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=tpgossz sslmode=disable")
-		if err != nil {
-			log.Fatal(err)
-			exit()
-		}
-		fmt.Println("Connected tpgossz!")
-	}
-}
-func createDatabase() {
-	fmt.Println("Creating tpgossz Database...")
-	_, err = db.Exec(`CREATE DATABASE tpgossz;`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("tpgossz database created succesfully!")
-}
-
-func dropDatabase() {
-	fmt.Println("Dropping tpgossz database if exists...")
-	checkIfUsersConnected()
-	_, err = db.Exec(`drop database if exists tpgossz;`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("tpgossz database dropped!")
-}
-
-func checkIfUsersConnected() {
-	fmt.Println(" Checking if there are users connected berfore dropping...")
-	var count int
-	row := db.QueryRow(`SELECT count(*) FROM pg_stat_activity WHERE datname = 'tpgossz';`)
-	err := row.Scan(&count)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if count > 0 {
-		concatenated := fmt.Sprintf("found %d users connected", count)
-		fmt.Println(concatenated)
-		disconnectUsers()
-	} else {
-		fmt.Println(" No users connected")
-	}
-
-}
-
-func disconnectUsers() {
-	connectPostgres()
-	fmt.Println("  Disconnecting users...")
-	_, err = db.Exec(`REVOKE CONNECT ON DATABASE tpgossz FROM public;`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = db.Exec(`SELECT pg_terminate_backend(pg_stat_activity.pid)
-					  FROM pg_stat_activity
-				      WHERE pg_stat_activity.datname = 'tpgossz';`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("  Disconnected users succesfully!")
 }
 
 func createTables() {
@@ -158,20 +73,6 @@ func createTables() {
 	} else {
 		fmt.Println("Tables created succesfully!")
 	}
-}
-
-func addPKandFK() {
-	fmt.Println("adding PKs and FKs...")
-	addPKs()
-	addFKs()
-	fmt.Println("PKs and FKs added succesfully!")
-}
-
-func dropPKandFK() {
-	fmt.Println("removing PKs and FKs...")
-	dropFKs()
-	dropPKs()
-	fmt.Println("PKs and FKs removed succesfully!")
 }
 
 func populateDatabase() {
@@ -237,6 +138,13 @@ func addBusiness() {
 	}
 }
 
+func addPKandFK() {
+	fmt.Println("adding PKs and FKs...")
+	addPKs()
+	addFKs()
+	fmt.Println("PKs and FKs added succesfully!")
+}
+
 func addPKs() {
 	_, err = db.Exec(`	alter table cliente add constraint cliente_pk primary key (nrocliente);
 						alter table tarjeta add constraint tarjeta_pk primary key (nrotarjeta);
@@ -266,6 +174,13 @@ func addFKs() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func dropPKandFK() {
+	fmt.Println("removing PKs and FKs...")
+	dropFKs()
+	dropPKs()
+	fmt.Println("PKs and FKs removed succesfully!")
 }
 
 func dropPKs() {
@@ -352,4 +267,90 @@ func autoCreateDatabase() {
 	addPKandFK()
 	populateDatabase()
 	fmt.Println("\nReady to work!")
+}
+
+func dropDatabase() {
+	fmt.Println("Dropping tpgossz database if exists...")
+	checkIfUsersConnected()
+	_, err = db.Exec(`drop database if exists tpgossz;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("tpgossz database dropped!")
+}
+
+func createDatabase() {
+	fmt.Println("Creating tpgossz Database...")
+	_, err = db.Exec(`CREATE DATABASE tpgossz;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("tpgossz database created succesfully!")
+}
+
+func connectDatabase() {
+	fmt.Println("Connecting to tpgossz database...")
+
+	//https://notathoughtexperiment.me/blog/how-to-do-create-database-dbname-if-not-exists-in-postgres-in-golang/
+	row := db.QueryRow(`SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = 'tpgossz');`)
+	var exists bool
+	err = row.Scan(&exists)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if exists == false {
+		fmt.Println("tpgossz database doesn't exist!")
+		createDatabase()
+
+	} else {
+		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=tpgossz sslmode=disable")
+		if err != nil {
+			log.Fatal(err)
+			exit()
+		}
+		fmt.Println("Connected tpgossz!")
+	}
+}
+
+func checkIfUsersConnected() {
+	fmt.Println(" Checking if there are users connected berfore dropping...")
+	var count int
+	row := db.QueryRow(`SELECT count(*) FROM pg_stat_activity WHERE datname = 'tpgossz';`)
+	err := row.Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if count > 0 {
+		concatenated := fmt.Sprintf("found %d users connected", count)
+		fmt.Println(concatenated)
+		disconnectUsers()
+	} else {
+		fmt.Println(" No users connected")
+	}
+
+}
+
+func disconnectUsers() {
+	connectPostgres()
+	fmt.Println("  Disconnecting users...")
+	_, err = db.Exec(`REVOKE CONNECT ON DATABASE tpgossz FROM public;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`SELECT pg_terminate_backend(pg_stat_activity.pid)
+					  FROM pg_stat_activity
+				      WHERE pg_stat_activity.datname = 'tpgossz';`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("  Disconnected users succesfully!")
+}
+
+func connectPostgres() {
+	fmt.Println("  Connecting to postgres database before disconnecting tpgossz users")
+	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("  Connected to postgres!")
 }
