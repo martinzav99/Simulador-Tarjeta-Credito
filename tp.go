@@ -35,25 +35,22 @@ func bienvenida() {
 	`, user)
 }
 
-func login(user string, password string) {
-	//var scanner = ""
-	//fmt.Printf("Bienvenido\n\n")
-	//fmt.Printf("Nombre de Usuario [" + user + "]:")
-	//fmt.Scanln(&scanner)
-	//if scanner != "" {
-	//	user = scanner
-	//}
-	//fmt.Printf("host [" + host + "]:")
-	//fmt.Scanln(&scanner)
-	//if scanner != "" {
-	//	host = scanner
-	//}
-	fmt.Println("Connecting to postgres database...")
-	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=host dbname=postgres sslmode=disable")
+func connectPostgres() {
+	fmt.Println("  Connecting to postgres database before disconnecting tpgossz users")
+	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Connected postgres!")
+	fmt.Println("  Connected to postgres!")
+}
+
+func login(user string, password string) {
+	fmt.Println("Connecting to postgres database...")
+	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Connected to postgres!")
 }
 
 func exit() {
@@ -73,12 +70,11 @@ func connectDatabase() {
 		log.Fatal(err)
 	}
 	if exists == false {
+		fmt.Println("tpgossz database doesn't exist!")
 		createDatabase()
-		createTables()
-		applyPKandFK()
-		populateDatabase()
+
 	} else {
-		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=host dbname=tpgossz sslmode=disable")
+		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=tpgossz sslmode=disable")
 		if err != nil {
 			log.Fatal(err)
 			exit()
@@ -87,13 +83,56 @@ func connectDatabase() {
 	}
 }
 func createDatabase() {
-	fmt.Println("tpgossz database doesn't exists, creating database...")
+	fmt.Println("Creating tpgossz Database...")
 	_, err = db.Exec(`CREATE DATABASE tpgossz;`)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("tpgossz database created succesfully!")
-	connectDatabase()
+}
+
+func dropDatabase() {
+	fmt.Println("Dropping tpgossz database if exists...")
+	checkIfUsersConnected()
+	_, err = db.Exec(`drop database if exists tpgossz;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("tpgossz database dropped!")
+}
+
+func checkIfUsersConnected() {
+	fmt.Println(" Checking if there are users connected berfore dropping...")
+	var count int
+	row := db.QueryRow(`SELECT count(*) FROM pg_stat_activity WHERE datname = 'tpgossz';`)
+	err := row.Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if count > 0 {
+		concatenated := fmt.Sprintf("found %d users connected", count)
+		fmt.Println(concatenated)
+		disconnectUsers()
+	} else {
+		fmt.Println(" No users connected")
+	}
+
+}
+
+func disconnectUsers() {
+	connectPostgres()
+	fmt.Println("  Disconnecting users...")
+	_, err = db.Exec(`REVOKE CONNECT ON DATABASE tpgossz FROM public;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`SELECT pg_terminate_backend(pg_stat_activity.pid)
+					  FROM pg_stat_activity
+				      WHERE pg_stat_activity.datname = 'tpgossz';`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("  Disconnected users succesfully!")
 }
 
 func createTables() {
@@ -115,19 +154,31 @@ func createTables() {
 
 						create table consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
 	if err != nil {
-		log.Fatal()
+		log.Fatal(err)
 	} else {
 		fmt.Println("Tables created succesfully!")
 	}
 }
 
-func applyPKandFK() {
+func addPKandFK() {
+	fmt.Println("adding PKs and FKs...")
+	addPKs()
+	addFKs()
+	fmt.Println("PKs and FKs added succesfully!")
+}
 
+func dropPKandFK() {
+	fmt.Println("removing PKs and FKs...")
+	dropFKs()
+	dropPKs()
+	fmt.Println("PKs and FKs removed succesfully!")
 }
 
 func populateDatabase() {
+	fmt.Println("populating Database...")
 	addClients()
 	addBusiness()
+	fmt.Println("Database populated!")
 }
 
 func addClients() {
@@ -186,7 +237,7 @@ func addBusiness() {
 	}
 }
 
-func agregarPKs() {
+func addPKs() {
 	_, err = db.Exec(`	alter table cliente add constraint cliente_pk primary key (nrocliente);
 						alter table tarjeta add constraint tarjeta_pk primary key (nrotarjeta);
 						alter table comercio add constraint comercio_pk primary key (nrocomercio);
@@ -202,7 +253,7 @@ func agregarPKs() {
 	}
 }
 
-func agregarFKs() {
+func addFKs() {
 	_, err = db.Exec(`	alter table tarjeta add constraint tarjeta_nrocliente_fk foreign key (nrocliente) references cliente (nrocliente);
 						alter table rechazo add constraint rechazo_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
 						alter table compra add constraint compra_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
@@ -217,15 +268,52 @@ func agregarFKs() {
 	}
 }
 
+func dropPKs() {
+	_, err = db.Exec(`	alter table cliente drop  constraint cliente_pk;
+						alter table tarjeta drop constraint tarjeta_pk;
+						alter table comercio drop constraint comercio_pk;
+						alter table compra drop constraint compra_pk;
+						alter table rechazo drop constraint rechazo_pk;
+						alter table cierre drop constraint cierre_pk;
+						alter table cabecera drop constraint cabecera_pk;
+						alter table detalle drop constraint detalle_pk;
+						alter table alerta drop constraint alerta_pk;`)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func dropFKs() {
+	_, err = db.Exec(`	alter table tarjeta drop constraint tarjeta_nrocliente_fk;
+						alter table rechazo drop constraint rechazo_nrotarjeta_fk;
+						alter table compra drop constraint compra_nrotarjeta_fk;
+						alter table alerta drop constraint alerta_nrotarjeta_fk;
+						alter table cabecera drop constraint cabecera_nrotarjeta_fk;
+						alter table alerta drop constraint alerta_nrorechazo_fk;
+						alter table rechazo drop constraint rechazo_nrocomercio_fk;
+						alter table compra drop constraint compra_nrocomercio_fk;`)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func menu() {
 	menu :=
 		`
-	[ 1 ] Conectar con la Base
-	[ 2 ] Opciones avanzadas
-	[ 0 ] Salir
-	
-	Elige una opción
-`
+		[ 1 ] Crear Base tpgossz (Auto)
+		[ 2 ] Eliminar Base tpgossz
+		[ 3 ] Crear Base tpgossz
+		[ 4 ] Conectar con Base tpgossz
+		[ 5 ] Crear tablas
+		[ 6 ] Agregar PKs y FKs
+		[ 7 ] Popular Base de datos
+		[ 8 ] Remover PKs y FKs
+		[ 0 ] Salir
+		
+		Elige una opción
+	`
 	fmt.Printf(menu)
 
 	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
@@ -233,9 +321,21 @@ func menu() {
 
 	switch eleccion {
 	case 1:
-		connectDatabase()
+		autoCreateDatabase()
 	case 2:
-		menuAdvanced()
+		dropDatabase()
+	case 3:
+		createDatabase()
+	case 4:
+		connectDatabase()
+	case 5:
+		createTables()
+	case 6:
+		addPKandFK()
+	case 7:
+		populateDatabase()
+	case 8:
+		dropPKandFK()
 	case 0:
 		exitBool = true
 		fmt.Println("Hasta Luego")
@@ -244,43 +344,12 @@ func menu() {
 	}
 }
 
-func menuAdvanced() {
-	menuString :=
-		`
-		*Opciones Avanzadas*
-
-	[ 1 ] Crear Base tpgossz
-	[ 2 ] Crear tablas
-	[ 3 ] Crear PK y FK
-	[ 4 ] Popular Base de datos
-	[ 5 ] Popular solo clientes
-	[ 6 ] Popular solo negocios
-	[ 0 ] Volver
-	
-	Elige una opción
-`
-	fmt.Printf(menuString)
-
-	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
-	fmt.Scan(&eleccion)
-
-	switch eleccion {
-	case 1:
-		createDatabase()
-	case 2:
-		createTables()
-	case 3:
-		applyPKandFK()
-	case 4:
-		populateDatabase()
-	case 5:
-		addClients()
-	case 6:
-		addBusiness()
-	case 0:
-		menu()
-	default:
-		fmt.Println("No elegiste ninguno")
-		menuAdvanced()
-	}
+func autoCreateDatabase() {
+	dropDatabase()
+	createDatabase()
+	connectDatabase()
+	createTables()
+	addPKandFK()
+	populateDatabase()
+	fmt.Println("\nReady to work!")
 }
