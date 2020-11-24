@@ -31,7 +31,7 @@ func main() {
 func bienvenida() {
 	fmt.Printf(
 		`
-	Bienvenido %s
+		Bienvenido %s!
 	`, user)
 }
 
@@ -217,6 +217,7 @@ func dropFKs() {
 func menu() {
 	menu :=
 		`
+			Menu principal
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Eliminar Base tpgossz
 		[ 3 ] Crear Base tpgossz
