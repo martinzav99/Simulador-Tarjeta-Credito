@@ -37,19 +37,22 @@ o desconectarse.
 
 Se destaca que, cada vez que el usuario elija una opcion la funcion se ejecutara y
 ademas hara un seguimiento con impresiones por pantalla para indicar su estado y
-correcto funcionamiento. En caso de no elegir la opcion de salida , al finalizar 
-las elecciones , aparecera el menu para su proximo tarea.
+correcto funcionamiento. 
+
+En caso de no elegir la opcion de salida , al finalizar las elecciones , aparecera el
+menu para su proximo tarea.
     
 
-===dificultades y procedimientos
+=== Dificultades y Procedimientos
 
 _parte1_
 
 Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
 entre las entidades
- 
-image::diagrama_base.jpg[alt="diagrama.",width=128,height=128]
+
+.diagrama_base 
+image::diagrama_base.jpg
 
 _parte2_
 
