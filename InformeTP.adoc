@@ -52,7 +52,7 @@ debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
 entre las entidades
 
 .diagrama_base 
-image::diagrama_base.jpg
+image::diagrama_base.jpg[]
 
 _parte2_
 
