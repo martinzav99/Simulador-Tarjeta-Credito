@@ -12,13 +12,13 @@ var (
 	db       *sql.DB
 	err      error
 	user     = "postgres"
-	host     = "localhost"
+	password = "1234"
 	exitBool = false
 )
 
 func main() {
 	defer exit()
-	login(user, host)
+	login(user, password)
 	bienvenida()
 	for {
 		menu()
@@ -35,7 +35,7 @@ func bienvenida() {
 	`, user)
 }
 
-func login(user string, host string) {
+func login(user string, password string) {
 	//var scanner = ""
 	//fmt.Printf("Bienvenido\n\n")
 	//fmt.Printf("Nombre de Usuario [" + user + "]:")
@@ -48,21 +48,22 @@ func login(user string, host string) {
 	//if scanner != "" {
 	//	host = scanner
 	//}
-	fmt.Println("Conectando a postgres")
-	db, err = sql.Open("postgres", "user="+user+" password=1234 host="+host+" dbname=postgres sslmode=disable")
+	fmt.Println("Connecting to postgres database...")
+	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=host dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Conectado con postgres")
+	fmt.Println("Connected postgres!")
 }
 
 func exit() {
-	fmt.Println("Cerrrando conexion...")
+	fmt.Println("Closing connection...")
 	db.Close()
+	fmt.Println("Closed!")
 }
 
-func createDatabase() {
-	fmt.Println("Conectando a tpgossz")
+func connectDatabase() {
+	fmt.Println("Connecting to tpgossz database...")
 
 	//https://notathoughtexperiment.me/blog/how-to-do-create-database-dbname-if-not-exists-in-postgres-in-golang/
 	row := db.QueryRow(`SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = 'tpgossz');`)
@@ -72,22 +73,31 @@ func createDatabase() {
 		log.Fatal(err)
 	}
 	if exists == false {
-		_, err = db.Exec(`CREATE DATABASE tpgossz;`)
+		createDatabase()
+		createTables()
+		applyPKandFK()
+		populateDatabase()
+	} else {
+		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=host dbname=tpgossz sslmode=disable")
 		if err != nil {
 			log.Fatal(err)
+			exit()
 		}
+		fmt.Println("Connected tpgossz!")
 	}
-
-	db, err = sql.Open("postgres", "user="+user+" password=1234 host="+host+" dbname=tpgossz sslmode=disable")
+}
+func createDatabase() {
+	fmt.Println("tpgossz database doesn't exists, creating database...")
+	_, err = db.Exec(`CREATE DATABASE tpgossz;`)
 	if err != nil {
 		log.Fatal(err)
-		exit()
 	}
-	fmt.Println("Conectado con tpgossz")
+	fmt.Println("tpgossz database created succesfully!")
+	connectDatabase()
 }
 
-func creartablas() {
-
+func createTables() {
+	fmt.Println("creating tables...")
 	_, err = db.Exec(`	create table cliente (nrocliente int, nombre text, apellido text, domicilio text, telefono varchar(12));
 						create table tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));
 						
@@ -106,10 +116,21 @@ func creartablas() {
 						create table consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
 	if err != nil {
 		log.Fatal()
+	} else {
+		fmt.Println("Tables created succesfully!")
 	}
 }
 
-func agregarClientes() {
+func applyPKandFK() {
+
+}
+
+func populateDatabase() {
+	addClients()
+	addBusiness()
+}
+
+func addClients() {
 	_, err = db.Exec(`	insert into cliente values (1, 'Leandro', 	'Sosa', 	'Marco Sastre 4540','541152774600');
 						insert into cliente values (2, 'Leonardo', 	'Sanabria', 'Gaspar Campos 1815','541148611570');
 						insert into cliente values (3, 'Florencia', 'Knol', 	'Zapiola 2825', 	'541148913800');
@@ -137,7 +158,7 @@ func agregarClientes() {
 	}
 }
 
-func agregarNegocios() {
+func addBusiness() {
 	_, err = db.Exec(`	insert into comercio values (1, 'Farmacia Tell','Juncal 699',		'B1663',	'541157274612');
 						insert into comercio values (2, 'Optica Bedini','Peron 781', 		'B1871',	'541174654172');
 						insert into comercio values (3, 'Terravision',	'Urquiza 1361',	 	'B1221',	'541183910808');
@@ -168,11 +189,9 @@ func agregarNegocios() {
 func menu() {
 	menu :=
 		`
-	[ 1 ] Crear Base
-	[ 2 ] Crear Tablas
-	[ 3 ] Agregar Clientes
-	[ 4 ] Agregar Negocios
-	[ 5 ] Salir
+	[ 1 ] Conectar con la Base
+	[ 2 ] Opciones avanzadas
+	[ 0 ] Salir
 	
 	Elige una opción
 `
@@ -183,17 +202,54 @@ func menu() {
 
 	switch eleccion {
 	case 1:
-		createDatabase()
+		connectDatabase()
 	case 2:
-		creartablas()
-	case 3:
-		agregarClientes()
-	case 4:
-		agregarNegocios()
-	case 5:
+		menuAdvanced()
+	case 0:
 		exitBool = true
 		fmt.Println("Hasta Luego")
 	default:
 		fmt.Println("No elegiste ninguno")
+	}
+}
+
+func menuAdvanced() {
+	menuString :=
+		`
+		*Opciones Avanzadas*
+
+	[ 1 ] Crear Base tpgossz
+	[ 2 ] Crear tablas
+	[ 3 ] Crear PK y FK
+	[ 4 ] Popular Base de datos
+	[ 5 ] Popular solo clientes
+	[ 6 ] Popular solo negocios
+	[ 0 ] Volver
+	
+	Elige una opción
+`
+	fmt.Printf(menuString)
+
+	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
+	fmt.Scan(&eleccion)
+
+	switch eleccion {
+	case 1:
+		createDatabase()
+	case 2:
+		createTables()
+	case 3:
+		applyPKandFK()
+	case 4:
+		populateDatabase()
+	case 5:
+		addClients()
+	case 6:
+		addBusiness()
+	case 0:
+		menu()
+	default:
+		fmt.Println("No elegiste ninguno")
+		menuAdvanced()
 	}
 }
