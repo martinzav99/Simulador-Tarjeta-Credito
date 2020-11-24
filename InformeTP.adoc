@@ -27,15 +27,21 @@ primareas y foraneas.
 
 == Descripción
 
-En esta sección pueden incluirse las dificultades que tuvieron, las
-soluciones encontradas, las decisiones que se fueron tomando a lo largo
-del trabajo práctico, y las cuestiones de diseño que consideren
-importantes.
+El programa inicia mostrando un menu princpipal para un manejo mas ordenado 
+a la base de datos, donde automaticamente se ejecutara la primera opcion que es la
+encargada de crear una base de datos. Entre las opciones nos encontramos la
+posibilidad de eliminar la base de datos creada , crearla manualmente , conectarse,
+crear tablas dentro de la misma , agregar y elminar todas las  Pk's  y Fk's ,
+completar la base de datos con informacion de clientes y comercios y por ultimo salir
+o desconectarse.
 
-También, se puede incluir una descripción general del programa—cómo
-funciona.
+Se destaca que, cada vez que el usuario elija una opcion la funcion se ejecutara y
+ademas hara un seguimiento con impresiones por pantalla para indicar su estado y
+correcto funcionamiento. En caso de no elegir la opcion de salida , al finalizar 
+las elecciones , aparecera el menu para su proximo tarea.
+    
 
-* dificultades y procedimientos:
+===dificultades y procedimientos
 
 _parte1_
 
@@ -43,8 +49,13 @@ Para empezar a modelar la base de datos decidimos utilizar el programa *lucidcha
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
 entre las entidades
  
-image:https://gitlab.com/maxischmidt2011/schmidt-sosa-zavalla-tp/-/blob/master/diagrama_base.png[alt="diagrama.",width=128,height=128]
+image::diagrama_base.jpg[alt="diagrama.",width=128,height=128]
 
+_parte2_
+
+Al momento de ingresar informacion sobre los comercios y clientes a la base 
+de datos,en lugar de inventar y escribir manualmente, se obtuvo la
+informacion de 
 
 == Implementación
 
