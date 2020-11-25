@@ -1,5 +1,5 @@
 = Base de Datos: Trabajo Práctico 1
-Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>;Martin Zavalla <martin.zav99@gmail.com>
+Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>; Martin Zavalla <martin.zav99@gmail.com>
 v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
 :title-page:
 :numbered:
@@ -13,10 +13,10 @@ En este trabajo se realizará una base de datos en postgreSQL mediante Go,
 donde se representa un modelo de datos que se usa para almacenar
 informacion relativa a clientes de tarjetas de credito, donde se destacan los detalles
 de compra, total de gastos, infomación del comercio y el producto, rechazos
-o alertas e incluso, información sobre la propia tarjeta y su propietario. 
+o alertas e incluso, información sobre la propia tarjeta y su propietario.
 
-El objetivo del programa es que reconozca y actuae ante situaciones tales como 
-autorizacion de compra, generar resumenes o alertar a los clientes de posibles
+El objetivo del programa es que reconozca y actúa ante situaciones tales como 
+autorización de compra, generar resumenes o alertar a los clientes de posibles
 problemas. Para ello, se deberá previamente crear una base de datos respetando 
 las propiedades de cada tabla (PK's y FK's), e instanciar datos competentes.
 
@@ -27,19 +27,19 @@ primareas y foraneas.
 
 == Descripción
 
-El programa inicia mostrando un menu princpipal para un manejo mas ordenado 
-a la base de datos, donde automaticamente se ejecutara la primera opcion que es la
+El programa inicia mostrando un menú princpipal para un manejo más ordenado 
+a la base de datos, donde automáticamente se ejecutará la primera opción que es la
 encargada de crear una base de datos. Entre las opciones nos encontramos la
-posibilidad de eliminar la base de datos creada , crearla manualmente , conectarse,
-crear tablas dentro de la misma , agregar y elminar todas las  Pk's  y Fk's ,
-completar la base de datos con informacion de clientes y comercios y por ultimo salir
+posibilidad de eliminar la base de datos creada, crearla manualmente, conectarse,
+crear tablas dentro de la misma, agregar y elminar todas las Pk's y Fk's,
+completar la base de datos con información de clientes y de comercios, y por último, salir
 o desconectarse.
 
-Se destaca que, cada vez que el usuario elija una opcion la funcion se ejecutara y
-ademas hara un seguimiento con impresiones por pantalla para indicar su estado y
+Se destaca que, cada vez que el usuario elija una opción la funcion se ejecutará y
+además hará un seguimiento con impresiones por pantalla para indicar su estado y
 correcto funcionamiento. 
 
-En caso de no elegir la opcion de salida , al finalizar las elecciones , aparecera el
+En caso de no elegir la opcion de salida, al finalizar las elecciones, aparecera el
 menu para su proximo tarea.
     
 
