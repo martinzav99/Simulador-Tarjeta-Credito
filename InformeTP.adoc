@@ -27,11 +27,23 @@ primareas y foraneas.
 
 == Descripción
 
-El programa inicia mostrando un menú princpipal para un manejo más ordenado 
-a la base de datos, donde automáticamente se ejecutará la primera opción que es la
-encargada de crear una base de datos. Entre las opciones nos encontramos la
+El programa inicia mostrando un menú princpipal de bienvenida (CLI) para un manejo más ordenado 
+con la base de datos. Donde la primera opción es la encargada de crear la base de datos completa 
+con tablas, PK's, FK's, clientes y negocios. Entre las demás opciones nos encontramos con: 
+
+1. Crear Base tpgossz (Automáticamente con tablas, PK's, FK's, clientes y negocios)
+2. Eliminar Base tpgossz
+3. Crear Base tpgossz
+4. Conectar con Base tpgossz
+5. Crear tablas (Crea todas las tablas requeridas)
+6. Agregar PKs y FKs
+7. Popular Base de datos (Instancia de Datos: agrega clientes y negocios)
+8. Remover PKs y FKs
+9. Salir (Cierra la conexión con la base de datos y finaliza el programa)
+
+la
 posibilidad de eliminar la base de datos creada, crearla manualmente, conectarse,
-crear tablas dentro de la misma, agregar y elminar todas las Pk's y Fk's,
+crear las tablas requeridas para el funcionamiento  , agregar y elminar todas las Pk's y Fk's,
 completar la base de datos con información de clientes y de comercios, y por último, salir
 o desconectarse.
 
