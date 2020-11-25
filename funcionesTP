@@ -132,9 +132,36 @@ $$ language psplsql;
 create or replace function xxxxxxx returns trigger as $$
 
 declare
-
+	nalerta int;
+	ntarjeta varchar(16);
+	fecha timestamp;
+	nrechazo int;
+	codalerta int;
+	descripcion text;
 begin 
+	select max(nroalerta) into nalerta from alerta;
 
+	if not found then	
+		nalerta := 0; 
+	else 
+		nalerta:= nalerta+1;	
+	end if;
+
+	select max(nrorechazo) into nrechazo from rechazo;
+
+	if not found then	
+		nrechazo := 0; 
+
+	select nrotarjeta into ntarjeta where nrorechazo = nrechazo;
+
+	codalerta := 0; //codigo por rechazo
+
+	fecha:= time.Now(); //duda
+
+	descripcion := 'Alerta por rechazo';
+
+	insert into alerta values (nalerta, ntarjeta, fecha, nrechazo, codalerta, descripcion);
+	
 end;
 
 $$ language plpgsql;
