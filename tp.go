@@ -73,6 +73,7 @@ func populateDatabase() {
 	addClients()
 	addBusiness()
 	addTarjetas()
+	generateCierres()
 	fmt.Println("Database populated!")
 }
 
@@ -152,8 +153,7 @@ func addTarjetas() {
 						insert into tarjeta values ('3573172713553770', 19, '180216', '230226',	'0981', 220000.25, 	'vigente');
 						insert into tarjeta values ('5552648744023638', 20, '170425', '220425',	'8974', 100000.45, 	'vigente');
 						insert into tarjeta values ('6326855100263642', 1, 	'180607', '230627',	'9821', 450000.78, 	'suspendida');
-						insert into tarjeta values ('8203564386694367', 2, 	'140728', '190728',	'0912', 9000.99, 	'anulada');;`)
-
+						insert into tarjeta values ('8203564386694367', 2, 	'140728', '190728',	'0912', 9000.99, 	'anulada');`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -228,6 +228,45 @@ func dropFKs() {
 						alter table compra drop constraint compra_nrocomercio_fk;`)
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func generateCierres() {
+	for nMes := 1; nMes <= 12; nMes++ {
+		for terminacion := 1; terminacion <= 9; terminacion++ {
+			if nMes == 12 {
+				_, err = db.Exec(fmt.Sprintf("insert into cierre values (2020, %v, %v, '2020%v0%v', '2020010%v', '202001%v');", nMes, terminacion, nMes, terminacion, terminacion, terminacion+9))
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else if nMes > 9 {
+				_, err = db.Exec(fmt.Sprintf("insert into cierre values (2020, %v, %v, '2020%v0%v', '2020010%v', '202001%v');", nMes, terminacion, nMes, terminacion, terminacion, terminacion+9))
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				_, err = db.Exec(fmt.Sprintf("insert into cierre values (2020, %v, %v, '20200%v0%v', '20200%v0%v', '20200%v%v');", nMes, terminacion, nMes, terminacion, nMes+1, terminacion, nMes+1, terminacion+9))
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		}
+		if nMes == 12 {
+			_, err = db.Exec(fmt.Sprintf("insert into cierre values (2020, %v, 0, '2020%v10', '20200110', '20200119');", nMes, nMes))
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else if nMes > 9 {
+			_, err = db.Exec(fmt.Sprintf("insert into cierre values (2020, %v, 0, '2020%v10', '2020%v10', '2020%v19');", nMes, nMes, nMes+1, nMes+1))
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			_, err = db.Exec(fmt.Sprintf("insert into cierre values (2020, %v, 0, '20200%v10', '20200%v10', '20200%v19');", nMes, nMes, nMes+1, nMes+1))
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
 }
 
