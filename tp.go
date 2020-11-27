@@ -29,8 +29,7 @@ func main() {
 }
 
 func bienvenida() {
-	fmt.Printf(
-		`
+	fmt.Printf(`
 		Bienvenido %s!
 	`, user)
 }
@@ -53,20 +52,14 @@ func exit() {
 func createTables() {
 	fmt.Println("creating tables...")
 	_, err = db.Exec(`	create table cliente (nrocliente int, nombre text, apellido text, domicilio text, telefono varchar(12));
-						create table tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));
-						
+						create table tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));						
 						create table comercio (nrocomercio int, nombre text, domicilio text, codigopostal varchar(8), telefono varchar(12));
 						create table compra (nrooperacion int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), pagado boolean);
-
 						create table rechazo (nrorechazo int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), motivo text);
-
 						create table cierre (anio int, mes int, terminacion int, fechainicio date, fechacierre date, fechavto date);
 						create table cabecera (nroresumen int, nombre text, apellido text, domicilio text, nrotarjeta varchar(16), desde date, hasta date, vence date, total decimal(8,2));
-
 						create table detalle (nroresumen int, nrolinea int, fecha date, nombrecomercio text, monto decimal(7,2));
-
 						create table alerta (nroalerta int, nrotarjeta varchar(16), fecha timestamp, nrorechazo int, codalerta int, descripcion text);
-
 						create table consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
 	if err != nil {
 		log.Fatal(err)
@@ -79,6 +72,7 @@ func populateDatabase() {
 	fmt.Println("populating Database...")
 	addClients()
 	addBusiness()
+	addTarjetas()
 	fmt.Println("Database populated!")
 }
 
@@ -102,8 +96,7 @@ func addClients() {
 						insert into cliente values (17, 'Aldana', 	'Ramos', 	'Cevallos 261', 	'541143727636');
 						insert into cliente values (18, 'Antonella', 'Herrera', 'Gascon 1241', 		'541148631232');
 						insert into cliente values (19, 'Pedro', 	'Rafele', 	'Urquiza 1241', 	'541144927876');
-						insert into cliente values (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 	'541194127656');
-						insert into cliente values (21, 'Ricardo', 	'Rueda', 	'Libertad 1252', 	'541147447171');`)
+						insert into cliente values (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 	'541194127656');`)
 
 	if err != nil {
 		log.Fatal(err)
@@ -132,6 +125,34 @@ func addBusiness() {
 						insert into comercio values (19, 'Cibernet', 	'Urquiza 1241', 	'B1224',	'541144945876');
 						insert into comercio values (20, 'Crazy World', 'Zapiola 1086', 	'B1199',	'541175085786');
 						insert into comercio values (21, 'Piero', 		'Tribulato 1333', 	'B1201',	'541142147877');`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func addTarjetas() {
+	_, err = db.Exec(`	insert into tarjeta values ('5555899304583399', 1, 	'200911', '250221',	'1234', 100000.90, 'vigente');
+						insert into tarjeta values ('5269399188431044', 2, 	'190918', '240928',	'0334', 50000.55, 	'vigente');
+						insert into tarjeta values ('8680402479723030', 3, 	'180322', '230322',	'8214', 700000.12, 	'vigente');
+						insert into tarjeta values ('7760048064179840', 4, 	'170211', '220221',	'4134', 100000.85, 	'vigente');
+						insert into tarjeta values ('6317807399246634', 5, 	'200121', '250121',	'2324', 800000.22, 	'vigente');
+						insert into tarjeta values ('2913395189972781', 6, 	'180819', '230828',	'4321', 900000.38, 	'vigente');
+						insert into tarjeta values ('4681981280484337', 7,	'201121', '251121',	'8765', 100000.58, 	'vigente');
+						insert into tarjeta values ('9387191057338602', 8, 	'160910', '210920',	'1253', 650000.85, 'vigente');
+						insert into tarjeta values ('2503782418139215', 9, 	'161226', '211226',	'8367', 100000.87, 	'vigente');
+						insert into tarjeta values ('4462725109757091', 10, '200901', '250921',	'6754', 20000.14, 	'vigente');
+						insert into tarjeta values ('2954596377708750', 11, '180911', '230921',	'7852', 200000.50, 'vigente');
+						insert into tarjeta values ('6231348143458624', 12, '161221', '211221',	'9873', 54000.25, 	'vigente');
+						insert into tarjeta values ('4919235066192653', 13, '190911', '240921',	'6753', 10000.00, 	'vigente');
+						insert into tarjeta values ('3742481627352427', 14, '170928', '220928',	'9801', 45000.56, 	'vigente');
+						insert into tarjeta values ('2884720084187620', 15, '180111', '230121',	'9876', 500000.75, 	'vigente');
+						insert into tarjeta values ('2340669528486435', 16, '170923', '220923',	'6752', 9000.80, 	'vigente');
+						insert into tarjeta values ('2377527131015460', 17, '190912', '240922',	'0987', 100000.23, 	'vigente');
+						insert into tarjeta values ('8472072142547842', 18, '200421', '250421',	'6987', 650000.00, 	'vigente');
+						insert into tarjeta values ('3573172713553770', 19, '180216', '230226',	'0981', 220000.25, 	'vigente');
+						insert into tarjeta values ('5552648744023638', 20, '170425', '220425',	'8974', 100000.45, 	'vigente');
+						insert into tarjeta values ('6326855100263642', 1, 	'180607', '230627',	'9821', 450000.78, 	'suspendida');
+						insert into tarjeta values ('8203564386694367', 2, 	'140728', '190728',	'0912', 9000.99, 	'anulada');;`)
 
 	if err != nil {
 		log.Fatal(err)
@@ -155,7 +176,6 @@ func addPKs() {
 						alter table cabecera add constraint cabecera_pk primary key (nroresumen);
 						alter table detalle add constraint detalle_pk primary key (nroresumen, nrolinea);
 						alter table alerta add constraint alerta_pk primary key (nroalerta);`)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -170,7 +190,6 @@ func addFKs() {
 						alter table alerta add constraint alerta_nrorechazo_fk foreign key (nrorechazo) references rechazo (nrorechazo);
 						alter table rechazo add constraint rechazo_nrocomercio_fk foreign key (nrocomercio) references comercio (nrocomercio);
 						alter table compra add constraint compra_nrocomercio_fk foreign key (nrocomercio) references comercio (nrocomercio);`)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -193,7 +212,6 @@ func dropPKs() {
 						alter table cabecera drop constraint cabecera_pk;
 						alter table detalle drop constraint detalle_pk;
 						alter table alerta drop constraint alerta_pk;`)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -208,7 +226,6 @@ func dropFKs() {
 						alter table alerta drop constraint alerta_nrorechazo_fk;
 						alter table rechazo drop constraint rechazo_nrocomercio_fk;
 						alter table compra drop constraint compra_nrocomercio_fk;`)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -229,7 +246,7 @@ func menu() {
 		[ 0 ] Salir
 		
 		Elige una opción
-	`
+		`
 	fmt.Printf(menu)
 
 	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
