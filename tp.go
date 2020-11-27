@@ -131,20 +131,20 @@ func addBusiness() {
 }
 
 func addTarjetas() {
-	_, err = db.Exec(`	insert into tarjeta values ('5555899304583399', 1, 	'200911', '250221',	'1234', 1000000.90, 'vigente');
+	_, err = db.Exec(`	insert into tarjeta values ('5555899304583399', 1, 	'200911', '250221',	'1234', 100000.90, 'vigente');
 						insert into tarjeta values ('5269399188431044', 2, 	'190918', '240928',	'0334', 50000.55, 	'vigente');
 						insert into tarjeta values ('8680402479723030', 3, 	'180322', '230322',	'8214', 700000.12, 	'vigente');
 						insert into tarjeta values ('7760048064179840', 4, 	'170211', '220221',	'4134', 100000.85, 	'vigente');
-						insert into tarjeta values ('6317807399246634', 5 	'200121', '250121',	'2324', 800000.22, 	'vigente');
+						insert into tarjeta values ('6317807399246634', 5, 	'200121', '250121',	'2324', 800000.22, 	'vigente');
 						insert into tarjeta values ('2913395189972781', 6, 	'180819', '230828',	'4321', 900000.38, 	'vigente');
 						insert into tarjeta values ('4681981280484337', 7,	'201121', '251121',	'8765', 100000.58, 	'vigente');
-						insert into tarjeta values ('9387191057338602', 8, 	'160910', '210920',	'1253', 6500000.85, 'vigente');
-						insert into tarjeta values ('2503782418139215', 9, 	'151226', '201226',	'8367', 100000.87, 	'vigente');
+						insert into tarjeta values ('9387191057338602', 8, 	'160910', '210920',	'1253', 650000.85, 'vigente');
+						insert into tarjeta values ('2503782418139215', 9, 	'161226', '211226',	'8367', 100000.87, 	'vigente');
 						insert into tarjeta values ('4462725109757091', 10, '200901', '250921',	'6754', 20000.14, 	'vigente');
-						insert into tarjeta values ('2954596377708750', 11, '180911', '230921',	'7852', 2000000.50, 'vigente');
-						insert into tarjeta values ('6231348143458624', 12, '161221', '211221',	'9873', 54000.25 	'vigente');
+						insert into tarjeta values ('2954596377708750', 11, '180911', '230921',	'7852', 200000.50, 'vigente');
+						insert into tarjeta values ('6231348143458624', 12, '161221', '211221',	'9873', 54000.25, 	'vigente');
 						insert into tarjeta values ('4919235066192653', 13, '190911', '240921',	'6753', 10000.00, 	'vigente');
-						insert into tarjeta values ('3742481627352427', 14, '170928', '220928',	'9801', 450000.56, 	'vigente');
+						insert into tarjeta values ('3742481627352427', 14, '170928', '220928',	'9801', 45000.56, 	'vigente');
 						insert into tarjeta values ('2884720084187620', 15, '180111', '230121',	'9876', 500000.75, 	'vigente');
 						insert into tarjeta values ('2340669528486435', 16, '170923', '220923',	'6752', 9000.80, 	'vigente');
 						insert into tarjeta values ('2377527131015460', 17, '190912', '240922',	'0987', 100000.23, 	'vigente');
