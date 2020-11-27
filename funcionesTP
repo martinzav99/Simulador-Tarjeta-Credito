@@ -49,42 +49,51 @@ create or replace function generar_resumen(nroclientex int , mesx int , anox int
 
 declare 
 
+deudaTotal record;
 ncliente record;
 ntarjeta record;
 nresumen record;
 ncierre record;
-numerotarjeta char
+nlinea record;
+ncomercio record;
+cadaCompra record;
+fechaEnDate record
+
+numerotarjeta ;
+digito int
 
 
-gasto record;
 
 
 begin 
 
 select count(nroresumen) into nresumen from cabecera;
+select count(nrolinea) into nlinea from cierre;
+
 select * into ncliente from cliente where nrocliente = nroclientex ;
 select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = vigente; 
 
-numerotarjeta := ntarjeta.nrotarjeta
-
-substr(numerotarjeta,-1,1);
-
-
+numeroTarjeta := ntarjeta.nrotarjeta
+numeroTarjeta := right(numeroTarjeta,1); /*el ultimo digito*/
+digito := to_number(numeroTarjeta,'9');    /*9 es formato de mascara*/
 
 select * into ncierre from cierre where ano = anox and mes = mesx and terminacion = digito; 
-select suma(monto) into gasto from consumo where nrotarjeta = c.nrotarjeta and codseguridad = c.codseguridad;
+select suma(monto) into deudaTotal from compra where nrotarjeta = c.nrotarjeta and pagado = false;
 
 
-insert into cabecera values (nresumen.nroresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,gasto.monto);
-insert into detalle values ();  /* consultar */
- 
+insert into cabecera values (nresumen.nroresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal.monto);
+
+
+for cadaCompra in compra loop
+	if nrotarjeta = ncliente.nrotarjeta then					
+		select * into ncomercio from comercio where nrocomercio = v.nrocomercio;
+		select 
+		insert into detalle values (nresumen.nroresumen,nlinea.nrolinea,(date),ncomercio.nombre,v.monto,);;
+	end if;
+end loop;
+
 end;
-
 $$ language psplsql;
-
-
-
-
 
 
 
