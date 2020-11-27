@@ -1,0 +1,57 @@
+import (
+    "encoding/json"
+    "fmt"
+    "log"
+)
+
+// Sólo se marshalean los fields públicos
+
+type Cliente struct {
+    Nrocliente  int
+    Nombre   	string
+	Apellido   	string
+	Domicilio 	string
+	Telefono 	int // duda: tolera varchar()?
+}
+
+type Tarjeta struct {
+    Nrotarjeta 		int
+	Nrocliente 		int
+    Validadesde 	int `json:"Desde: "`
+	Validahasta 	int `json:"Hasta: "`
+	Codseguridad 	int `json:"Codigo: "` //duda: ¿hay que guardar el codigo de seguridad?
+	Limitecompra 	[]int
+	Estado 			string
+}
+
+type Comercio struct {
+    Nrocomercio int
+    Nombre   	string
+	Domicilio 	string
+	Codpostal 	int
+	Telefono 	int
+}
+
+type Compra struct {
+	Nrooperacion 	int
+	Nrotarjeta 		int
+	Nrocomercio 	int
+	Fecha 			date
+    Monto 			[]int
+    Pagado 			bool
+}
+
+func xxxx(clientes []Cliente) {
+    data, err := json.MarshalIndent(clientes, "", "    ")
+    if err != nil {
+        log.Fatalf("JSON marshaling failed: %s", err)
+    }
+    //fmt.Printf("%s\n", data)
+
+    var clientes2 []Cliente
+    err = json.Unmarshal(data, &clientes2)
+    if err != nil {
+        log.Fatalf("JSON unmarshaling failed: %s", err)
+    }
+    //fmt.Printf("%v\n", clientes2)
+}

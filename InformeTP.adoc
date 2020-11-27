@@ -1,5 +1,5 @@
 = Base de Datos: Trabajo Práctico 1
-Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>;Martin Zavalla <martin.zav99@gmail.com>
+Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>; Martin Zavalla <martin.zav99@gmail.com>
 v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
 :title-page:
 :numbered:
@@ -13,10 +13,10 @@ En este trabajo se realizará una base de datos en postgreSQL mediante Go,
 donde se representa un modelo de datos que se usa para almacenar
 informacion relativa a clientes de tarjetas de credito, donde se destacan los detalles
 de compra, total de gastos, infomación del comercio y el producto, rechazos
-o alertas e incluso, información sobre la propia tarjeta y su propietario. 
+o alertas e incluso, información sobre la propia tarjeta y su propietario.
 
-El objetivo del programa es que reconozca y actuae ante situaciones tales como 
-autorizacion de compra, generar resumenes o alertar a los clientes de posibles
+El objetivo del programa es que reconozca y actúa ante situaciones tales como 
+autorización de compra, generar resumenes o alertar a los clientes de posibles
 problemas. Para ello, se deberá previamente crear una base de datos respetando 
 las propiedades de cada tabla (PK's y FK's), e instanciar datos competentes.
 
@@ -27,24 +27,50 @@ primareas y foraneas.
 
 == Descripción
 
-En esta sección pueden incluirse las dificultades que tuvieron, las
-soluciones encontradas, las decisiones que se fueron tomando a lo largo
-del trabajo práctico, y las cuestiones de diseño que consideren
-importantes.
+El programa inicia mostrando un menú princpipal de bienvenida (CLI) para un manejo más ordenado 
+con la base de datos. Donde la primera opción es la encargada de crear la base de datos completa 
+con tablas, PK's, FK's, clientes y negocios. Entre las demás opciones nos encontramos con: 
 
-También, se puede incluir una descripción general del programa—cómo
-funciona.
+1. Crear Base tpgossz (Automáticamente con tablas, PK's, FK's, clientes y negocios)
+2. Eliminar Base tpgossz
+3. Crear Base tpgossz
+4. Conectar con Base tpgossz
+5. Crear tablas (Crea todas las tablas requeridas)
+6. Agregar PKs y FKs
+7. Popular Base de datos (Instancia de Datos: agrega clientes y negocios)
+8. Remover PKs y FKs
+9. Salir (Cierra la conexión con la base de datos y finaliza el programa)
 
-* dificultades y procedimientos:
+la
+posibilidad de eliminar la base de datos creada, crearla manualmente, conectarse,
+crear las tablas requeridas para el funcionamiento  , agregar y elminar todas las Pk's y Fk's,
+completar la base de datos con información de clientes y de comercios, y por último, salir
+o desconectarse.
+
+Se destaca que, cada vez que el usuario elija una opción la funcion se ejecutará y
+además hará un seguimiento con impresiones por pantalla para indicar su estado y
+correcto funcionamiento. 
+
+En caso de no elegir la opcion de salida, al finalizar las elecciones, aparecera el
+menu para su proximo tarea.
+    
+
+=== Dificultades y Procedimientos
 
 _parte1_
 
 Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
 entre las entidades
- 
-image:https://gitlab.com/maxischmidt2011/schmidt-sosa-zavalla-tp/-/blob/master/diagrama_base.png[alt="diagrama.",width=128,height=128]
 
+.diagrama_base 
+image::diagrama_base.jpg[]
+
+_parte2_
+
+Al momento de ingresar informacion sobre los comercios y clientes a la base 
+de datos,en lugar de inventar y escribir manualmente, se obtuvo la
+informacion de 
 
 == Implementación
 

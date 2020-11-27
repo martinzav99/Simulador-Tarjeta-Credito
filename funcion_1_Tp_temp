@@ -1,0 +1,24 @@
+montoCompraSum
+select sum(monto) from compra into montoCompraSum where nrotarjeta = nrotarj and pagado = false /*no se si se puede hacer asi para boolean*/ --agregar condiciones extra
+rec record;
+select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarj --guardas en un record llamado 'record'
+
+if not found then --el select no trajo registros
+	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'tarjeta no valida o no vigente');
+	return false;
+elsif rec.codsegur = codsegur then
+	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'codigo de seguridad invalido');
+	return false;
+elsif rec.validahasta > current_date then
+	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'plazo de vigencia expirado');
+	return false;
+elsif rec.estado = 'suspendido' then
+	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'la tarjeta se encuentra suspendida');
+	return false;
+elsif rec.limitecompra < montoCompraSum then
+	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'supera limite de tarjeta');
+	return false;
+else 
+	insert into compra values (nrcompr+1,nrotarj,nrocomerc,current_timestamp,mont,true);
+	return true;
+end if;

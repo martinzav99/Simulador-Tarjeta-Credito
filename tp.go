@@ -72,6 +72,7 @@ func populateDatabase() {
 	fmt.Println("populating Database...")
 	addClients()
 	addBusiness()
+	addTarjetas()
 	fmt.Println("Database populated!")
 }
 
@@ -95,8 +96,8 @@ func addClients() {
 						insert into cliente values (17, 'Aldana', 	'Ramos', 	'Cevallos 261', 	'541143727636');
 						insert into cliente values (18, 'Antonella', 'Herrera', 'Gascon 1241', 		'541148631232');
 						insert into cliente values (19, 'Pedro', 	'Rafele', 	'Urquiza 1241', 	'541144927876');
-						insert into cliente values (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 	'541194127656');
-						insert into cliente values (21, 'Ricardo', 	'Rueda', 	'Libertad 1252', 	'541147447171');`)
+						insert into cliente values (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 	'541194127656');`)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -124,6 +125,35 @@ func addBusiness() {
 						insert into comercio values (19, 'Cibernet', 	'Urquiza 1241', 	'B1224',	'541144945876');
 						insert into comercio values (20, 'Crazy World', 'Zapiola 1086', 	'B1199',	'541175085786');
 						insert into comercio values (21, 'Piero', 		'Tribulato 1333', 	'B1201',	'541142147877');`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func addTarjetas() {
+	_, err = db.Exec(`	insert into tarjeta values ('5555899304583399', 1, 	'200911', '250221',	'1234', 1000000.90, 'vigente');
+						insert into tarjeta values ('5269399188431044', 2, 	'190918', '240928',	'0334', 50000.55, 	'vigente');
+						insert into tarjeta values ('8680402479723030', 3, 	'180322', '230322',	'8214', 700000.12, 	'vigente');
+						insert into tarjeta values ('7760048064179840', 4, 	'170211', '220221',	'4134', 100000.85, 	'vigente');
+						insert into tarjeta values ('6317807399246634', 5 	'200121', '250121',	'2324', 800000.22, 	'vigente');
+						insert into tarjeta values ('2913395189972781', 6, 	'180819', '230828',	'4321', 900000.38, 	'vigente');
+						insert into tarjeta values ('4681981280484337', 7,	'201121', '251121',	'8765', 100000.58, 	'vigente');
+						insert into tarjeta values ('9387191057338602', 8, 	'160910', '210920',	'1253', 6500000.85, 'vigente');
+						insert into tarjeta values ('2503782418139215', 9, 	'151226', '201226',	'8367', 100000.87, 	'vigente');
+						insert into tarjeta values ('4462725109757091', 10, '200901', '250921',	'6754', 20000.14, 	'vigente');
+						insert into tarjeta values ('2954596377708750', 11, '180911', '230921',	'7852', 2000000.50, 'vigente');
+						insert into tarjeta values ('6231348143458624', 12, '161221', '211221',	'9873', 54000.25 	'vigente');
+						insert into tarjeta values ('4919235066192653', 13, '190911', '240921',	'6753', 10000.00, 	'vigente');
+						insert into tarjeta values ('3742481627352427', 14, '170928', '220928',	'9801', 450000.56, 	'vigente');
+						insert into tarjeta values ('2884720084187620', 15, '180111', '230121',	'9876', 500000.75, 	'vigente');
+						insert into tarjeta values ('2340669528486435', 16, '170923', '220923',	'6752', 9000.80, 	'vigente');
+						insert into tarjeta values ('2377527131015460', 17, '190912', '240922',	'0987', 100000.23, 	'vigente');
+						insert into tarjeta values ('8472072142547842', 18, '200421', '250421',	'6987', 650000.00, 	'vigente');
+						insert into tarjeta values ('3573172713553770', 19, '180216', '230226',	'0981', 220000.25, 	'vigente');
+						insert into tarjeta values ('5552648744023638', 20, '170425', '220425',	'8974', 100000.45, 	'vigente');
+						insert into tarjeta values ('6326855100263642', 1, 	'180607', '230627',	'9821', 450000.78, 	'suspendida');
+						insert into tarjeta values ('8203564386694367', 2, 	'140728', '190728',	'0912', 9000.99, 	'anulada');;`)
+
 	if err != nil {
 		log.Fatal(err)
 	}

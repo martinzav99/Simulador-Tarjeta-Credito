@@ -4,9 +4,9 @@ declare
 
 i record;
 
-ncompra record
-nrechaz record
-pagos record
+ncompra record;
+nrechaz record;
+pagos record;
 
 nrorechaz int; 
 nrocompr int;
@@ -15,43 +15,46 @@ mtotal int;
 
 begin
 
-
 select max(nrocompra) into ncompra from compra where nrotarjeta = nrotarj;
-if not found then
- nrocompr := 0
+
+if not found then	
+	 nrocompr := 0; 
 else 
- nrocompr:= ncompra.nrocompra;
+	nrocompr:= ncompra.nrocompra;
+	
 end if;
+
 
 select max(nrorechazo) into nrechaz from rechazo where nrotarjeta = nrotarj;
+
 if not found then
- nrorechaz := 0
+	nrorechaz := 0;
 else
- nrorechaz := nrechaz.nrorechazo;
+	nrorechaz := nrechaz.nrorechazo;
 end if;
 
-select sum(monto) into pagos from compra where nrotarjeta=nrotarj
+
+select sum(monto) into pagos from consumo where nrotarjeta=nrotarj and codseguridad = codsegur and nrocomercio = nrocomerc;
 
 mtotal := pagos.monto + mont;
-
 
 for i in select * from tarjeta loop
 	if i.nrotarjeta = nrotarj then
 				
 		if i.codseguridad = codsegur then
 			
-			if b.estado = 'anulado' then
-				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current timestamp,mont,'plazo de vigencia expirado');
+			if b.validahasta > current_date then
+				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'plazo de vigencia expirado');
 				return false;
 			end if;
 			
-			if b.estado = 'vencido' then
-				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current timestamp,mont,'la tarjeta se encuentra suspendida');
+			if b.estado = 'suspendido' then
+				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'la tarjeta se encuentra suspendida');
 				return false;
 			end if;
 			
 			if mtotal > b.limitecompra then
-				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current timestamp,mont,'supera limite de tarjeta');
+				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'supera limite de tarjeta');
 				return false;
 			else 
 				insert into compra values (nrcompr+1,nrotarj,nrocomerc,current_timestamp,mont,true);
@@ -60,25 +63,24 @@ for i in select * from tarjeta loop
 				
 			
 		else
-			insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current timestamp,mont,'codigo de seguridad invalido');
+			insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'codigo de seguridad invalido');
 			return false;
 		end if;
 	else
-		insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current timestamp,mont,'tarjeta no valida o no vigente');
+		insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'tarjeta no valida o no vigente');
 		return false;
 	
-	end if;	
+	end if;
 end loop;
 
-
-$$ language pgplsql;
-
-
+end;
+$$language plpgsql;
 
 
 
 
-create or replace function generar_resumen(nroclien int , peridoi date,peridiof date) returns void as $$
+
+create or replace function generar_resumen(nroclien int , perido date) returns void as $$
 
 declare 
 
@@ -86,6 +88,10 @@ p record;
 c record;
 nresumen record;
 nroresum int;
+year int;
+month int;
+aux record;
+gasto record;
 
 
 begin 
@@ -97,11 +103,18 @@ else
 	nroresum := nresumen.nroresumen;
 end if;
 
-select * into person from cliente where nrocliente = nroclien ;
+year  := extract(year from periodo);  /* devuelve var? */
+month := extract(month from periodo);
 
-select * into card from tarjeta where nrocliente = nroclien and estado = vigente; 
+select * into p from cliente where nrocliente = nroclien ;
+select * into c from tarjeta where nrocliente = nroclien and estado = vigente; 
+select * into aux from cierre where ano = year and mes = month and terminacion = c.nrotarjeta;
+select suma(monto) into gasto from consumo where nrotarjeta = c.nrotarjeta and codseguridad = c.codseguridad;
 
-insert into cabecera values (nroresum+1,p.nombre,p.apellido,p.domicilio,c.nrotarjeta,periodoi,peridof,c.validahasta,..);
+
+
+insert into cabecera values (nroresum+1,p.nombre,p.apellido,p.domicilio,c.nrotarjeta,aux.fechainicio,aux.fechacierre,aux.fechavto,gasto.monto);
+insert into detalle values ();  /* consultar */
 
  
 end;
@@ -110,12 +123,45 @@ $$ language psplsql;
 
 
 
+
+
+
+
+
+
 create or replace function xxxxxxx returns trigger as $$
 
 declare
-
+	nalerta int;
+	ntarjeta varchar(16);
+	fecha timestamp;
+	nrechazo int;
+	codalerta int;
+	descripcion text;
 begin 
+	select max(nroalerta) into nalerta from alerta;
 
+	if not found then	
+		nalerta := 0; 
+	else 
+		nalerta:= nalerta+1;	
+	end if;
+
+	select max(nrorechazo) into nrechazo from rechazo;
+
+	if not found then	
+		nrechazo := 0; 
+
+	select nrotarjeta into ntarjeta where nrorechazo = nrechazo;
+
+	codalerta := 0; //codigo por rechazo
+
+	fecha:= time.Now(); //duda
+
+	descripcion := 'Alerta por rechazo';
+
+	insert into alerta values (nalerta, ntarjeta, fecha, nrechazo, codalerta, descripcion);
+	
 end;
 
 $$ language plpgsql;
