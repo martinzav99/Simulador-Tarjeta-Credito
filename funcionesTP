@@ -1,77 +1,42 @@
-create or replace function a_de_compra(nrotarj char , codsegur char , nrocomerc int , mont decimal) returns boolean as $$
+create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 
 declare
 
-i record;
-
+montoCompraSum record;
+tarjetaRecord;
+nrechazo record;
 ncompra record;
-nrechaz record;
-pagos record;
-
-nrorechaz int; 
-nrocompr int;
-
-mtotal int;
+montoTotal int;
 
 begin
 
-select max(nrocompra) into ncompra from compra where nrotarjeta = nrotarj;
+select count (nrocompra) into ncompra from compra;
+select count(nrorechazo) into nrechazo from rechazo;
+select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
+montoTotal := montoCompraSum + montox;
 
-if not found then	
-	 nrocompr := 0; 
+
+select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax
+
+if not found then  /*el select no trajo registros*/
+	insert into rechazo values (nrechazo.nrorechazo,nrotarjetax,nrocomerciox,current_timestamp,montox,'tarjeta no valida o no vigente');
+	return false;
+elsif tarjetaRecord.codseguridad = codseguridadx then
+	insert into rechazo values (nrechazo.nrorechazo,nrotarjetax,nrocomerciox,current_timestamp,montox,'codigo de seguridad invalido');
+	return false;
+elsif tarjetaRecord.validahasta > current_date then
+	insert into rechazo values (nrechazo.nrorechazo,nrotarjetax,nrocomerciox,current_timestamp,montox,'plazo de vigencia expirado');
+	return false;
+elsif tarjetaRecord.estado = 'suspendido' then
+	insert into rechazo values (nrechazo.nrorechazo,nrotarjetax,nrocomerciox,current_timestamp,montox,'la tarjeta se encuentra suspendida');
+	return false;
+elsif tarjetaRecord.limitecompra < montoCompraSum then
+	insert into rechazo values (nrechazo.nrorechazo,nrotarjetax,nrocomerciox,current_timestamp,montox,'supera limite de tarjeta');
+	return false;
 else 
-	nrocompr:= ncompra.nrocompra;
-	
+	insert into compra values (ncompra.nrocompra,nrotarjetax,nrocomerciox,current_timestamp,montox,false);
+	return true;
 end if;
-
-
-select max(nrorechazo) into nrechaz from rechazo where nrotarjeta = nrotarj;
-
-if not found then
-	nrorechaz := 0;
-else
-	nrorechaz := nrechaz.nrorechazo;
-end if;
-
-
-select sum(monto) into pagos from consumo where nrotarjeta=nrotarj and codseguridad = codsegur and nrocomercio = nrocomerc;
-
-mtotal := pagos.monto + mont;
-
-for i in select * from tarjeta loop
-	if i.nrotarjeta = nrotarj then
-				
-		if i.codseguridad = codsegur then
-			
-			if b.validahasta > current_date then
-				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'plazo de vigencia expirado');
-				return false;
-			end if;
-			
-			if b.estado = 'suspendido' then
-				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'la tarjeta se encuentra suspendida');
-				return false;
-			end if;
-			
-			if mtotal > b.limitecompra then
-				insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'supera limite de tarjeta');
-				return false;
-			else 
-				insert into compra values (nrcompr+1,nrotarj,nrocomerc,current_timestamp,mont,true);
-				return true;
-			end if;
-				
-			
-		else
-			insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'codigo de seguridad invalido');
-			return false;
-		end if;
-	else
-		insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'tarjeta no valida o no vigente');
-		return false;
-	
-	end if;
-end loop;
 
 end;
 $$language plpgsql;
@@ -80,42 +45,38 @@ $$language plpgsql;
 
 
 
-create or replace function generar_resumen(nroclien int , perido date) returns void as $$
+create or replace function generar_resumen(nroclientex int , mesx int , anox int) returns void as $$
 
 declare 
 
-p record;
-c record;
+ncliente record;
+ntarjeta record;
 nresumen record;
-nroresum int;
-year int;
-month int;
-aux record;
+ncierre record;
+numerotarjeta char
+
+
 gasto record;
 
 
 begin 
 
-select max(nroresumen) into nresumen from cabecera;
-if not found then
-	nroresum := 0;
-else 
-	nroresum := nresumen.nroresumen;
-end if;
+select count(nroresumen) into nresumen from cabecera;
+select * into ncliente from cliente where nrocliente = nroclientex ;
+select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = vigente; 
 
-year  := extract(year from periodo);  /* devuelve var? */
-month := extract(month from periodo);
+numerotarjeta := ntarjeta.nrotarjeta
 
-select * into p from cliente where nrocliente = nroclien ;
-select * into c from tarjeta where nrocliente = nroclien and estado = vigente; 
-select * into aux from cierre where ano = year and mes = month and terminacion = c.nrotarjeta;
+substr(numerotarjeta,-1,1);
+
+
+
+select * into ncierre from cierre where ano = anox and mes = mesx and terminacion = digito; 
 select suma(monto) into gasto from consumo where nrotarjeta = c.nrotarjeta and codseguridad = c.codseguridad;
 
 
-
-insert into cabecera values (nroresum+1,p.nombre,p.apellido,p.domicilio,c.nrotarjeta,aux.fechainicio,aux.fechacierre,aux.fechavto,gasto.monto);
+insert into cabecera values (nresumen.nroresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,gasto.monto);
 insert into detalle values ();  /* consultar */
-
  
 end;
 
