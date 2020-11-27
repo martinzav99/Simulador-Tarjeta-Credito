@@ -79,6 +79,7 @@ func populateDatabase() {
 	fmt.Println("populating Database...")
 	addClients()
 	addBusiness()
+	addTarjetas()
 	fmt.Println("Database populated!")
 }
 
