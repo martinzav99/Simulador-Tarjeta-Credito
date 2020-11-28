@@ -50,7 +50,7 @@ func exit() {
 }
 
 func createTables() {
-	fmt.Println("creating tables...")
+	fmt.Println("Creating tables...")
 	_, err = db.Exec(`	create table cliente (nrocliente int, nombre text, apellido text, domicilio text, telefono varchar(12));
 						create table tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));						
 						create table comercio (nrocomercio int, nombre text, domicilio text, codigopostal varchar(8), telefono varchar(12));
@@ -69,7 +69,7 @@ func createTables() {
 }
 
 func populateDatabase() {
-	fmt.Println("populating Database...")
+	fmt.Println("Populating Database...")
 	addClients()
 	addBusiness()
 	addTarjetas()
@@ -160,7 +160,7 @@ func addTarjetas() {
 }
 
 func addPKandFK() {
-	fmt.Println("adding PKs and FKs...")
+	fmt.Println("Adding PKs and FKs...")
 	addPKs()
 	addFKs()
 	fmt.Println("PKs and FKs added succesfully!")
@@ -196,7 +196,7 @@ func addFKs() {
 }
 
 func dropPKandFK() {
-	fmt.Println("removing PKs and FKs...")
+	fmt.Println("Removing PKs and FKs...")
 	dropFKs()
 	dropPKs()
 	fmt.Println("PKs and FKs removed succesfully!")
@@ -271,13 +271,14 @@ func generateCierres() {
 }
 
 func addStoredProceduresTriggers() {
+	fmt.Println("Adding Stored Procedures and Triggers...")
 	addAutorizacionDeCompra()
 	//addOtroTrigger()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
 
 func addAutorizacionDeCompra() {
-	fmt.Println("adding 'Autorizacion De Compra' Procedure")
+	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
 	_, err = db.Exec(`	create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 						declare
 							montoCompraSum int;
@@ -470,7 +471,7 @@ func checkIfUsersConnected() {
 		log.Fatal(err)
 	}
 	if count > 0 {
-		concatenated := fmt.Sprintf("found %d users connected", count)
+		concatenated := fmt.Sprintf("  Found %d users connected", count)
 		fmt.Println(concatenated)
 		disconnectUsers()
 	} else {
@@ -481,7 +482,7 @@ func checkIfUsersConnected() {
 
 func disconnectUsers() {
 	connectPostgres()
-	fmt.Println("  Disconnecting users...")
+	fmt.Println("   Disconnecting users...")
 	_, err = db.Exec(`REVOKE CONNECT ON DATABASE tpgossz FROM public;`)
 	if err != nil {
 		log.Fatal(err)
@@ -492,14 +493,14 @@ func disconnectUsers() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("  Disconnected users succesfully!")
+	fmt.Println("   Disconnected users succesfully!")
 }
 
 func connectPostgres() {
-	fmt.Println("  Connecting to postgres database before disconnecting tpgossz users")
+	fmt.Println("   Connecting to postgres database before disconnecting tpgossz users")
 	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("  Connected to postgres!")
+	fmt.Println("   Connected to postgres!")
 }
