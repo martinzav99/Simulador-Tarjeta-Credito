@@ -270,13 +270,76 @@ func generateCierres() {
 	}
 }
 
+func addStoredProceduresTriggers() {
+	addAutorizacionDeCompra()
+	//addOtroTrigger()
+	fmt.Println("Done adding Stored Procedures and Triggers!")
+}
+
+func addAutorizacionDeCompra() {
+	fmt.Println("adding 'Autorizacion De Compra' Procedure")
+	_, err = db.Exec(`	create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
+						declare
+							montoCompraSum int;
+							tarjetaRecord record;
+							fechaActual date;
+							timeActual timestamp;
+							nrechazo int;
+							noperacion int;
+							montoTotal int;
+						
+						begin
+							select count (nrooperacion) into noperacion from compra;
+							select count(nrorechazo) into nrechazo from rechazo;
+							select current_date into fechaActual;
+						
+							select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
+						
+							if not found then
+								select current_timestamp into timeActual;
+								insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
+								return false;
+							elsif tarjetaRecord.codseguridad != codseguridadx then
+								select current_timestamp into timeActual;
+								insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
+								return false;
+							elsif CAST(tarjetaRecord.validahasta as date) < fechaActual then /* arreglar */
+								select current_timestamp into timeActual;
+								insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
+								return false;
+							elsif tarjetaRecord.estado = 'suspendida' then
+								select current_timestamp into timeActual;
+								insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
+								return false;
+							end if;
+							
+							select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
+							montoTotal := montoCompraSum + montox;
+						
+							if tarjetaRecord.limitecompra < montoCompraSum then
+								select current_timestamp into timeActual;
+								insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
+								return false;
+							end if;
+							
+							select current_timestamp into timeActual;
+							insert into compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
+							return true;
+						
+						end;
+						$$language plpgsql;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func menu() {
 	menuString :=
 		`
 			Menu principal
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
-		
+
 		[ 0 ] Salir
 		
 		Elige una opción
@@ -336,7 +399,7 @@ func menuCreacionMnual() {
 	case 7:
 		dropPKandFK()
 	case 8:
-		//autoCreateDatabase()
+		addStoredProceduresTriggers()
 	case 0:
 		menu()
 	default:
