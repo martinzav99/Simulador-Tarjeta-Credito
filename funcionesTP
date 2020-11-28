@@ -133,9 +133,9 @@ $$ language psplsql;
 
 
 
+////////////////////////////////////////////////////////ALERTAS
 
-
-create or replace function xxxxxxx returns trigger as $$
+create or replace function generar_alerta_por_rechazo(); returns trigger as $$
 
 declare
 	nalerta int;
@@ -172,10 +172,39 @@ end;
 
 $$ language plpgsql;
 
-create trigger alerta_a_clientes()
+create trigger alerta_por_rechazo()
 
-after update on rechazo
+after insert on rechazo
 
 for each row
 
-execute procedure 
+execute procedure generar_alerta_por_rechazo();
+
+//dos compras en un lapso menor de un minuto en comercios ubicados en el mismo código postal y en 5 minutos con distinto codigo postal
+
+create or replace function generar_alerta_por_compras_irregulares(); returns trigger as $$
+
+declare
+	ultima_nrooperacion int;
+	nalerta int;
+	ntarjeta varchar(16);
+	ultima_fecha timestamp;
+	nrechazo int;
+	codalerta int;
+	descripcion text;
+begin
+	select nrotarjeta into ntarjeta from compra where nrooperacion = (select MAX(nrooperacion) into ultima_nrooperacion from compra);
+	select fecha into ultima_fecha from compra where nrooperacion = ultima_nrooperacion;
+	(select * from compra where nrotarjeta = ntarjeta)
+
+end;
+
+$$ language plpgsql;
+
+create trigger alerta_por_compras_irregulares()
+
+after insert on compra
+
+for each row
+
+execute procedure generar_alerta_por_compras_irregulares();
