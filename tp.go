@@ -183,7 +183,7 @@ func addPKs() {
 
 func addFKs() {
 	_, err = db.Exec(`	alter table tarjeta add constraint tarjeta_nrocliente_fk foreign key (nrocliente) references cliente (nrocliente);
-						alter table rechazo add constraint rechazo_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
+						--alter table rechazo add constraint rechazo_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
 						alter table compra add constraint compra_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
 						alter table alerta add constraint alerta_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
 						alter table cabecera add constraint cabecera_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
@@ -219,7 +219,7 @@ func dropPKs() {
 
 func dropFKs() {
 	_, err = db.Exec(`	alter table tarjeta drop constraint tarjeta_nrocliente_fk;
-						alter table rechazo drop constraint rechazo_nrotarjeta_fk;
+						--alter table rechazo drop constraint rechazo_nrotarjeta_fk;
 						alter table compra drop constraint compra_nrotarjeta_fk;
 						alter table alerta drop constraint alerta_nrotarjeta_fk;
 						alter table cabecera drop constraint cabecera_nrotarjeta_fk;
