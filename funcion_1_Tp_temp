@@ -1,7 +1,7 @@
 create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 
 declare
-	montoCompraSum record;
+	montoCompraSum int;
 	tarjetaRecord record;
 	fechaActual date;
 	timeActual timestamp;
@@ -35,7 +35,7 @@ begin
 	end if;
 	
 	select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
-	montoTotal := montoCompraSum.monto + montox;
+	montoTotal := montoCompraSum + montox;
 
 	if tarjetaRecord.limitecompra < montoCompraSum then
 		select current_timestamp into timeActual;
