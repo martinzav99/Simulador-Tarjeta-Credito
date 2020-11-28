@@ -1,0 +1,15 @@
+create or replace function fecha_dif_actual(fecha1 char(6)) returns boolean as $$
+declare
+	dif interval;
+
+begin
+	select CAST(fecha1 AS date) - NOW() into dif;
+
+	if dif < interval '0' second then
+		return false;
+	end if;
+	return true;
+end;
+$$language plpgsql;
+
+select fecha_dif_actual('201115')

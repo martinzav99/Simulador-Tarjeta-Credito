@@ -1,24 +1,65 @@
-montoCompraSum
-select sum(monto) from compra into montoCompraSum where nrotarjeta = nrotarj and pagado = false /*no se si se puede hacer asi para boolean*/ --agregar condiciones extra
-rec record;
-select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarj --guardas en un record llamado 'record'
+create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 
-if not found then --el select no trajo registros
-	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'tarjeta no valida o no vigente');
-	return false;
-elsif rec.codsegur = codsegur then
-	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'codigo de seguridad invalido');
-	return false;
-elsif rec.validahasta > current_date then
-	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'plazo de vigencia expirado');
-	return false;
-elsif rec.estado = 'suspendido' then
-	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'la tarjeta se encuentra suspendida');
-	return false;
-elsif rec.limitecompra < montoCompraSum then
-	insert into rechazo values (nrorechaz,nrotarj,nrocomerc,current_timestamp,mont,'supera limite de tarjeta');
-	return false;
-else 
-	insert into compra values (nrcompr+1,nrotarj,nrocomerc,current_timestamp,mont,true);
+declare
+	montoCompraSum int;
+	tarjetaRecord record;
+	fechaActual date;
+	timeActual timestamp;
+	nrechazo int;
+	noperacion int;
+	montoTotal int;
+
+begin
+	select count (nrooperacion) into noperacion from compra;
+	select count(nrorechazo) into nrechazo from rechazo;
+	select current_date into fechaActual;
+
+	select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
+
+	if not found then
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
+		return false;
+	elsif tarjetaRecord.codseguridad != codseguridadx then
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
+		return false;
+	elsif CAST(tarjetaRecord.validahasta as date) < fechaActual then /* arreglar */
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
+		return false;
+	elsif tarjetaRecord.estado = 'suspendida' then
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
+		return false;
+	end if;
+	
+	select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
+	montoTotal := montoCompraSum + montox;
+
+	if tarjetaRecord.limitecompra < montoCompraSum then
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
+		return false;
+	end if;
+	
+	select current_timestamp into timeActual;
+	insert into compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
 	return true;
-end if;
+
+end;
+$$language plpgsql;
+
+
+
+
+select a_de_compra('8680402479723030', '1' , 10 , 600) --codigo de seguridad invalido
+select a_de_compra('8680402479723055', '8214' , 10 , 600) --tarjeta no valida o no vigente
+select a_de_compra('6326855100263642', '9821' , 10 , 600) --tarjeta suspendida
+select a_de_compra('8203564386694367', '0912' , 10 , 600) --tarjeta plazo de vigencia expirado
+select a_de_compra('8680402479723030', '8214' , 10 , 600) --compra realizada correctamente
+
+select * from rechazo
+select * from compra
+
+
