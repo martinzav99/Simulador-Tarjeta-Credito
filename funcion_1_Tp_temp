@@ -24,7 +24,7 @@ begin
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
 		return false;
-	elsif CAST(tarjetaRecord.validahasta as date) > fechaActual then /* arreglar */
+	elsif CAST(tarjetaRecord.validahasta as date) < fechaActual then /* arreglar */
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
 		return false;
