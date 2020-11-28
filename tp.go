@@ -414,6 +414,7 @@ func autoCreateDatabase() {
 	createTables()
 	addPKandFK()
 	populateDatabase()
+	addStoredProceduresTriggers()
 	fmt.Println("\nReady to work!")
 }
 
