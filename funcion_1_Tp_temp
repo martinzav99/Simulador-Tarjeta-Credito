@@ -28,7 +28,7 @@ begin
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
 		return false;
-	elsif tarjetaRecord.estado = 'suspendido' then
+	elsif tarjetaRecord.estado = 'suspendida' then
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
 		return false;
@@ -49,3 +49,17 @@ begin
 
 end;
 $$language plpgsql;
+
+
+
+
+select a_de_compra('8680402479723030', '1' , 10 , 600) --codigo de seguridad invalido
+select a_de_compra('8680402479723055', '8214' , 10 , 600) --tarjeta no valida o no vigente
+select a_de_compra('6326855100263642', '9821' , 10 , 600) --tarjeta suspendida
+select a_de_compra('8203564386694367', '0912' , 10 , 600) --tarjeta plazo de vigencia expirado
+select a_de_compra('8680402479723030', '8214' , 10 , 600) --compra realizada correctamente
+
+select * from rechazo
+select * from compra
+
+
