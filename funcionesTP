@@ -1,67 +1,61 @@
 create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 
 declare
-
-montoCompraSum record;
-tarjetaRecord record;
-fechaActual date;
-timeActual timestamp;
-nrechazo int;
-noperacion int;
-montoTotal int;
+	montoCompraSum record;
+	tarjetaRecord record;
+	fechaActual date;
+	timeActual timestamp;
+	nrechazo int;
+	noperacion int;
+	montoTotal int;
 
 begin
+	select count (nrooperacion) into noperacion from compra;
+	select count(nrorechazo) into nrechazo from rechazo;
+	select current_date into fechaActual;
 
-select count (nrooperacion) into noperacion from compra;
-select count(nrorechazo) into nrechazo from rechazo;
-select current_date into fechaActual;
+	select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
 
-
-select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
-
-if not found then
-	select current_timestamp into timeActual;
-	insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
-	return false;
-elsif tarjetaRecord.codseguridad = codseguridadx then
-	select current_timestamp into timeActual;
-	insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
-	return false;
-elsif tarjetaRecord.validahasta > fechaActual then /* arreglar */
-	select current_timestamp into timeActual;
-	insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
-	return false;
-elsif tarjetaRecord.estado = 'suspendido' then
-	select current_timestamp into timeActual;
-	insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
-	return false;
-else
-	select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
-	montoTotal := montoCompraSum.monto + montox;
-	
-	if tarjetaRecord.limitecompra < montoCompraSum then
+	if not found then
 		select current_timestamp into timeActual;
-		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
+		return false;
+	elsif tarjetaRecord.codseguridad = codseguridadx then
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
+		return false;
+	elsif tarjetaRecord.validahasta > fechaActual then /* arreglar */
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
+		return false;
+	elsif tarjetaRecord.estado = 'suspendido' then
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
 		return false;
 	else
-		select current_timestamp into timeActual;
-		insert into compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
-		return true;
+		select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
+		montoTotal := montoCompraSum.monto + montox;
+		
+		if tarjetaRecord.limitecompra < montoCompraSum then
+			select current_timestamp into timeActual;
+			insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
+			return false;
+		else
+			select current_timestamp into timeActual;
+			insert into compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
+			return true;
+		end if;
+		
 	end if;
-	
-end if;
 
 end;
 $$language plpgsql;
-
-
 
 /*
 
 Problema :
 
 select a_de_compra ('5555899304583398','1',10,2.0);
-
 
 ERROR:  insert or update on table "rechazo" violates foreign key constraint "rechazo_nrotarjeta_fk"
 DETAIL:  Key (nrotarjeta)=(5555899304583398) is not present in table "tarjeta".
@@ -72,66 +66,50 @@ PL/pgSQL function a_de_compra(character,character,integer,numeric) line 23 at SQ
 funciona sin agregar pks y fks 
 
 */
-
-
-
-
-
-
-
-
-
-
 create or replace function generar_resumen(nroclientex int , mesx int , anox int) returns void as $$
 
 declare 
+	deudaTotal record;
+	ncliente record;
+	ntarjeta record;
+	nresumen record;
+	ncierre record;
+	nlinea record;
+	ncomercio record;
+	cadaCompra record;
+	fechaEnDate record
 
-deudaTotal record;
-ncliente record;
-ntarjeta record;
-nresumen record;
-ncierre record;
-nlinea record;
-ncomercio record;
-cadaCompra record;
-fechaEnDate record
-
-numerotarjeta varcharb    ;
-digito int
-
-
-
+	numerotarjeta varcharb    ;
+	digito int
 
 begin 
 
-select count(nroresumen) into nresumen from cabecera;
-select count(nrolinea) into nlinea from cierre;
+	select count(nroresumen) into nresumen from cabecera;
+	select count(nrolinea) into nlinea from cierre;
 
-select * into ncliente from cliente where nrocliente = nroclientex ;
-select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = vigente; 
+	select * into ncliente from cliente where nrocliente = nroclientex ;
+	select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = vigente; 
 
-numeroTarjeta := ntarjeta.nrotarjeta
-numeroTarjeta := right(numeroTarjeta,1); /*el ultimo digito*/
-digito := to_number(numeroTarjeta,'9');    /*9 es formato de mascara*/
+	numeroTarjeta := ntarjeta.nrotarjeta
+	numeroTarjeta := right(numeroTarjeta,1); /*el ultimo digito*/
+	digito := to_number(numeroTarjeta,'9');    /*9 es formato de mascara*/
 
-select * into ncierre from cierre where ano = anox and mes = mesx and terminacion = digito; 
-select suma(monto) into deudaTotal from compra where nrotarjeta = c.nrotarjeta and pagado = false;
-
-
-insert into cabecera values (nresumen.nroresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal.monto);
+	select * into ncierre from cierre where ano = anox and mes = mesx and terminacion = digito; 
+	select suma(monto) into deudaTotal from compra where nrotarjeta = c.nrotarjeta and pagado = false;
 
 
-for cadaCompra in compra loop
-	if nrotarjeta = ncliente.nrotarjeta then					
-		select * into ncomercio from comercio where nrocomercio = v.nrocomercio;
-		select cast (v.fecha as date) into fechaEnDate;
-		insert into detalle values (nresumen.nroresumen,nlinea.nrolinea,fechaEnDate.fecha,ncomercio.nombre,v.monto,);;
-	end if;
-end loop;
+	insert into cabecera values (nresumen.nroresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal.monto);
+
+
+	for cadaCompra in compra loop
+		if nrotarjeta = ncliente.nrotarjeta then					
+			select * into ncomercio from comercio where nrocomercio = v.nrocomercio;
+			select cast (v.fecha as date) into fechaEnDate;
+			insert into detalle values (nresumen.nroresumen,nlinea.nrolinea,fechaEnDate.fecha,ncomercio.nombre,v.monto,);;
+		end if;
+	end loop;
 end;
 $$ language psplsql;
-
-
 
 ////////////////////////////////////////////////////////ALERTAS
 
@@ -169,15 +147,11 @@ begin
 	insert into alerta values (nalerta, ntarjeta, fecha, nrechazo, codalerta, descripcion);
 	
 end;
-
 $$ language plpgsql;
 
 create trigger alerta_por_rechazo()
-
 after insert on rechazo
-
 for each row
-
 execute procedure generar_alerta_por_rechazo();
 
 //dos compras en un lapso menor de un minuto en comercios ubicados en el mismo código postal y en 5 minutos con distinto codigo postal
@@ -194,17 +168,15 @@ declare
 	descripcion text;
 begin
 	select nrotarjeta into ntarjeta from compra where nrooperacion = (select MAX(nrooperacion) into ultima_nrooperacion from compra);
+
 	select fecha into ultima_fecha from compra where nrooperacion = ultima_nrooperacion;
+	
 	(select * from compra where nrotarjeta = ntarjeta)
 
 end;
-
 $$ language plpgsql;
 
 create trigger alerta_por_compras_irregulares()
-
 after insert on compra
-
 for each row
-
 execute procedure generar_alerta_por_compras_irregulares();
