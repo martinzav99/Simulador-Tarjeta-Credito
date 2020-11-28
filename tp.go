@@ -271,22 +271,17 @@ func generateCierres() {
 }
 
 func menu() {
-	menu :=
+	menuString :=
 		`
 			Menu principal
 		[ 1 ] Crear Base tpgossz (Auto)
-		[ 2 ] Eliminar Base tpgossz
-		[ 3 ] Crear Base tpgossz
-		[ 4 ] Conectar con Base tpgossz
-		[ 5 ] Crear tablas
-		[ 6 ] Agregar PKs y FKs
-		[ 7 ] Popular Base de datos
-		[ 8 ] Remover PKs y FKs
+		[ 2 ] Crear Base tpgossz (Manual)
+		
 		[ 0 ] Salir
 		
 		Elige una opción
 		`
-	fmt.Printf(menu)
+	fmt.Printf(menuString)
 
 	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
 	fmt.Scan(&eleccion)
@@ -295,22 +290,55 @@ func menu() {
 	case 1:
 		autoCreateDatabase()
 	case 2:
-		dropDatabase()
-	case 3:
-		createDatabase()
-	case 4:
-		connectDatabase()
-	case 5:
-		createTables()
-	case 6:
-		addPKandFK()
-	case 7:
-		populateDatabase()
-	case 8:
-		dropPKandFK()
+		menuCreacionMnual()
 	case 0:
 		exitBool = true
 		fmt.Println("Hasta Luego")
+	default:
+		fmt.Println("No elegiste ninguno")
+	}
+}
+func menuCreacionMnual() {
+	menuString :=
+		`
+			Menu de creacion Manual
+		[ 1 ] Eliminar Base tpgossz
+		[ 2 ] Crear Base tpgossz
+		[ 3 ] Conectar con Base tpgossz
+		[ 4 ] Crear tablas
+		[ 5 ] Agregar PKs y FKs
+		[ 6 ] Popular Base de datos
+		[ 7 ] Remover PKs y FKs
+		[ 8 ] Agregar Stored Procedures y Triggers
+
+		[ 0 ] Volver
+		
+		Elige una opción
+		`
+	fmt.Printf(menuString)
+
+	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
+	fmt.Scan(&eleccion)
+
+	switch eleccion {
+	case 1:
+		dropDatabase()
+	case 2:
+		createDatabase()
+	case 3:
+		connectDatabase()
+	case 4:
+		createTables()
+	case 5:
+		addPKandFK()
+	case 6:
+		populateDatabase()
+	case 7:
+		dropPKandFK()
+	case 8:
+		//autoCreateDatabase()
+	case 0:
+		menu()
 	default:
 		fmt.Println("No elegiste ninguno")
 	}
