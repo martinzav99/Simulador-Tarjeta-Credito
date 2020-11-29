@@ -1,60 +1,54 @@
 create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 
 declare
-	montoCompraSum record;
+	montoCompraSum int;
 	tarjetaRecord record;
 	fechaActual date;
 	timeActual timestamp;
 	nrechazo int;
 	noperacion int;
 	montoTotal int;
-	flag boolean;
 
 begin
 	select count (nrooperacion) into noperacion from compra;
 	select count(nrorechazo) into nrechazo from rechazo;
 	select current_date into fechaActual;
-	
-	
-	
+
 	select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
 
 	if not found then
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
 		return false;
-	elsif tarjetaRecord.codseguridad = codseguridadx then
+	elsif tarjetaRecord.codseguridad != codseguridadx then
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
 		return false;
-	elsif tarjetaRecord.validahasta > fechaActual then /* arreglar */
+	elsif CAST(tarjetaRecord.validahasta as date) < fechaActual then /* arreglar */
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
 		return false;
-	elsif tarjetaRecord.estado = 'suspendido' then
+	elsif tarjetaRecord.estado = 'suspendida' then
 		select current_timestamp into timeActual;
 		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
 		return false;
-	else
-		select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
-		montoTotal := montoCompraSum.monto + montox;
-		
-		if tarjetaRecord.limitecompra < montoCompraSum then
-			select current_timestamp into timeActual;
-			insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
-			return false;
-		else
-			select current_timestamp into timeActual;
-			insert into compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
-			return true;
-		end if;
-		
 	end if;
+	
+	select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
+	montoTotal := montoCompraSum + montox;
+
+	if tarjetaRecord.limitecompra < montoCompraSum then
+		select current_timestamp into timeActual;
+		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
+		return false;
+	end if;
+	
+	select current_timestamp into timeActual;
+	insert into compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
+	return true;
 
 end;
 $$language plpgsql;
-
-
 
 
 /*
@@ -75,8 +69,6 @@ funciona sin agregar pks y fks
 solucionado
 
 */
-
-
 
 
 
@@ -102,8 +94,7 @@ declare
 begin 
 
 	select count(nroresumen) into nresumen from cabecera;
-	select count(nrolinea) into nlinea from detalle;
-
+	
 	select * into ncliente from cliente where nrocliente = nroclientex ;
 	select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = 'vigente'; 
  
@@ -122,11 +113,13 @@ begin
 		if unaCompra.nrotarjeta = ntarjeta.nrotarjeta then					
 			select * into ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
 			select cast (unaCompra.fecha as date) into fechaEnDate;
+			select count(nrolinea) into nlinea from detalle;
 			insert into detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
 		end if;
 	end loop;
 end;
 $$ language plpgsql;
+
 
 ////////////////////////////////////////////////////////ALERTAS
 
