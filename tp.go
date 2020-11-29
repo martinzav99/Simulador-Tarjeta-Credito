@@ -273,6 +273,7 @@ func generateCierres() {
 func addStoredProceduresTriggers() {
 	fmt.Println("Adding Stored Procedures and Triggers...")
 	addAutorizacionDeCompra()
+	addGenerarResumen()
 	addCompraRechazadaTrigger()
 	add2Compras1mMismoCpTrigger()
 	add2Compras5mDistintoCpTrigger()
@@ -336,6 +337,61 @@ func addAutorizacionDeCompra() {
 		log.Fatal(err)
 	}
 }
+
+
+func addGenerarResumen() {
+	fmt.Println(" Adding 'Generar resumen' Procedure")
+	_, err = db.Exec(`  create or replace function generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
+						declare 
+
+							ncliente record;
+							ntarjeta record;
+							ncierre record;
+							ncomercio record;
+							unaCompra record;
+							
+							fechaEnDate date;
+
+							tarjetaEnText text;
+							ultimoDigito text;
+							deudaTotal int;
+							nresumen int;
+							nlinea int;
+							digito int;
+
+						begin 
+
+							select count(nroresumen) into nresumen from cabecera;
+							
+							select * into ncliente from cliente where nrocliente = nroclientex ;
+							select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = 'vigente'; 
+						 
+							tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
+							select right(tarjetaEnText,1) into ultimoDigito; /*el ultimo digito*/
+							digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
+
+
+							select * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
+							select sum(monto) into deudaTotal from compra where nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
+
+							insert into cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
+
+
+							for unaCompra in select * from compra loop
+								if unaCompra.nrotarjeta = ntarjeta.nrotarjeta then					
+									select * into ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
+									select cast (unaCompra.fecha as date) into fechaEnDate;
+									select count(nrolinea) into nlinea from detalle;
+									insert into detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
+								end if;
+							end loop;
+						end;
+						$$ language plpgsql;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 
 func addCompraRechazadaTrigger() {
 	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and trigger")
