@@ -102,10 +102,10 @@ declare
 begin 
 
 	select count(nroresumen) into nresumen from cabecera;
-	select count(nrolinea) into nlinea from cierre;
+	select count(nrolinea) into nlinea from detalle;
 
 	select * into ncliente from cliente where nrocliente = nroclientex ;
-	select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = vigente; 
+	select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = 'vigente'; 
  
 	tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
 	select right(tarjetaEnText,1) into ultimoDigito; /*el ultimo digito*/
@@ -113,14 +113,13 @@ begin
 
 
 	select * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
-	select suma(monto) into deudaTotal from compra where nrotarjeta = c.nrotarjeta and pagado = false;
-
+	select sum(monto) into deudaTotal from compra where nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
 
 	insert into cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
 
 	for unaCompra in select * from compra loop
-		if nrotarjeta = ncliente.nrotarjeta then					
+		if unaCompra.nrotarjeta = ntarjeta.nrotarjeta then					
 			select * into ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
 			select cast (unaCompra.fecha as date) into fechaEnDate;
 			insert into detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
