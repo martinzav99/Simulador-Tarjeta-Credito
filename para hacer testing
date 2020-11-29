@@ -1,0 +1,23 @@
+						
+--compras canceladas
+select autorizacion_de_compra('8680402479723030', '1' , 10 , 600); --codigo de seguridad invalido
+select autorizacion_de_compra('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
+select autorizacion_de_compra('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
+select autorizacion_de_compra('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
+select autorizacion_de_compra('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
+--compras realizadas correctamente
+--prueba para trigger 1min
+select autorizacion_de_compra('8680402479723030', '8214' , 3 , 600); --compra realizada correctamente cp B1221
+select autorizacion_de_compra('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
+select autorizacion_de_compra('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
+--prueba para trigger 5min
+select autorizacion_de_compra('8680402479723030', '8214' , 16 , 600); --compra realizada correctamente cp C1017
+select autorizacion_de_compra('8680402479723030', '8214' , 10 , 600); --compra realizada correctamente cp C1827
+select autorizacion_de_compra('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
+
+select * from compra;
+select * from rechazo;
+select * from compra;
+select * from alerta;
+
+SELECT * FROM compra WHERE nrotarjeta='8680402479723030' AND nrocomercio != 18 AND '2020-11-29 04:15:05.700313' - fecha <= interval '3' minute;
