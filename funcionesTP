@@ -80,7 +80,7 @@ solucionado
 
 
 
-create or replace function generar_resumen(nroclientex int , mesx int , anox int) returns void as $$
+create or replace function generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
 
 declare 
 
@@ -92,8 +92,8 @@ declare
 	
 	fechaEnDate date;
 
-	numerotarjeta char(16);
-	textnrotarjeta text;
+	tarjetaEnText text;
+	ultimoDigito text;
 	deudaTotal int;
 	nresumen int;
 	nlinea int;
@@ -107,27 +107,23 @@ begin
 	select * into ncliente from cliente where nrocliente = nroclientex ;
 	select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = vigente; 
  
-	numeroTarjeta := ntarjeta.nrotarjeta
-	/* rigth solo funciona con text , falta pasar de char (16) a text */
-	
-	select right(numeroTarjeta,1) into textnrotarjeta; /*el ultimo digito*/
+	tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
+	select right(tarjetaEnText,1) into ultimoDigito; /*el ultimo digito*/
 	digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
 
 
-
-
-	select * into ncierre from cierre where ano = anox and mes = mesx and terminacion = digito; 
+	select * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
 	select suma(monto) into deudaTotal from compra where nrotarjeta = c.nrotarjeta and pagado = false;
 
 
 	insert into cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
 
-	for unaCompra in compra loop
+	for unaCompra in select * from compra loop
 		if nrotarjeta = ncliente.nrotarjeta then					
-			select * into ncomercio from comercio where nrocomercio = v.nrocomercio;
+			select * into ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
 			select cast (unaCompra.fecha as date) into fechaEnDate;
-			insert into detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,v.monto,);;
+			insert into detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
 		end if;
 	end loop;
 end;
