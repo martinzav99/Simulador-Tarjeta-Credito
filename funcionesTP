@@ -1,4 +1,4 @@
-create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
+CREATE OR REPLACE function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 
 declare
 	montoCompraSum int;
@@ -10,52 +10,51 @@ declare
 	montoTotal int;
 
 begin
-	select count (nrooperacion) into noperacion from compra;
-	select count(nrorechazo) into nrechazo from rechazo;
-	select current_date into fechaActual;
+	SELECT COUNT(nrooperacion) INTO noperacion FROM compra;
+	SELECT COUNT(nrorechazo) INTO nrechazo FROM rechazo;
+	SELECT current_date INTO fechaActual;
 
-	select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
+	SELECT * FROM tarjeta INTO tarjetaRecord WHERE nrotarjeta = nrotarjetax;
 
 	if not found then
-		select current_timestamp into timeActual;
-		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
+		SELECT current_timestamp INTO timeActual;
+		INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
 		return false;
 	elsif tarjetaRecord.codseguridad != codseguridadx then
-		select current_timestamp into timeActual;
-		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
+		SELECT current_timestamp INTO timeActual;
+		INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
 		return false;
 	elsif CAST(tarjetaRecord.validahasta as date) < fechaActual then /* arreglar */
-		select current_timestamp into timeActual;
-		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
+		SELECT current_timestamp INTO timeActual;
+		INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
 		return false;
 	elsif tarjetaRecord.estado = 'suspendida' then
-		select current_timestamp into timeActual;
-		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
+		SELECT current_timestamp INTO timeActual;
+		INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
 		return false;
 	end if;
 	
-	select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
+	SELECT SUM(monto) INTO montoCompraSum FROM compra WHERE nrotarjeta=nrotarjetax and pagado = false;
 	montoTotal := montoCompraSum + montox;
 
 	if tarjetaRecord.limitecompra < montoCompraSum then
-		select current_timestamp into timeActual;
-		insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
+		SELECT current_timestamp INTO timeActual;
+		INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
 		return false;
 	end if;
 	
-	select current_timestamp into timeActual;
-	insert into compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
+	SELECT current_timestamp INTO timeActual;
+	INSERT INTO compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
 	return true;
 
 end;
 $$language plpgsql;
 
-
 /*
 
 Problema :
 
-select a_de_compra ('5555899304583398','1',10,2.0);
+SELECT a_de_compra ('5555899304583398','1',10,2.0);
 
 ERROR:  insert or update on table "rechazo" violates foreign key constraint "rechazo_nrotarjeta_fk"
 DETAIL:  Key (nrotarjeta)=(5555899304583398) is not present in table "tarjeta".
@@ -70,12 +69,9 @@ solucionado
 
 */
 
-
-
-create or replace function generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
+CREATE OR REPLACE function generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
 
 declare 
-
 	ncliente record;
 	ntarjeta record;
 	ncierre record;
@@ -92,29 +88,27 @@ declare
 	digito int;
 
 begin 
-
-	select count(nroresumen) into nresumen from cabecera;
+	SELECT COUNT(nroresumen) INTO nresumen FROM cabecera;
 	
-	select * into ncliente from cliente where nrocliente = nroclientex ;
-	select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = 'vigente'; 
+	SELECT * INTO ncliente FROM cliente WHERE nrocliente = nroclientex ;
+	SELECT * INTO ntarjeta FROM tarjeta WHERE nrocliente = nroclientex and estado = 'vigente'; 
  
 	tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
-	select right(tarjetaEnText,1) into ultimoDigito; /*el ultimo digito*/
+	SELECT right(tarjetaEnText,1) INTO ultimoDigito; /*el ultimo digito*/
 	digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
 
+	SELECT * INTO ncierre FROM cierre WHERE anio = aniox and mes = mesx and terminacion = digito; 
+	SELECT SUM(monto) INTO deudaTotal FROM compra WHERE nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
 
-	select * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
-	select sum(monto) into deudaTotal from compra where nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
-
-	insert into cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
+	INSERT INTO cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
 
-	for unaCompra in select * from compra loop
+	for unaCompra in SELECT * from compra loop
 		if unaCompra.nrotarjeta = ntarjeta.nrotarjeta then					
-			select * into ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
-			select cast (unaCompra.fecha as date) into fechaEnDate;
-			select count(nrolinea) into nlinea from detalle;
-			insert into detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
+			SELECT * INTO ncomercio FROM comercio WHERE nrocomercio = unaCompra.nrocomercio;
+			SELECT cast (unaCompra.fecha as date) INTO fechaEnDate;
+			SELECT COUNT(nrolinea) INTO nlinea FROM detalle;
+			INSERT INTO detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
 		end if;
 	end loop;
 end;
