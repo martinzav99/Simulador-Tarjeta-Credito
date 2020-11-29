@@ -21,3 +21,24 @@ select * from compra;
 select * from alerta;
 
 SELECT * FROM compra WHERE nrotarjeta='8680402479723030' AND nrocomercio != 18 AND '2020-11-29 04:15:05.700313' - fecha <= interval '3' minute;
+
+
+
+/*
+
+INSERT INTO consumo VALUES('8680402479723030', '1' , 10 , 600); --codigo de seguridad invalido
+INSERT INTO consumo VALUES('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
+INSERT INTO consumo VALUES('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
+INSERT INTO consumo VALUES('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
+INSERT INTO consumo VALUES('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
+
+
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 3 , 600); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
+
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 16 , 600); --compra realizada correctamente cp C1017
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 10 , 600); --compra realizada correctamente cp C1827
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
+
+*/
