@@ -8,12 +8,15 @@ declare
 	nrechazo int;
 	noperacion int;
 	montoTotal int;
+	flag boolean;
 
 begin
 	select count (nrooperacion) into noperacion from compra;
 	select count(nrorechazo) into nrechazo from rechazo;
 	select current_date into fechaActual;
-
+	
+	
+	
 	select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
 
 	if not found then
@@ -51,6 +54,9 @@ begin
 end;
 $$language plpgsql;
 
+
+
+
 /*
 
 Problema :
@@ -65,22 +71,33 @@ PL/pgSQL function a_de_compra(character,character,integer,numeric) line 23 at SQ
 
 funciona sin agregar pks y fks 
 
+
+solucionado
+
 */
+
+
+
+
+
 create or replace function generar_resumen(nroclientex int , mesx int , anox int) returns void as $$
 
 declare 
-	deudaTotal record;
+
 	ncliente record;
 	ntarjeta record;
-	nresumen record;
 	ncierre record;
-	nlinea record;
 	ncomercio record;
-	cadaCompra record;
-	fechaEnDate record
+	unaCompra record;
+	
+	fechaEnDate date;
 
-	numerotarjeta varcharb    ;
-	digito int
+	numerotarjeta char(16);
+	textnrotarjeta text;
+	deudaTotal int;
+	nresumen int;
+	nlinea int;
+	digito int;
 
 begin 
 
@@ -89,27 +106,32 @@ begin
 
 	select * into ncliente from cliente where nrocliente = nroclientex ;
 	select * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = vigente; 
-
+ 
 	numeroTarjeta := ntarjeta.nrotarjeta
-	numeroTarjeta := right(numeroTarjeta,1); /*el ultimo digito*/
-	digito := to_number(numeroTarjeta,'9');    /*9 es formato de mascara*/
+	/* rigth solo funciona con text , falta pasar de char (16) a text */
+	
+	select right(numeroTarjeta,1) into textnrotarjeta; /*el ultimo digito*/
+	digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
+
+
+
 
 	select * into ncierre from cierre where ano = anox and mes = mesx and terminacion = digito; 
 	select suma(monto) into deudaTotal from compra where nrotarjeta = c.nrotarjeta and pagado = false;
 
 
-	insert into cabecera values (nresumen.nroresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal.monto);
+	insert into cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
 
-	for cadaCompra in compra loop
+	for unaCompra in compra loop
 		if nrotarjeta = ncliente.nrotarjeta then					
 			select * into ncomercio from comercio where nrocomercio = v.nrocomercio;
-			select cast (v.fecha as date) into fechaEnDate;
-			insert into detalle values (nresumen.nroresumen,nlinea.nrolinea,fechaEnDate.fecha,ncomercio.nombre,v.monto,);;
+			select cast (unaCompra.fecha as date) into fechaEnDate;
+			insert into detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,v.monto,);;
 		end if;
 	end loop;
 end;
-$$ language psplsql;
+$$ language plpgsql;
 
 ////////////////////////////////////////////////////////ALERTAS
 
