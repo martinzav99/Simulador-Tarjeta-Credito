@@ -273,6 +273,9 @@ func generateCierres() {
 func addStoredProceduresTriggers() {
 	fmt.Println("Adding Stored Procedures and Triggers...")
 	addAutorizacionDeCompra()
+	addCompraRechazadaTrigger()
+	add2Compras1mMismoCpTrigger()
+	add2Compras5mDistintoCpTrigger()
 	//addOtroTrigger()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
@@ -334,8 +337,8 @@ func addAutorizacionDeCompra() {
 	}
 }
 
-func addCompraRechazadaTriggers() {
-	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and 'Compra Rechazada' trigger")
+func addCompraRechazadaTrigger() {
+	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and trigger")
 	_, err = db.Exec(`  create or replace function alerta_compra_rechazada() returns trigger as $$
 						declare
 							nalerta int;
@@ -358,13 +361,81 @@ func addCompraRechazadaTriggers() {
 	}
 }
 
+func add2Compras1mMismoCpTrigger() {
+	fmt.Println(" Adding 'Alerta Compra 1m mismo CP' Procedure and trigger")
+	_, err = db.Exec(`  create or replace function alerta_compra_1m_mismoCP() returns trigger as $$
+						declare
+							nalerta int;
+							ncompras int;
+						begin
+							SELECT count(*) INTO ncompras 
+							FROM compra AS cp
+							JOIN comercio AS cm on cm.nrocomercio = cp.nrocomercio
+							WHERE cp.nrotarjeta = new.nrotarjeta AND cp.nrocomercio != new.nrocomercio  AND cm.codigopostal = (SELECT codigopostal 
+																														FROM comercio
+																														WHERE new.nrocomercio = nrocomercio) AND new.fecha - cp.fecha <= interval '1' minute;
+						
+							if ncompras = 1 then
+								select max(nroalerta)+1 into nalerta from alerta;
+								if nalerta isnull then 
+									nalerta := 1; 
+								end if;
+									insert into alerta values (nalerta, new.nrotarjeta, new.fecha, null, 0, 'Se registraron dos compras en un lapso menor de un minuto en comercios distintos ubicados en el mismo codigo postal');
+							end if;
+							return new;
+						end;
+						$$ language plpgsql;
+						
+						create trigger compra_1m_mismoCP
+						after insert on compra
+						for each row
+						execute procedure alerta_compra_1m_mismoCP();`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func add2Compras5mDistintoCpTrigger() {
+	fmt.Println(" Adding 'Alerta Compra 5m distinto CP' Procedure and trigger")
+	_, err = db.Exec(`  create or replace function alerta_compra_5m_distintoCP() returns trigger as $$
+						declare
+							nalerta int;
+							ncompras int;
+						begin
+							SELECT count(*) INTO ncompras 
+							FROM compra AS cp
+							JOIN comercio AS cm on cm.nrocomercio = cp.nrocomercio
+							WHERE cp.nrotarjeta = new.nrotarjeta AND cm.codigopostal != (SELECT codigopostal 
+																						 FROM comercio
+																						 WHERE new.nrocomercio = nrocomercio) AND new.fecha - fecha <= interval '5' minute;
+						
+							if ncompras = 1 then
+								select max(nroalerta)+1 into nalerta from alerta;
+								if nalerta isnull then 
+									nalerta := 1; 
+								end if;
+									insert into alerta values (nalerta, new.nrotarjeta, new.fecha, null, 0, 'Se registraron dos compras en un lapso menor a 5 minutos en comercios con diferentes codigos postales');
+							end if;
+							return new;
+						end;
+						$$ language plpgsql;
+						
+						create trigger compra_5m_distintoCP
+						after insert on compra
+						for each row
+						execute procedure alerta_compra_5m_distintoCP();`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func menu() {
 	menuString :=
 		`
 			Menu principal
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
-		[ 3 ] test addCompraRechazadaTriggers
+		[ 3 ] test
 
 		[ 0 ] Salir
 		
@@ -381,7 +452,7 @@ func menu() {
 	case 2:
 		menuCreacionMnual()
 	case 3:
-		addCompraRechazadaTriggers()
+		// funcion a testeae
 	case 0:
 		exitBool = true
 		fmt.Println("Hasta Luego")
