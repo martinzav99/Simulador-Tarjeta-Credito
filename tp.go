@@ -110,19 +110,19 @@ func addBusiness() {
 						insert into comercio values (3, 'Terravision',	'Urquiza 1361',	 	'B1221',	'541183910808');
 						insert into comercio values (4, 'Optica Lutz', 	'Libertad 3113', 	'B1636',	'541149476322');
 						insert into comercio values (5, 'Chatelet', 	'Italia 812', 		'B1663',	'541140715725');
-						insert into comercio values (6, 'Magoya', 		'Peron 1601', 		'B1810',	'541153682324');
+						insert into comercio values (6, 'Magoya', 		'Peron 1601', 		'B1221',	'541153682324');
 						insert into comercio values (7, 'Mayo Resto', 	'Mitre 1319', 		'B1613',	'541198035313');
 						insert into comercio values (8, 'Macowens', 	'Gascon 1481', 		'B1850', 	'541143565021');
 						insert into comercio values (9, 'Mundo Peluche','Balbin 1645', 		'B1613',	'541152604684');
 						insert into comercio values (10, 'Sonia Novias','Sarmiento 1468', 	'C1827',	'541158573111');
-						insert into comercio values (11, 'Lentes Novar','Rivadavia 5802', 	'C1002',	'541141213088');
+						insert into comercio values (11, 'Lentes Novar','Rivadavia 5802', 	'B1221',	'541141213088');
 						insert into comercio values (12, 'TatuArte', 	'Paunero 1564', 	'C1012',	'541149433826');
 						insert into comercio values (13, 'Kosiuko', 	'Marco Sastre 1840','C1026',	'541180712494');
 						insert into comercio values (14, 'Ossira', 		'Paunero 545', 		'C1008',	'541143314057');
-						insert into comercio values (15, 'Blindado Bar','Ecuador 5451', 	'C1022',	'541105927551');
+						insert into comercio values (15, 'Blindado Bar','Ecuador 5451', 	'B1221',	'541105927551');
 						insert into comercio values (16, 'Epic Shop', 	'Alvear 6014', 		'C1017',	'541143128703');
 						insert into comercio values (17, 'XS Resto', 	'Pasco 1261', 		'C1222',	'541143027636');
-						insert into comercio values (18, 'Hipervision', 'Libertad 1241', 	'C1244',	'541189151232');
+						insert into comercio values (18, 'Hipervision', 'Libertad 1241', 	'B1221',	'541189151232');
 						insert into comercio values (19, 'Cibernet', 	'Urquiza 1241', 	'B1224',	'541144945876');
 						insert into comercio values (20, 'Crazy World', 'Zapiola 1086', 	'B1199',	'541175085786');
 						insert into comercio values (21, 'Piero', 		'Tribulato 1333', 	'B1201',	'541142147877');`)
@@ -133,7 +133,7 @@ func addBusiness() {
 
 func addTarjetas() {
 	_, err = db.Exec(`	insert into tarjeta values ('5555899304583399', 1, 	'200911', '250221',	'1234', 100000.90, 'vigente');
-						insert into tarjeta values ('5269399188431044', 2, 	'190918', '240928',	'0334', 50000.55, 	'vigente');
+						insert into tarjeta values ('5269399188431044', 2, 	'190918', '240928',	'0334', 50000, 	'vigente');
 						insert into tarjeta values ('8680402479723030', 3, 	'180322', '230322',	'8214', 700000.12, 	'vigente');
 						insert into tarjeta values ('7760048064179840', 4, 	'170211', '220221',	'4134', 100000.85, 	'vigente');
 						insert into tarjeta values ('6317807399246634', 5, 	'200121', '250121',	'2324', 800000.22, 	'vigente');
@@ -185,9 +185,9 @@ func addFKs() {
 	_, err = db.Exec(`	alter table tarjeta add constraint tarjeta_nrocliente_fk foreign key (nrocliente) references cliente (nrocliente);
 						--alter table rechazo add constraint rechazo_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
 						alter table compra add constraint compra_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
-						alter table alerta add constraint alerta_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
+						--alter table alerta add constraint alerta_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
 						alter table cabecera add constraint cabecera_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
-						alter table alerta add constraint alerta_nrorechazo_fk foreign key (nrorechazo) references rechazo (nrorechazo);
+						--alter table alerta add constraint alerta_nrorechazo_fk foreign key (nrorechazo) references rechazo (nrorechazo);
 						alter table rechazo add constraint rechazo_nrocomercio_fk foreign key (nrocomercio) references comercio (nrocomercio);
 						alter table compra add constraint compra_nrocomercio_fk foreign key (nrocomercio) references comercio (nrocomercio);`)
 	if err != nil {
@@ -221,9 +221,9 @@ func dropFKs() {
 	_, err = db.Exec(`	alter table tarjeta drop constraint tarjeta_nrocliente_fk;
 						--alter table rechazo drop constraint rechazo_nrotarjeta_fk;
 						alter table compra drop constraint compra_nrotarjeta_fk;
-						alter table alerta drop constraint alerta_nrotarjeta_fk;
+						--alter table alerta drop constraint alerta_nrotarjeta_fk;
 						alter table cabecera drop constraint cabecera_nrotarjeta_fk;
-						alter table alerta drop constraint alerta_nrorechazo_fk;
+						--alter table alerta drop constraint alerta_nrorechazo_fk;
 						alter table rechazo drop constraint rechazo_nrocomercio_fk;
 						alter table compra drop constraint compra_nrocomercio_fk;`)
 	if err != nil {
@@ -279,7 +279,7 @@ func addStoredProceduresTriggers() {
 
 func addAutorizacionDeCompra() {
 	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
-	_, err = db.Exec(`	create or replace function a_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
+	_, err = db.Exec(`	create or replace function autorizacion_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
 						declare
 							montoCompraSum int;
 							tarjetaRecord record;
@@ -290,8 +290,8 @@ func addAutorizacionDeCompra() {
 							montoTotal int;
 						
 						begin
-							select count (nrooperacion) into noperacion from compra;
-							select count(nrorechazo) into nrechazo from rechazo;
+							select count (nrooperacion)+1 into noperacion from compra;
+							select count(nrorechazo)+1 into nrechazo from rechazo;
 							select current_date into fechaActual;
 						
 							select * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
@@ -317,7 +317,7 @@ func addAutorizacionDeCompra() {
 							select sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
 							montoTotal := montoCompraSum + montox;
 						
-							if tarjetaRecord.limitecompra < montoCompraSum then
+							if tarjetaRecord.limitecompra < montoTotal then
 								select current_timestamp into timeActual;
 								insert into rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
 								return false;
@@ -334,12 +334,37 @@ func addAutorizacionDeCompra() {
 	}
 }
 
+func addCompraRechazadaTriggers() {
+	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and 'Compra Rechazada' trigger")
+	_, err = db.Exec(`  create or replace function alerta_compra_rechazada() returns trigger as $$
+						declare
+							nalerta int;
+						begin
+							select max(nroalerta)+1 into nalerta from alerta;
+							if nalerta isnull then 
+								nalerta := 1; 
+							end if;
+								insert into alerta values (nalerta, new.nrotarjeta, new.fecha, new.nrorechazo, 0, 'rechazo');
+							return new;
+						end;
+						$$ language plpgsql;
+						
+						create trigger compra_rechazada
+						before insert on rechazo
+						for each row
+						execute procedure alerta_compra_rechazada();`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func menu() {
 	menuString :=
 		`
 			Menu principal
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
+		[ 3 ] test addCompraRechazadaTriggers
 
 		[ 0 ] Salir
 		
@@ -355,6 +380,8 @@ func menu() {
 		autoCreateDatabase()
 	case 2:
 		menuCreacionMnual()
+	case 3:
+		addCompraRechazadaTriggers()
 	case 0:
 		exitBool = true
 		fmt.Println("Hasta Luego")
