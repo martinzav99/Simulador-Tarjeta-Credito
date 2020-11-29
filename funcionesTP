@@ -123,7 +123,7 @@ $$ language plpgsql;
 
 ////////////////////////////////////////////////////////ALERTAS
 
-create or replace function generar_alerta_por_rechazo(); returns trigger as $$
+CREATE OR REPLACE function generar_alerta_por_rechazo(); returns trigger as $$
 
 declare
 	nalerta int;
@@ -133,7 +133,7 @@ declare
 	codalerta int;
 	descripcion text;
 begin 
-	select max(nroalerta) into nalerta from alerta;
+	SELECT MAX(nroalerta) INTO nalerta FROM alerta;
 
 	if not found then	
 		nalerta := 0; 
@@ -141,12 +141,12 @@ begin
 		nalerta:= nalerta+1;	
 	end if;
 
-	select max(nrorechazo) into nrechazo from rechazo;
+	SELECT MAX(nrorechazo) INTO nrechazo FROM rechazo;
 
 	if not found then	
 		nrechazo := 0; 
 
-	select nrotarjeta into ntarjeta where nrorechazo = nrechazo;
+	SELECT nrotarjeta INTO ntarjeta WHERE nrorechazo = nrechazo;
 
 	codalerta := 0; //codigo por rechazo
 
@@ -154,19 +154,19 @@ begin
 
 	descripcion := 'Alerta por rechazo';
 
-	insert into alerta values (nalerta, ntarjeta, fecha, nrechazo, codalerta, descripcion);
+	INSERT INTO alerta values (nalerta, ntarjeta, fecha, nrechazo, codalerta, descripcion);
 	
 end;
 $$ language plpgsql;
 
-create trigger alerta_por_rechazo()
-after insert on rechazo
-for each row
-execute procedure generar_alerta_por_rechazo();
+CREATE TRIGGER alerta_por_rechazo()
+AFTER INSERT ON rechazo
+FOR EACH ROW
+EXECUTE PROCEDURE generar_alerta_por_rechazo();
 
 //dos compras en un lapso menor de un minuto en comercios ubicados en el mismo código postal y en 5 minutos con distinto codigo postal
 
-create or replace function generar_alerta_por_compras_irregulares(); returns trigger as $$
+CREATE OR REPLACE function generar_alerta_por_compras_irregulares(); returns trigger as $$
 
 declare
 	ultima_nrooperacion int;
@@ -177,16 +177,16 @@ declare
 	codalerta int;
 	descripcion text;
 begin
-	select nrotarjeta into ntarjeta from compra where nrooperacion = (select MAX(nrooperacion) into ultima_nrooperacion from compra);
+	SELECT nrotarjeta INTO ntarjeta FROM compra WHERE nrooperacion = (SELECT MAX(nrooperacion) INTO ultima_nrooperacion FROM compra);
 
-	select fecha into ultima_fecha from compra where nrooperacion = ultima_nrooperacion;
+	SELECT fecha INTO ultima_fecha FROM compra WHERE nrooperacion = ultima_nrooperacion;
 	
-	(select * from compra where nrotarjeta = ntarjeta)
+	(SELECT * FROM compra WHERE nrotarjeta = ntarjeta)
 
 end;
 $$ language plpgsql;
 
-create trigger alerta_por_compras_irregulares()
-after insert on compra
-for each row
-execute procedure generar_alerta_por_compras_irregulares();
+CREATE TRIGGER alerta_por_compras_irregulares()
+AFTER INSERT ON compra
+FOR EACH ROW
+EXECUTE PROCEDURE generar_alerta_por_compras_irregulares();
