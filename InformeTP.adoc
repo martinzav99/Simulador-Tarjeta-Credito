@@ -18,18 +18,67 @@ o alertas e incluso, información sobre la propia tarjeta y su propietario.
 El objetivo del programa es que reconozca y actúa ante situaciones tales como 
 autorización de compra, generar resumenes o alertar a los clientes de posibles
 problemas. Para ello, se deberá previamente crear una base de datos respetando 
-las propiedades de cada tabla (PK's y FK's), e instanciar datos competentes.
+las propiedades de cada tabla , e instanciar datos competentes.
 
-Además, como el usuario tendrá la posibilidad de borrar todas las identifiaciones
-primareas y foraneas.
+Además, como usuario tendrá la posibilidad de crear la base de datos manualmente
+y ver el paso a paso de su proceso o la opcion de que se realice todo automanicamente.
+Una de estas es borrar todas las identifiaciones primareas y foraneas (PK's y FK's) que
+solo se puede realizar mediente la opcion manual.
  
 
 
 == Descripción
 
-El programa inicia mostrando un menú princpipal de bienvenida (CLI) para un manejo más ordenado 
-con la base de datos. Donde la primera opción es la encargada de crear la base de datos completa 
-con tablas, PK's, FK's, clientes y negocios. Entre las demás opciones nos encontramos con: 
+El programa inicia mostrando un menú princpipal de bienvenida (CLI) para un manejo
+más ordenado con la base de datos. Donde se podra elegir entre crearla y cargarla
+con toda la informacion necesaria automaticamente o hacerlo manualmente. Tambien
+se le agrega una tercer opcion que es para realizar pruebas de funcionamiento.
+Por ultimo , se encuentra la opcion de salir.
+
+
+Modelo de menu principal
+
+		[ 1 ] Crear Base tpgossz (Auto)
+		[ 2 ] Crear Base tpgossz (Manual)
+		[ 3 ] test
+
+		[ 0 ] Salir
+
+		
+la primera opción es la encargada de crear la base de datos completa 
+con tablas, PK's, FK's, clientes,negocios y funciones. 
+
+Entre las funciones se encuentran :
+
+Autorizacion de compra , donde se verifica la existencia de una tarjeta 
+mediante su numero y codigo de seguridad, el estado de vigencia y su limite
+de compra. Asi ,saber si validar la compra o generar un rechazo para luego
+cargar la informacion en su respectiva tabla dependiendo del resultado.
+
+Generar resumen, en la cual se devuelve la informacion detallada de un cliente
+y el total de gastos junto a infomacion sobre todas sus compras realizadas en
+un periodo especifico.
+
+Generar alertas, que posee una logica para generar alertas por fraudes.
+Esta debe ejecutarse cada cierto tiempo de forma automatica , donde las
+alertas a detectar se basan en la compra de productos en diferentes comercios
+dentro de un rango de tiempo dependiendo de si sucede en locales el igual o
+distinto codigo postal. Luego, se guardan los datos en su respectiva tabla con
+un codigo identificador para saber que tipo de alerta se produjo.
+
+La segunda opcion muestra un menu secundario con las opciones para realizar 
+la posibilidad de eliminar la base de datos creada, crearla manualmente, 
+conectarse, crear las tablas requeridas para el funcionamiento , agregar y 
+elminar todas las Pk's y Fk's, completar la base de datos con información de 
+clientes y de comercios,agregar funciones ,y por último, salir o desconectarse.
+
+
+/*
+
+Modelo de menu secundario
+
+(cambiar)
+
 
 1. Crear Base tpgossz (Automáticamente con tablas, PK's, FK's, clientes y negocios)
 2. Eliminar Base tpgossz
@@ -41,18 +90,14 @@ con tablas, PK's, FK's, clientes y negocios. Entre las demás opciones nos encon
 8. Remover PKs y FKs
 9. Salir (Cierra la conexión con la base de datos y finaliza el programa)
 
-la
-posibilidad de eliminar la base de datos creada, crearla manualmente, conectarse,
-crear las tablas requeridas para el funcionamiento  , agregar y elminar todas las Pk's y Fk's,
-completar la base de datos con información de clientes y de comercios, y por último, salir
-o desconectarse.
+/*
 
-Se destaca que, cada vez que el usuario elija una opción la funcion se ejecutará y
-además hará un seguimiento con impresiones por pantalla para indicar su estado y
-correcto funcionamiento. 
 
-En caso de no elegir la opcion de salida, al finalizar las elecciones, aparecera el
-menu para su proximo tarea.
+Cada vez que el usuario elija una opción la funcion se ejecutará y hará un seguimiento
+con impresiones por pantalla para indicar su estado y correcto funcionamiento. 
+
+Por ultimo ,en caso de no elegir la opcion de salida, al finalizar las elecciones,
+aparecera el menu para su proximo tarea.
     
 
 === Dificultades y Procedimientos
@@ -61,16 +106,34 @@ _parte1_
 
 Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
-entre las entidades
+entre las entidades. 
 
 .diagrama_base 
 image::diagrama_base.jpg[]
 
+
 _parte2_
+
+Para agregar las Pk's y Fk's se utilizo el formato dado en clases (ver en implementacion).
+En este caso, se realizo una funcion para agregar las pks y fks en sus respectivas
+tablas y otra para borrarlas.
+Resaltamos que, debido al diagrama hecho previamente ayudo de buena manera para 
+visualizar de forma rapida las identificaciones.
+
+_parte3_
 
 Al momento de ingresar informacion sobre los comercios y clientes a la base 
 de datos,en lugar de inventar y escribir manualmente, se obtuvo la
-informacion de 
+informacion de paginas de internet con datos publicados.
+Donde algunos fueron modificados a conveniencia para usarlo a modo de prueba en
+las proximas funciones a reaizar.
+
+_parte4_
+
+
+
+
+
 
 == Implementación
 
