@@ -233,36 +233,20 @@ func dropFKs() {
 
 func generateCierres() {
 	for nMes := 1; nMes <= 12; nMes++ {
-		for terminacion := 1; terminacion <= 9; terminacion++ {
+		for terminacion := 0; terminacion <= 9; terminacion++ {
+			var fInicio string
+			var fCierre string
+			var fVto string
+
+			fInicio = fmt.Sprintf("2020-%v-%v", nMes, terminacion+2)
 			if nMes == 12 {
-				_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre values (2020, %v, %v, '2020%v0%v', '2020010%v', '202001%v');", nMes, terminacion, nMes, terminacion, terminacion, terminacion+9))
-				if err != nil {
-					log.Fatal(err)
-				}
-			} else if nMes > 9 {
-				_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre values (2020, %v, %v, '2020%v0%v', '2020010%v', '202001%v');", nMes, terminacion, nMes, terminacion, terminacion, terminacion+9))
-				if err != nil {
-					log.Fatal(err)
-				}
+				fCierre = fmt.Sprintf("2021-%v-%v", 1, terminacion+1)
+				fVto = fmt.Sprintf("2021-%v-%v", 2, terminacion+11)
 			} else {
-				_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre values (2020, %v, %v, '20200%v0%v', '20200%v0%v', '20200%v%v');", nMes, terminacion, nMes, terminacion, nMes+1, terminacion, nMes+1, terminacion+9))
-				if err != nil {
-					log.Fatal(err)
-				}
+				fCierre = fmt.Sprintf("2020-%v-%v", nMes+1, terminacion+1)
+				fVto = fmt.Sprintf("2020-%v-%v", nMes+1, terminacion+11)
 			}
-		}
-		if nMes == 12 {
-			_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre values (2020, %v, 0, '2020%v10', '20200110', '20200119');", nMes, nMes))
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else if nMes > 9 {
-			_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre values (2020, %v, 0, '2020%v10', '2020%v10', '2020%v19');", nMes, nMes, nMes+1, nMes+1))
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre values (2020, %v, 0, '20200%v10', '20200%v10', '20200%v19');", nMes, nMes, nMes+1, nMes+1))
+			_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre values (2020, %v, %v, '%v', '%v', '%v');", nMes, terminacion, fInicio, fCierre, fVto))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -338,7 +322,6 @@ func addAutorizacionDeCompra() {
 	}
 }
 
-
 func addGenerarResumen() {
 	fmt.Println(" Adding 'Generar resumen' Procedure")
 	_, err = db.Exec(`  create or replace function generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
@@ -392,7 +375,6 @@ func addGenerarResumen() {
 	}
 }
 
-
 func addCompraRechazadaTrigger() {
 	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and trigger")
 	_, err = db.Exec(`  CREATE OR REPLACE function alerta_compra_rechazada() returns trigger as $$
@@ -429,8 +411,7 @@ func add2Compras1mMismoCpTrigger() {
 							JOIN comercio AS cm on cm.nrocomercio = cp.nrocomercio
 							WHERE cp.nrotarjeta = new.nrotarjeta AND cp.nrocomercio != new.nrocomercio  AND cm.codigopostal = (SELECT codigopostal 
 																														FROM comercio
-																														WHERE new.nrocomercio = nrocomercio) AND new.fecha - cp.fecha <= interval '1' minute;
-						
+																														WHERE new.nrocomercio = nrocomercio) AND new.fecha - cp.fecha <= interval '1' minute;						
 							if ncompras = 1 then
 								SELECT MAX(nroalerta)+1 into nalerta from alerta;
 								if nalerta isnull then 
