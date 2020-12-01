@@ -40,38 +40,42 @@ Modelo de menu principal
 
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
-		[ 3 ] test
+		[ 3 ] Remover PKs y FKs
+		[ 4 ] test
 
 		[ 0 ] Salir
 
 		
 la primera opción es la encargada de crear la base de datos completa 
-con tablas, PK's, FK's, clientes,negocios y funciones. 
+con tablas, PK's, FK's, clientes,negocios y funciones de forma automatica. 
 
 Entre las funciones se encuentran :
 
-Autorizacion de compra , donde se verifica la existencia de una tarjeta 
-mediante su numero y codigo de seguridad, el estado de vigencia y su limite
-de compra. Asi ,saber si validar la compra o generar un rechazo para luego
-cargar la informacion en su respectiva tabla dependiendo del resultado.
+Autorizacion de compra: donde se verifica la existencia de una tarjeta 
+mediante su número y código de seguridad, el estado de vigencia y su límite
+de compra. Así, se puede validar la compra o generar un rechazo para luego
+cargar la información en su respectiva tabla dependiendo del resultado.
 
-Generar resumen, en la cual se devuelve la informacion detallada de un cliente
-y el total de gastos junto a infomacion sobre todas sus compras realizadas en
-un periodo especifico.
+Generar resumen: en la cual se devuelve la información detallada de un cliente
+y el total de gastos junto a infomación sobre todas sus compras realizadas en
+un periodo específico.
 
-Generar alertas, que posee una logica para generar alertas por fraudes.
-Esta debe ejecutarse cada cierto tiempo de forma automatica , donde las
+Generar alertas: que posee una lógica para generar alertas por fraudes.
+Esta debe ejecutarse cada cierto tiempo de forma automática, donde las
 alertas a detectar se basan en la compra de productos en diferentes comercios
-dentro de un rango de tiempo dependiendo de si sucede en locales el igual o
-distinto codigo postal. Luego, se guardan los datos en su respectiva tabla con
-un codigo identificador para saber que tipo de alerta se produjo.
+dentro de un rango de tiempo dependiendo de si sucede en locales de igual o
+distinto código postal. Luego, se guardan los datos en su respectiva tabla con
+un código identificador para saber que tipo de alerta se produjo.
 
-La segunda opcion muestra un menu secundario con las opciones para realizar 
-la posibilidad de eliminar la base de datos creada, crearla manualmente, 
-conectarse, crear las tablas requeridas para el funcionamiento , agregar y 
-elminar todas las Pk's y Fk's, completar la base de datos con información de 
-clientes y de comercios,agregar funciones ,y por último, salir o desconectarse.
+La segunda opción muestra un menu secundario con las opciones para realizar 
+las mismas acciones que la opción 1, pero con la posibilidad de eliminar la 
+base de datos creada, crearla manualmente, conectarse, crear las tablas requeridas 
+para el funcionamiento, agregar los PK's y FK's, completar la base de datos con 
+información (popular la base de datos), agregar funciones, y por último, 
+salir o desconectarse.
 
+En la tercera opción, podemos eliminar los PK's y FK's de todas las tablas existentes
+para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
 
 Modelo de menu secundario
 
@@ -87,11 +91,11 @@ Modelo de menu secundario
 		[ 0 ] Volver
 		
 
-Cada vez que el usuario elija una opción la funcion se ejecutará y hará un seguimiento
+Cada vez que el usuario elija una opción la función se ejecutará y hará un seguimiento
 con impresiones por pantalla para indicar su estado y correcto funcionamiento. 
 
-Por ultimo ,en caso de no elegir la opcion de salida, al finalizar las elecciones,
-aparecera el menu para su proximo tarea.
+Por último, en caso de no elegir la opción de salida válida, se mostrará un mensaje
+"No elegiste ninguno" y se volverá al menu para seleccionar la siguiente tarea.
     
 
 === Dificultades y Procedimientos
@@ -124,11 +128,20 @@ las proximas funciones a reaizar.
 
 _parte4_
 
+Al momento de generar los rechazos encontramos mayor comodidad al implementar en 
+la tabla Rechazo un codmotivo, que funciona de forma semejante al codalerta de la tabla Alerta,
+en este caso a través de cinco variables numéricas se puende constatar el motivo del rechazo.
 
+MOTIVOS:
+1. Tarjeta no valida o no vigente = 0
+2. Codigo de seguridad invalido = 1
+3. Plazo de vigencia expirado = 2
+4. La tarjeta se encuentra suspendida = 3
+5. Supera limite de tarjeta = 4
 
 == Implementación
 
-En esta sección se incluye el código fuente correctamente formateado—y
+En esta sección se incluye el código fuente correctamente formateado y
 comentado, si corresponde.
 
 Además, por cada fragmento de código
@@ -143,21 +156,21 @@ utilicen—a no ser que sea absolutamente necesario._
 == Conclusiones
 
 Una vez realizado el proyecto aprendimos el correcto manejo de SQL en Go, el uso de Postgres y la 
-administración de una base de datos relacionada con tarjetas de creditos que simula ser realista. 
-La comprensión de los temas incluidos en el trabajo práctico nos hicieron cambiar drasticamente nuestra 
+administración de una base de datos relacionada con tarjetas de creditos con una simulación realista. 
+La comprensión de los temas incluidos en el trabajo práctico nos hicieron cambiar drásticamente nuestra 
 visión sobre los mismos, porque hasta el momento de iniciarlo, solo habías indagado en peticiones 
 simples con tablas pequeñas o poco relacionadas entre sí. 
 
 Al ir avanzando en nuestro trabajo confirmamos nuestras sospechas con respecto a los resultados obtenidos, 
 logrando un programa sólido con CLI (en inglés, command-line interface) que cumpliera con todo lo 
-requerido en el enunciado inicial propuesto por los docentes a cargo.
+requerido en el enunciado inicial, propuesto por los docentes a cargo.
 
-¿Qué cosas haríamos diferente si tuviéramos que repetir el proyecto y por qué? ¿Qué aspectos del mismo tuvieron debilidades y cómo podrían subsanarse a futuro?
 En el caso de que tuvieramos que repetir el proyecto realizariamos pequeños cambios como: poder tener comandos 
-dentro del CLI que permitiecen al usuario ingresar clientes, negocios, consumos, etc. También es verdad que al 
-herramientas de trabajo nuevas para todos los integrantes fue un poco intrincado el inicio del proyecto, pero
-una vez afianzado lo más básico del trabajo práctico (la conexión con el servidos, la creación de la base de datos con sus tablas respectivas y sus PK's y FK's), lo demás dluyo con mayor facilidad para nosotros.
+dentro del CLI que permitiecen al usuario ingresar clientes, negocios, consumos, etc. También es verdad que esta 
+herramientas de trabajo es nueva para todos los integrantes, fue un poco intrincado el inicio del proyecto, pero
+una vez afianzado lo más básico del trabajo práctico (la conexión con el servidos, la creación de la base de datos 
+con sus tablas respectivas y sus PK's y FK's), lo demás dluyo con mayor facilidad para nosotros.
 
 Una vez observado el resultado del proyecto nos quedamos con ganas de implementar nuevas base de datos de mayor
 complejidad o con diferentes particularidades, también de hacer modificaciones sustanciales al código presentado 
-para mayor cantidad de funcionalidades a nuestro programa que creamos.
+para mayor cantidad de funcionalidades para nuestro programa que creamos o para aumentar la escalabilidad del proyecto.
