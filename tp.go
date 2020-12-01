@@ -104,7 +104,6 @@ func addClients() {
 						INSERT INTO cliente VALUES (18, 'Antonella', 'Herrera', 'Gascon 1241', 			'541148631232');
 						INSERT INTO cliente VALUES (19, 'Pedro', 	'Rafele', 	'Urquiza 1241', 		'541144927876');
 						INSERT INTO cliente VALUES (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 		'541194127656');`)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -248,14 +247,14 @@ func addPKs() {
 }
 
 func addFKs() {
-	_, err = db.Exec(`	ALTER TABLE tarjeta ADD CONSTRAINT tarjeta_nrocliente_fk FOREIGN KEY (nrocliente) REFERENCES cliente (nrocliente);
-						--ALTER TABLE rechazo ADD CONSTRAINT rechazo_nrotarjeta_fk FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-						ALTER TABLE compra ADD CONSTRAINT compra_nrotarjeta_fk FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-						--ALTER TABLE alerta ADD CONSTRAINT alerta_nrotarjeta_fk FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-						ALTER TABLE cabecera ADD CONSTRAINT cabecera_nrotarjeta_fk FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-						--ALTER TABLE alerta ADD CONSTRAINT alerta_nrorechazo_fk FOREIGN KEY (nrorechazo) REFERENCES rechazo (nrorechazo);
-						ALTER TABLE rechazo ADD CONSTRAINT rechazo_nrocomercio_fk FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);
-						ALTER TABLE compra ADD CONSTRAINT compra_nrocomercio_fk FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);`)
+	_, err = db.Exec(`	ALTER TABLE 	tarjeta ADD CONSTRAINT tarjeta_nrocliente_fk 	FOREIGN KEY (nrocliente) REFERENCES cliente (nrocliente);
+						--ALTER TABLE 	rechazo ADD CONSTRAINT rechazo_nrotarjeta_fk 	FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+						ALTER TABLE 	compra ADD CONSTRAINT compra_nrotarjeta_fk 		FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+						--ALTER TABLE 	alerta ADD CONSTRAINT alerta_nrotarjeta_fk 		FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+						ALTER TABLE 	cabecera ADD CONSTRAINT cabecera_nrotarjeta_fk 	FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+						--ALTER TABLE 	alerta ADD CONSTRAINT alerta_nrorechazo_fk 		FOREIGN KEY (nrorechazo) REFERENCES rechazo (nrorechazo);
+						ALTER TABLE 	rechazo ADD CONSTRAINT rechazo_nrocomercio_fk 	FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);
+						ALTER TABLE 	compra ADD CONSTRAINT compra_nrocomercio_fk 	FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -304,13 +303,13 @@ func generateCierres() {
 			var fCierre string
 			var fVto string
 
-			fInicio = fmt.Sprintf("2020-%v-%v", nMes, terminacion+2)
+			fInicio = fmt.Sprintf(		"2020-%v-%v", nMes, 	terminacion+2)
 			if nMes == 12 {
-				fCierre = fmt.Sprintf("2021-%v-%v", 1, terminacion+1)
-				fVto = fmt.Sprintf("2021-%v-%v", 2, terminacion+11)
+				fCierre = fmt.Sprintf(	"2021-%v-%v", 1, 		terminacion+1)
+				fVto = fmt.Sprintf(		"2021-%v-%v", 2, 		terminacion+11)
 			} else {
-				fCierre = fmt.Sprintf("2020-%v-%v", nMes+1, terminacion+1)
-				fVto = fmt.Sprintf("2020-%v-%v", nMes+1, terminacion+11)
+				fCierre = fmt.Sprintf(	"2020-%v-%v", nMes+1, 	terminacion+1)
+				fVto = fmt.Sprintf(		"2020-%v-%v", nMes+1, 	terminacion+11)
 			}
 			_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre VALUES (2020, %v, %v, '%v', '%v', '%v');", nMes, terminacion, fInicio, fCierre, fVto))
 			if err != nil {
@@ -345,44 +344,44 @@ func addAutorizacionDeCompra() {
 							montoTotal int;
 						
 						begin
-							SELECT count (nrooperacion)+1 into noperacion from compra;
-							SELECT count(nrorechazo)+1 into nrechazo from rechazo;
-							SELECT current_date into fechaActual;
+							SELECT COUNT(nrooperacion)+1 INTO noperacion FROM compra;
+							SELECT COUNT(nrorechazo)+1 INTO nrechazo FROM rechazo;
+							SELECT current_date INTO fechaActual;
 						
-							SELECT * from tarjeta into tarjetaRecord where nrotarjeta = nrotarjetax;
+							SELECT * FROM tarjeta INTO tarjetaRecord WHERE nrotarjeta = nrotarjetax;
 						
 							if not found then
-								SELECT current_timestamp into timeActual;
+								SELECT current_timestamp INTO timeActual;
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'tarjeta no valida o no vigente', 0);
 								return false;
-							elsif tarjetaRecord.codseguridad != codseguridadx then
-								SELECT current_timestamp into timeActual;
+							elsif tarjetaRecord.codseguridad != codseguridadx THEN
+								SELECT current_timestamp INTO timeActual;
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'codigo de seguridad invalido', 1);
-								return false;
-							elsif CAST(tarjetaRecord.validahasta as date) < fechaActual then /* arreglar */
-								SELECT current_timestamp into timeActual;
+								RETURN false;
+							elsif CAST(tarjetaRecord.validahasta as date) < fechaActual THEN /* arreglar */
+								SELECT current_timestamp INTO timeActual;
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'plazo de vigencia expirado', 2);
-								return false;
-							elsif tarjetaRecord.estado = 'suspendida' then
-								SELECT current_timestamp into timeActual;
+								RETURN false;
+							elsif tarjetaRecord.estado = 'suspendida' THEN
+								SELECT current_timestamp INTO timeActual;
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'la tarjeta se encuentra suspendida', 3);
-								return false;
+								RETURN false;
 							end if;
 							
-							SELECT sum(monto) into montoCompraSum from compra where nrotarjeta=nrotarjetax and pagado = false;
+							SELECT SUM(monto) INTO montoCompraSum FROM compra WHERE nrotarjeta=nrotarjetax and pagado = false;
 							montoTotal := montoCompraSum + montox;
 						
-							if tarjetaRecord.limitecompra < montoTotal then
-								select current_timestamp into timeActual;
+							IF tarjetaRecord.limitecompra < montoTotal THEN
+								SELECT current_timestamp into timeActual;
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox,'supera limite de tarjeta', 4);
 								return false;
-							end if;
+							END IF;
 							
-							SELECT current_timestamp into timeActual;
+							SELECT current_timestamp INTO timeActual;
 							INSERT INTO compra VALUES (noperacion, nrotarjetax, nrocomerciox, timeActual, montox, false);
-							return true;
+							RETURN true;
 						
-						end;
+						END;
 						$$language plpgsql;`)
 	if err != nil {
 		log.Fatal(err)
@@ -393,7 +392,6 @@ func addGenerarResumen() {
 	fmt.Println(" Adding 'Generar resumen' Procedure")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
 						declare 
-
 							ncliente record;
 							ntarjeta record;
 							ncierre record;
@@ -410,13 +408,12 @@ func addGenerarResumen() {
 							digito int;
 
 						begin 
+							SELECT COUNT(nroresumen) INTO nresumen FROM cabecera;
 
-							SELECT count(nroresumen) into nresumen from cabecera;
-
-							SELECT * into ncliente from cliente where nrocliente = nroclientex ;
-							SELECT * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = 'vigente'; 
+							SELECT * INTO ncliente FROM cliente WHERE nrocliente = nroclientex ;
+							SELECT * INTO ntarjeta FROM tarjeta WHERE nrocliente = nroclientex and estado = 'vigente'; 
 							tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
-							SELECT right(tarjetaEnText,1) into ultimoDigito; /*el ultimo digito*/
+							SELECT right(tarjetaEnText,1) INTO ultimoDigito; /*el ultimo digito*/
 							digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
 
 
@@ -426,15 +423,15 @@ func addGenerarResumen() {
 							INSERT INTO cabecera VALUES (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
 
-							for unaCompra in select * from compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
+							FOR unaCompra IN SELECT * FROM compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
 		
-								SELECT * INTO ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
-								SELECT cast (unaCompra.fecha as date) into fechaEnDate;
-								SELECT count(nrolinea) into nlinea from detalle;
+								SELECT * INTO ncomercio FROM comercio WHERE nrocomercio = unaCompra.nrocomercio;
+								SELECT CAST (unaCompra.fecha AS date) INTO fechaEnDate;
+								SELECT COUNT(nrolinea) INTO nlinea FROM detalle;
 								INSERT INTO detalle VALUES (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
 								unaCompra.pagado := true;
-							end loop;
-						end;
+							END loop;
+						END;
 						$$ language plpgsql;`)
 	if err != nil {
 		log.Fatal(err)
@@ -490,9 +487,9 @@ func add2Compras1mMismoCpTrigger() {
 						$$ language plpgsql;
 						
 						CREATE TRIGGER compra_1m_mismoCP
-						after insert on compra
-						for each row
-						execute procedure alerta_compra_1m_mismoCP();`)
+						AFTER INSERT ON compra
+						FOR EACH ROW
+						EXECUTE PROCEDURE alerta_compra_1m_mismoCP();`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -505,27 +502,27 @@ func add2Compras5mDistintoCpTrigger() {
 							nalerta int;
 							ncompras int;
 						begin
-							SELECT count(*) INTO ncompras 
+							SELECT COUNT(*) INTO ncompras 
 							FROM compra AS cp
 							JOIN comercio AS cm on cm.nrocomercio = cp.nrocomercio
 							WHERE cp.nrotarjeta = new.nrotarjeta AND cm.codigopostal != (SELECT codigopostal 
 																						 FROM comercio
 																						 WHERE new.nrocomercio = nrocomercio) AND new.fecha - fecha <= interval '5' minute;						
 							if ncompras = 1 then
-								select max(nroalerta)+1 into nalerta from alerta;
-								if nalerta isnull then 
+								SELECT MAX(nroalerta)+1 into nalerta from alerta;
+								IF nalerta ISNULL THEN 
 									nalerta := 1; 
 								end if;
 									INSERT INTO alerta VALUES (nalerta, new.nrotarjeta, new.fecha, null, 5, 'Se registraron dos compras en un lapso menor a 5 minutos en comercios con diferentes codigos postales');
-							end if;
-							return new;
-						end;
+							END IF;
+							RETURN new;
+						END;
 						$$ language plpgsql;
 						
-						CREATE trigger compra_5m_distintoCP
-						after insert on compra
-						for each row
-						execute procedure alerta_compra_5m_distintoCP();`)
+						CREATE TRIGGER compra_5m_distintoCP
+						AFTER INSERT ON compra
+						FOR EACH ROW
+						EXECUTE PROCEDURE alerta_compra_5m_distintoCP();`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -538,7 +535,7 @@ func add2RechazosPorExcesoLimiteTrigger() {
 							nalerta int;
 							nrechazos int;
 						BEGIN						
-							SELECT count(*) INTO nrechazos
+							SELECT COUNT(*) INTO nrechazos
 							FROM rechazo AS rz
 							WHERE rz.nrotarjeta = new.nrotarjeta AND 
 								rz.codmotivo = 4 AND 
@@ -547,7 +544,7 @@ func add2RechazosPorExcesoLimiteTrigger() {
 							IF nrechazos = 1 then
 								UPDATE tarjeta SET estado = 'suspendida' where nrotarjeta = new.nrotarjeta;
 								SELECT MAX(nroalerta)+1 INTO nalerta from alerta;
-								if nalerta isnull then 
+								IF nalerta ISNULL THEN 
 									nalerta := 1; 
 								end if;
 									INSERT INTO alerta VALUES (nalerta, new.nrotarjeta, new.fecha, new.nrorechazo, 32, 'Se registraron dos rechazos por exceso de limite en el dia. La tarjeta ha sido suspendida preventivamente');
@@ -556,10 +553,10 @@ func add2RechazosPorExcesoLimiteTrigger() {
 						END;
 						$$ language plpgsql;
 						
-						CREATE trigger compra_rechazada_exceso
-						before insert on rechazo
-						for each row
-						execute procedure alerta_dos_rechazos_por_execeso_limite();`)
+						CREATE TRIGGER compra_rechazada_exceso
+						BEFORE INSERT ON rechazo
+						FOR EACH ROW
+						EXECUTE PROCEDURE alerta_dos_rechazos_por_execeso_limite();`)
 	if err != nil {
 		log.Fatal(err)
 	}
