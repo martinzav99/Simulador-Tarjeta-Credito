@@ -117,6 +117,37 @@ $$ language plpgsql;
 
 ////////////////////////////////////////////////////////ALERTAS
 
+CREATE OR REPLACE function dosRechazosPorExecesoLimite() returns trigger as $$
+
+
+declare
+
+diaDeHoy timestamp;
+tarjetaExcedida record;
+
+
+begin
+
+select current_timestamp into diaDeHoy; 
+
+for tarjetaExcedida in SELECT *  FROM rechazo 
+								WHERE  fecha = diaDeHoy and motivo = 'supera limite de tarjeta'
+								GROUP BY nrotarjeta
+								HAVING count (nrorechazo)> 1 loop; 
+	
+	tarjetaExcedida.estado := 'la tarjeta se encuentra suspendida';
+	
+	INSERT values INTO ();
+	
+end loop;
+
+end;
+
+$$ language plpgsql; 
+
+
+
+
 CREATE OR REPLACE function generar_alerta_por_rechazo(); returns trigger as $$
 
 declare
