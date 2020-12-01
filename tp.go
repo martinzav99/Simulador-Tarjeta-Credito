@@ -377,13 +377,13 @@ func addGenerarResumen() {
 							INSERT INTO cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
 
-							for unaCompra in select * from compra loop
-								if unaCompra.nrotarjeta = ntarjeta.nrotarjeta then					
-									SELECT * INTO ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
-									SELECT cast (unaCompra.fecha as date) into fechaEnDate;
-									SELECT count(nrolinea) into nlinea from detalle;
-									INSERT INTO detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
-								end if;
+							for unaCompra in select * from compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
+										
+								SELECT * INTO ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
+								SELECT cast (unaCompra.fecha as date) into fechaEnDate;
+								SELECT count(nrolinea) into nlinea from detalle;
+								INSERT INTO detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
+								unaCompra.pagado := true;
 							end loop;
 						end;
 						$$ language plpgsql;`)
