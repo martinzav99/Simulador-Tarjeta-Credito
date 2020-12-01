@@ -74,6 +74,7 @@ func populateDatabase() {
 	addBusiness()
 	addTarjetas()
 	generateCierres()
+	addConsumos()
 	fmt.Println("Database populated!")
 }
 
@@ -154,6 +155,71 @@ func addTarjetas() {
 						INSERT INTO tarjeta values ('5552648744023638', 20, '170425', '220425',	'8974', 100000.45, 	'vigente');
 						INSERT INTO tarjeta values ('6326855100263642', 1, 	'180607', '230627',	'9821', 450000.78, 	'suspendida');
 						INSERT INTO tarjeta values ('8203564386694367', 2, 	'140728', '190728',	'0912', 9000.99, 	'anulada');`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func addConsumos() {
+	_, err = db.Exec(` INSERT INTO consumo VALUES('8680402479723030', '1' , 10 , 600); --codigo de seguridad invalido
+INSERT INTO consumo VALUES('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
+INSERT INTO consumo VALUES('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
+INSERT INTO consumo VALUES('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
+INSERT INTO consumo VALUES('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
+
+
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 3 , 600); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
+
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 16 , 600); --compra realizada correctamente cp C1017
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 10 , 600); --compra realizada correctamente cp C1827
+INSERT INTO consumo VALUES('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
+
+INSERT INTO consumo VALUES('7760048064179840', '4134' , 12 , 2000); --compra realizada correctamente cp C1012
+INSERT INTO consumo VALUES('7760048064179840', '1111' , 2 , 5000); --codigo de seguridad invalido
+INSERT INTO consumo VALUES('7760048064179840', '1111' , 4 , 100000.90); --supera el limite de tarjeta
+
+INSERT INTO consumo VALUES('2913395189972781', '4321' , 13 , 20000.00); --compra realizada correctamente cp C1026
+INSERT INTO consumo VALUES('4681981280484337', '8765' , 14 , 15000.50); --compra realizada correctamente cp C1008
+INSERT INTO consumo VALUES('9387191057338602', '1253' , 15 , 600.00); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('2503782418139215', '8367' , 16 , 6500.45); --compra realizada correctamente cp C1017
+INSERT INTO consumo VALUES('4462725109757091', '6754' , 17 , 8001.45); --compra realizada correctamente cp C1222
+INSERT INTO consumo VALUES('2954596377708750', '7852' , 18 , 12000.70); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('6231348143458624', '9873' , 19 , 900.55); --compra realizada correctamente cp B1224
+INSERT INTO consumo VALUES('4919235066192653', '6753' , 20 , 7000.90); --compra realizada correctamente cp B1199
+INSERT INTO consumo VALUES('3742481627352427', '9801' , 1 , 700.95); --compra realizada correctamente cp B1663
+INSERT INTO consumo VALUES('2884720084187620', '9876' , 2 , 1300.70); --compra realizada correctamente cp B1871
+INSERT INTO consumo VALUES('2340669528486435', '6752' , 3 , 60000.20); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('2377527131015460', '0987' , 4 , 9000.00); --compra realizada correctamente cp B1636
+INSERT INTO consumo VALUES('8472072142547842', '6987' , 5 , 7240.70); --compra realizada correctamente cp B1663
+INSERT INTO consumo VALUES('3573172713553770', '0981' , 6 , 700.95); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('5552648744023638', '8974' , 7 , 3100.70); --compra realizada correctamente cp B1613
+INSERT INTO consumo VALUES('6326855100263642', '9821' , 8 , 50000.40); --tarjeta suspendida
+INSERT INTO consumo VALUES('8203564386694367', '0912' , 9 , 16000.00); --tarjeta anulada
+INSERT INTO consumo VALUES('5555899304583399', '6987' , 11 ,100000.80); --compra realizada correctamente cp C1827
+INSERT INTO consumo VALUES('5555899304583399', '6987' , 12 ,200000.00); --supera el limite de tarjeta
+INSERT INTO consumo VALUES('5555899304583399', '6987' , 13 ,2540.90); --compra realizada correctamente cp C1026
+INSERT INTO consumo VALUES('5269399188431044', '0334' , 14, 5600.50); --compra realizada correctamente cp C1008
+INSERT INTO consumo VALUES('7760048064179840', '4134' , 15, 8000.00); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('6317807399246634', '2324' , 16 ,5000.40); --compra realizada correctamente cp C1017
+INSERT INTO consumo VALUES('2913395189972781', '4321' , 17 ,50000.20); --compra realizada correctamente cp C1222
+INSERT INTO consumo VALUES('4681981280484337', '8765' , 18 ,5440.10); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('9387191057338602', '1253' , 19 ,5000.40); --compra realizada correctamente cp B1224
+INSERT INTO consumo VALUES('2503782418139215', '8367' , 20 ,50000.20); --compra realizada correctamente cp B1199
+INSERT INTO consumo VALUES('4462725109757091', '6754' , 21 ,5440.10); --compra realizada correctamente cp B1201
+INSERT INTO consumo VALUES('2954596377708750', '7852' , 1 ,2000.20); --compra realizada correctamente cp B1663
+INSERT INTO consumo VALUES('6231348143458624', '9873' , 2 ,7440.10); --compra realizada correctamente cp B1871
+INSERT INTO consumo VALUES('4919235066192653', '6753' , 3 ,2000.40); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('3742481627352427', '9801' , 4 ,50.50); --compra realizada correctamente cp B1636
+INSERT INTO consumo VALUES('2884720084187620', '9876' , 5 ,440.80); --compra realizada correctamente cp B1663
+INSERT INTO consumo VALUES('2340669528486435', '6752' , 6 ,4000.20); --compra realizada correctamente cp B1221
+INSERT INTO consumo VALUES('2377527131015460', '0987' , 7 ,880.16); --compra realizada correctamente cp B1613
+INSERT INTO consumo VALUES('8472072142547842', '6987' , 8 ,7000.40); --compra realizada correctamente cp B1850
+INSERT INTO consumo VALUES('3573172713553770', '0981' , 9 ,950.60); --compra realizada correctamente cp B1613
+INSERT INTO consumo VALUES('5552648744023638', '8974' , 10 ,1990.00); --compra realizada correctamente cp C1827
+INSERT INTO consumo VALUES('6326855100263642', '9821' , 11 ,400.40); --tarjeta suspendida
+INSERT INTO consumo VALUES('8203564386694367', '0912' , 12 ,80080.16);`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -360,13 +426,13 @@ func addGenerarResumen() {
 							INSERT INTO cabecera values (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
 
-							for unaCompra in select * from compra loop
-								if unaCompra.nrotarjeta = ntarjeta.nrotarjeta then					
-									SELECT * INTO ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
-									SELECT cast (unaCompra.fecha as date) into fechaEnDate;
-									SELECT count(nrolinea) into nlinea from detalle;
-									INSERT INTO detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
-								end if;
+							for unaCompra in select * from compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
+										
+								SELECT * INTO ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
+								SELECT cast (unaCompra.fecha as date) into fechaEnDate;
+								SELECT count(nrolinea) into nlinea from detalle;
+								INSERT INTO detalle values (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
+								unaCompra.pagado := true;
 							end loop;
 						end;
 						$$ language plpgsql;`)
@@ -472,7 +538,8 @@ func menu() {
 			Menu principal
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
-		[ 3 ] test
+		[ 3 ] Remover PKs y FKs
+		[ 4 ] test
 
 		[ 0 ] Salir
 		
@@ -489,7 +556,9 @@ func menu() {
 	case 2:
 		menuCreacionMnual()
 	case 3:
-		// funcion a testeae
+		dropPKandFK()
+	case 4:
+		//funcion a testear	
 	case 0:
 		exitBool = true
 		fmt.Println("Hasta Luego")
@@ -507,8 +576,8 @@ func menuCreacionMnual() {
 		[ 4 ] Crear tablas
 		[ 5 ] Agregar PKs y FKs
 		[ 6 ] Popular Base de datos
-		[ 7 ] Remover PKs y FKs
-		[ 8 ] Agregar Stored Procedures y Triggers
+		[ 7 ] Agregar Stored Procedures y Triggers
+		[ 8 ] Agregar Consumos
 
 		[ 0 ] Volver
 		
@@ -533,9 +602,9 @@ func menuCreacionMnual() {
 	case 6:
 		populateDatabase()
 	case 7:
-		dropPKandFK()
-	case 8:
 		addStoredProceduresTriggers()
+	case 8:
+		addConsumos()	
 	case 0:
 		menu()
 	default:
