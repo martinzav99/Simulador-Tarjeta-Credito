@@ -73,25 +73,19 @@ elminar todas las Pk's y Fk's, completar la base de datos con información de
 clientes y de comercios,agregar funciones ,y por último, salir o desconectarse.
 
 
-/*
-
 Modelo de menu secundario
 
-(cambiar)
+		[ 1 ] Eliminar Base tpgossz
+		[ 2 ] Crear Base tpgossz
+		[ 3 ] Conectar con Base tpgossz
+		[ 4 ] Crear tablas
+		[ 5 ] Agregar PKs y FKs
+		[ 6 ] Popular Base de datos
+		[ 7 ] Remover PKs y FKs
+		[ 8 ] Agregar Stored Procedures y Triggers
 
-
-1. Crear Base tpgossz (Automáticamente con tablas, PK's, FK's, clientes y negocios)
-2. Eliminar Base tpgossz
-3. Crear Base tpgossz
-4. Conectar con Base tpgossz
-5. Crear tablas (Crea todas las tablas requeridas)
-6. Agregar PKs y FKs
-7. Popular Base de datos (Instancia de Datos: agrega clientes y negocios)
-8. Remover PKs y FKs
-9. Salir (Cierra la conexión con la base de datos y finaliza el programa)
-
-/*
-
+		[ 0 ] Volver
+		
 
 Cada vez que el usuario elija una opción la funcion se ejecutará y hará un seguimiento
 con impresiones por pantalla para indicar su estado y correcto funcionamiento. 
