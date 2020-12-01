@@ -9,11 +9,12 @@ import (
 )
 
 var (
-	db       *sql.DB
-	err      error
-	user     = "postgres"
-	password = "1234"
-	exitBool = false
+	db               *sql.DB
+	err              error
+	user             = "postgres"
+	password         = "1234"
+	exitBool         = false
+	advancedMenuBool = false
 )
 
 func main() {
@@ -21,7 +22,11 @@ func main() {
 	login(user, password)
 	bienvenida()
 	for {
-		menu()
+		if advancedMenuBool {
+			advancedMenu()
+		} else {
+			menu()
+		}
 		if exitBool == true {
 			break
 		}
@@ -55,7 +60,7 @@ func createTables() {
 						CREATE TABLE tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));						
 						CREATE TABLE comercio (nrocomercio int, nombre text, domicilio text, codigopostal varchar(8), telefono varchar(12));
 						CREATE TABLE compra (nrooperacion int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), pagado boolean);
-						CREATE TABLE rechazo (nrorechazo int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), motivo text);
+						CREATE TABLE rechazo (nrorechazo int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), motivo text, codmotivo int);
 						CREATE TABLE cierre (anio int, mes int, terminacion int, fechainicio date, fechacierre date, fechavto date);
 						CREATE TABLE cabecera (nroresumen int, nombre text, apellido text, domicilio text, nrotarjeta varchar(16), desde date, hasta date, vence date, total decimal(8,2));
 						CREATE TABLE detalle (nroresumen int, nrolinea int, fecha date, nombrecomercio text, monto decimal(7,2));
@@ -74,7 +79,7 @@ func populateDatabase() {
 	addBusiness()
 	addTarjetas()
 	generateCierres()
-	addConsumos()
+	//addConsumos()
 	fmt.Println("Database populated!")
 }
 
@@ -322,6 +327,7 @@ func addStoredProceduresTriggers() {
 	addCompraRechazadaTrigger()
 	add2Compras1mMismoCpTrigger()
 	add2Compras5mDistintoCpTrigger()
+	add2RechazosPorExcesoLimiteTrigger()
 	//addOtroTrigger()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
@@ -347,19 +353,19 @@ func addAutorizacionDeCompra() {
 						
 							if not found then
 								SELECT current_timestamp into timeActual;
-								INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'tarjeta no valida o no vigente');
+								INSERT INTO rechazo values (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'tarjeta no valida o no vigente', 0);
 								return false;
 							elsif tarjetaRecord.codseguridad != codseguridadx then
 								SELECT current_timestamp into timeActual;
-								INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'codigo de seguridad invalido');
+								INSERT INTO rechazo values (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'codigo de seguridad invalido', 1);
 								return false;
 							elsif CAST(tarjetaRecord.validahasta as date) < fechaActual then /* arreglar */
 								SELECT current_timestamp into timeActual;
-								INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'plazo de vigencia expirado');
+								INSERT INTO rechazo values (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'plazo de vigencia expirado', 2);
 								return false;
 							elsif tarjetaRecord.estado = 'suspendida' then
 								SELECT current_timestamp into timeActual;
-								INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'la tarjeta se encuentra suspendida');
+								INSERT INTO rechazo values (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'la tarjeta se encuentra suspendida', 3);
 								return false;
 							end if;
 							
@@ -368,12 +374,12 @@ func addAutorizacionDeCompra() {
 						
 							if tarjetaRecord.limitecompra < montoTotal then
 								select current_timestamp into timeActual;
-								INSERT INTO rechazo values (nrechazo,nrotarjetax,nrocomerciox,timeActual,montox,'supera limite de tarjeta');
+								INSERT INTO rechazo values (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox,'supera limite de tarjeta', 4);
 								return false;
 							end if;
 							
 							SELECT current_timestamp into timeActual;
-							INSERT INTO compra values (noperacion,nrotarjetax,nrocomerciox,timeActual,montox,false);
+							INSERT INTO compra values (noperacion, nrotarjetax, nrocomerciox, timeActual, montox, false);
 							return true;
 						
 						end;
@@ -393,7 +399,7 @@ func addGenerarResumen() {
 							ncierre record;
 							ncomercio record;
 							unaCompra record;
-							
+
 							fechaEnDate date;
 
 							tarjetaEnText text;
@@ -406,10 +412,9 @@ func addGenerarResumen() {
 						begin 
 
 							SELECT count(nroresumen) into nresumen from cabecera;
-							
+
 							SELECT * into ncliente from cliente where nrocliente = nroclientex ;
 							SELECT * into ntarjeta from tarjeta where nrocliente = nroclientex and estado = 'vigente'; 
-						 
 							tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
 							SELECT right(tarjetaEnText,1) into ultimoDigito; /*el ultimo digito*/
 							digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
@@ -422,7 +427,7 @@ func addGenerarResumen() {
 
 
 							for unaCompra in select * from compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
-										
+		
 								SELECT * INTO ncomercio from comercio where nrocomercio = unaCompra.nrocomercio;
 								SELECT cast (unaCompra.fecha as date) into fechaEnDate;
 								SELECT count(nrolinea) into nlinea from detalle;
@@ -446,7 +451,7 @@ func addCompraRechazadaTrigger() {
 							if nalerta isnull then 
 								nalerta := 1; 
 							end if;
-								INSERT INTO alerta values (nalerta, new.nrotarjeta, new.fecha, new.nrorechazo, 0, 'rechazo');
+								INSERT INTO alerta values (nalerta, new.nrotarjeta, new.fecha, new.nrorechazo, 0, 'Compra Rechazada');
 							return new;
 						end;
 						$$ language plpgsql;
@@ -478,7 +483,7 @@ func add2Compras1mMismoCpTrigger() {
 								if nalerta isnull then 
 									nalerta := 1; 
 								end if;
-									INSERT INTO alerta values (nalerta, new.nrotarjeta, new.fecha, null, 0, 'Se registraron dos compras en un lapso menor de un minuto en comercios distintos ubicados en el mismo codigo postal');
+									INSERT INTO alerta values (nalerta, new.nrotarjeta, new.fecha, null, 1, 'Se registraron dos compras en un lapso menor de un minuto en comercios distintos ubicados en el mismo codigo postal');
 							end if;
 							return new;
 						end;
@@ -511,7 +516,7 @@ func add2Compras5mDistintoCpTrigger() {
 								if nalerta isnull then 
 									nalerta := 1; 
 								end if;
-									INSERT INTO alerta values (nalerta, new.nrotarjeta, new.fecha, null, 0, 'Se registraron dos compras en un lapso menor a 5 minutos en comercios con diferentes codigos postales');
+									INSERT INTO alerta values (nalerta, new.nrotarjeta, new.fecha, null, 5, 'Se registraron dos compras en un lapso menor a 5 minutos en comercios con diferentes codigos postales');
 							end if;
 							return new;
 						end;
@@ -521,6 +526,40 @@ func add2Compras5mDistintoCpTrigger() {
 						after insert on compra
 						for each row
 						execute procedure alerta_compra_5m_distintoCP();`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func add2RechazosPorExcesoLimiteTrigger() {
+	fmt.Println(" Adding 'Alerta 2 compras rechazadas exceso limite' Procedure and trigger")
+	_, err = db.Exec(`  CREATE OR REPLACE function alerta_dos_rechazos_por_execeso_limite() returns trigger as $$
+						DECLARE
+							nalerta int;
+							nrechazos int;
+						BEGIN						
+							SELECT count(*) INTO nrechazos
+							FROM rechazo AS rz
+							WHERE rz.nrotarjeta = new.nrotarjeta AND 
+								rz.codmotivo = 4 AND 
+								rz.fecha BETWEEN date(new.fecha) AND date(new.fecha) + INTERVAL '23:59:59';
+						
+							IF nrechazos = 1 then
+								UPDATE tarjeta SET estado = 'suspendida' where nrotarjeta = new.nrotarjeta;
+								SELECT MAX(nroalerta)+1 INTO nalerta from alerta;
+								if nalerta isnull then 
+									nalerta := 1; 
+								end if;
+									INSERT INTO alerta VALUES (nalerta, new.nrotarjeta, new.fecha, new.nrorechazo, 32, 'Se registraron dos rechazos por exceso de limite en el dia. La tarjeta ha sido suspendida preventivamente');
+							END IF;
+							RETURN new;
+						END;
+						$$ language plpgsql;
+						
+						CREATE trigger compra_rechazada_exceso
+						before insert on rechazo
+						for each row
+						execute procedure alerta_dos_rechazos_por_execeso_limite();`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -548,10 +587,11 @@ func menu() {
 	case 1:
 		autoCreateDatabase()
 	case 2:
-		menuCreacionMnual()
+		advancedMenuBool = true
 	case 3:
 		dropPKandFK()
 	case 4:
+		fmt.Println("Hola, Test!")
 		//funcion a testear
 	case 0:
 		exitBool = true
@@ -560,7 +600,7 @@ func menu() {
 		fmt.Println("No elegiste ninguno")
 	}
 }
-func menuCreacionMnual() {
+func advancedMenu() {
 	menuString :=
 		`
 			Menu de creacion Manual
@@ -599,9 +639,9 @@ func menuCreacionMnual() {
 		addStoredProceduresTriggers()
 	case 8:
 		fmt.Println("Hola, Test!")
-		//addConsumos()
+		//funcion a testear
 	case 0:
-		menu()
+		advancedMenuBool = false
 	default:
 		fmt.Println("No elegiste ninguno")
 	}
