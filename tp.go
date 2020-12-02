@@ -169,7 +169,7 @@ func addTarjetas() {
 
 func addConsumos() {
 	_, err = db.Exec(`  INSERT INTO consumo VALUES ('8680402479723030', '1'    , 10 , 600); --codigo de seguridad invalido
-						INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
+						/*INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
 						INSERT INTO consumo VALUES ('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
 						INSERT INTO consumo VALUES ('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
 						INSERT INTO consumo VALUES ('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
@@ -221,7 +221,7 @@ func addConsumos() {
 						INSERT INTO consumo VALUES ('3573172713553770', '0981' , 9  , 950.60); --compra realizada correctamente cp B1613
 						INSERT INTO consumo VALUES ('5552648744023638', '8974' , 10 , 1990.00); --compra realizada correctamente cp C1827
 						INSERT INTO consumo VALUES ('6326855100263642', '9821' , 11 , 400.40); --tarjeta suspendida
-						INSERT INTO consumo VALUES ('8203564386694367', '0912' , 12 , 800.16);`)
+						INSERT INTO consumo VALUES ('8203564386694367', '0912' , 12 , 800.16);*/`)
 	if err != nil {
 		log.Fatal(err)
 	}
