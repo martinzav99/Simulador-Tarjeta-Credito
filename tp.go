@@ -2,13 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
-	_ "github.com/lib/pq"
-	"encoding/json"
 	"strconv"
-	bolt "github.com/coreos/bbolt"
-	//bolt "go.etcd.io/bbolt"
+
+	//bolt "github.com/coreos/bbolt"
+	_ "github.com/lib/pq"
+	bolt "go.etcd.io/bbolt"
 )
 
 var (
@@ -330,12 +331,9 @@ func addStoredProceduresTriggers() {
 	add2Compras1mMismoCpTrigger()
 	add2Compras5mDistintoCpTrigger()
 	add2RechazosPorExcesoLimiteTrigger()
-	//addOtroTrigger()
+	addConsumosVirtuales()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
-
-
-
 
 func addAutorizacionDeCompra() {
 	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
@@ -568,37 +566,44 @@ func add2RechazosPorExcesoLimiteTrigger() {
 	}
 }
 
-func testeo(){
-	testeoConsumosVirtuales()
-	fmt.Println("inciando testeteo de Consumos virtuales:")
-	_, err = db.Exec(` 
-						--select * from compra;
-						--select * from rechazo; 
-						select consumos_virtuales();
-						`)
+//func testeo() {
+//	testeoConsumosVirtuales()
+//	fmt.Println("inciando testeteo de Consumos virtuales:")
+//	_, err = db.Exec(`
+//						--select * from compra;
+//						--select * from rechazo;
+//						select consumos_virtuales();
+//						`)
+//
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//}
 
+func realizarConsumos() {
+	fmt.Println("Realizando consumos de prueba")
+	_, err = db.Exec(`SELECT procedimiento_testeo();`)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Consumos de prueba realizados!")
 }
 
-func testeoConsumosVirtuales() {
-	fmt.Println(" Cargando Consumos Virtuales")
-	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns void as $$
-						DECLARE
-							unConsumo record;
-						BEGIN						
-							for unConsumo in select * from consumo loop
-								PERFORM autorizacion_de_compra(unConsumo.nrotarjeta,unConsumo.codseguridad,										unConsumo.nrocomercio,unConsumo.monto);
-							end loop;
+func addConsumosVirtuales() {
+	fmt.Println(" Adding 'Consumos Virtuales' Procedure")
+	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION procedimiento_testeo() returns void as $$
+						DECLARE 
+							tupla record;
+						BEGIN 
+							FOR tupla IN SELECT * FROM consumo loop
+								PERFORM autorizacion_de_compra(tupla.nrotarjeta, tupla.codseguridad, tupla.nrocomercio, tupla.monto);
+							END loop;
 						END;
 						$$ language plpgsql;`)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
-
-
 
 func menu() {
 	menuString :=
@@ -607,8 +612,8 @@ func menu() {
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
 		[ 3 ] Remover PKs y FKs
-		[ 4 ] test
-		[ 5 ] Guardar los datos (BoltDB)
+		[ 4 ] Realizar consumos de prueba
+		[ 5 ] Guardar datos (BoltDB)
 
 		[ 0 ] Salir
 		
@@ -627,8 +632,7 @@ func menu() {
 	case 3:
 		dropPKandFK()
 	case 4:
-		fmt.Println("Hola, Test!")
-		testeo()
+		realizarConsumos()
 	case 5:
 		generarBoltDB()
 	case 0:
