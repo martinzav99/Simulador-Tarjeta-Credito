@@ -26,7 +26,6 @@ Una de estas es borrar todas las identifiaciones primareas y foraneas (PK's y FK
 solo se puede realizar mediente la opcion manual.
  
 
-
 == Descripción
 
 El programa inicia mostrando un menú princpipal de bienvenida (CLI) para un manejo
@@ -108,7 +107,7 @@ En caso de no elegir la opción de salida válida, se mostrará un mensaje
 
 === Dificultades y Procedimientos
 
-_parte1_
+_Inicio y Planificación del Proyecto_
 
 Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
@@ -118,26 +117,28 @@ entre las entidades.
 image::diagrama_base.jpg[]
 
 
-_parte2_
+
+_Creando Tablas, PK's y FK's_
 
 Para agregar las Pk's y Fk's se utilizo el formato dado en clases (ver en implementacion).
 En este caso, se realizo una funcion para agregar las pks y fks en sus respectivas
-tablas y otra para borrarlas.
-Resaltamos que, debido al diagrama hecho previamente ayudo de buena manera para 
-visualizar de forma rapida las identificaciones.
+tablas y otra para borrarlas. Resaltamos que, debido al diagrama realizado previamente, 
+fue mucho más fácil visualizar de forma rápida y precisa las identificaciones y sus relaciones.
 
-_parte3_
+_Instancia de Datos_
 
-Al momento de ingresar informacion sobre los comercios y clientes a la base 
-de datos,en lugar de inventar y escribir manualmente, se obtuvo la
-informacion de paginas de internet con datos publicados.
-Donde algunos fueron modificados a conveniencia para usarlo a modo de prueba en
-las proximas funciones a reaizar.
+Al momento de ingresar información sobre los comercios y clientes a la base 
+de datos, en lugar de inventar y escribir manualmente, se obtuvo la
+información de paginas de internet con datos públicos y verdaderos.
+Donde algunos fueron modificados a conveniencia, para usarlo a modo de prueba en
+las proximas funciones a realizar. En el caso de los números de tarjetas de crédito y 
+los CVV, se utilizó un programa online que genera los mismo de forma aleatoria, con el
+fin de que la base de datos parezca mucho más realista: *https://herramientas-online.com/generador-tarjeta-credito-cvv.php* 
 
-_parte4_
+_Implementación de "codmotivo" en la Tabla Rechazos_
 
 Al momento de generar los rechazos encontramos mayor comodidad al implementar en 
-la tabla Rechazo un codmotivo, que funciona de forma semejante al codalerta de la tabla Alerta,
+la tabla Rechazo un *codmotivo*, que funciona de forma semejante al codalerta de la tabla Alerta,
 en este caso a través de cinco variables numéricas se puende constatar el motivo del rechazo.
 
 *MOTIVOS:*
