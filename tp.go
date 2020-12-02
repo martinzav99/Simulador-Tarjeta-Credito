@@ -303,13 +303,13 @@ func generateCierres() {
 			var fCierre string
 			var fVto string
 
-			fInicio = fmt.Sprintf(		"2020-%v-%v", nMes, 	terminacion+2)
+			fInicio = fmt.Sprintf("2020-%v-%v", nMes, terminacion+2)
 			if nMes == 12 {
-				fCierre = fmt.Sprintf(	"2021-%v-%v", 1, 		terminacion+1)
-				fVto = fmt.Sprintf(		"2021-%v-%v", 2, 		terminacion+11)
+				fCierre = fmt.Sprintf("2021-%v-%v", 1, terminacion+1)
+				fVto = fmt.Sprintf("2021-%v-%v", 2, terminacion+11)
 			} else {
-				fCierre = fmt.Sprintf(	"2020-%v-%v", nMes+1, 	terminacion+1)
-				fVto = fmt.Sprintf(		"2020-%v-%v", nMes+1, 	terminacion+11)
+				fCierre = fmt.Sprintf("2020-%v-%v", nMes+1, terminacion+1)
+				fVto = fmt.Sprintf("2020-%v-%v", nMes+1, terminacion+11)
 			}
 			_, err = db.Exec(fmt.Sprintf("INSERT INTO cierre VALUES (2020, %v, %v, '%v', '%v', '%v');", nMes, terminacion, fInicio, fCierre, fVto))
 			if err != nil {
@@ -589,7 +589,6 @@ func menu() {
 		dropPKandFK()
 	case 4:
 		fmt.Println("Hola, Test!")
-		//funcion a testear
 	case 0:
 		exitBool = true
 		fmt.Println("Hasta Luego")
