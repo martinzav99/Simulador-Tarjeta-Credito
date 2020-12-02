@@ -571,7 +571,7 @@ func add2RechazosPorExcesoLimiteTrigger() {
 func testeo(){
 	fmt.Println("inciando testeteo de Consumos virtuales:")
 	_, err = db.Exec(` 
-						select testeoConsumosVirtuales(); `)
+						select consumos_virtuales(); `)
 
 	if err != nil {
 		log.Fatal(err)
