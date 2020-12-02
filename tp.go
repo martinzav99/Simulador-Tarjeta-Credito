@@ -567,15 +567,19 @@ func add2RechazosPorExcesoLimiteTrigger() {
 		log.Fatal(err)
 	}
 }
-/*
-func testeo(){
-	fmt.Println("inciando testeteo:")
-	select testeoConsumosVirtuales();
 
+func testeo(){
+	fmt.Println("inciando testeteo de Consumos virtuales:")
+	_, err = db.Exec(` 
+						select testeoConsumosVirtuales(); `)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
-*/
+
 func testeoConsumosVirtuales() {
-	fmt.Println(" Adding 'Consumos Virtuales' Procedure and trigger")
+	fmt.Println(" Cargando Consumos Virtuales")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns trigger as $$
 						DECLARE
 							unConsumo record;
@@ -620,7 +624,7 @@ func menu() {
 		dropPKandFK()
 	case 4:
 		fmt.Println("Hola, Test!")
-		testeoConsumosVirtuales()
+		testeo()
 	case 5:
 		generarBoltDB()
 	case 0:
