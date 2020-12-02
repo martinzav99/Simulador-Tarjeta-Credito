@@ -68,9 +68,9 @@ func generarBoltDB() {
 		log.Fatal(err)
 	}
 
-	createUpdate(db, "Clientes", []byte(strconv.Itoa(cliente1.Nrocliente)), data_cl1)
+	createUpdate(db, "Clientes", []byte(strconv.Itoa(cliente1.Nrocliente)), dataCl1)
 	resultadoCl1, err := readUnique(db, "Clientes", []byte(strconv.Itoa(cliente1.Nrocliente)))
-	fmt.Printf("%s\n", resultado_cl1)
+	fmt.Printf("%s\n", resultadoCl1)
 
 	cliente2 := Cliente{2, "Leonardo", "Sanabria", "Gaspar Campos 1815", 541148611570}
 
