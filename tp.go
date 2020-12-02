@@ -572,7 +572,10 @@ func testeo(){
 	testeoConsumosVirtuales()
 	fmt.Println("inciando testeteo de Consumos virtuales:")
 	_, err = db.Exec(` 
-						select consumos_virtuales(); `)
+						--select * from compra;
+						--select * from rechazo; 
+						select consumos_virtuales();
+						`)
 
 	if err != nil {
 		log.Fatal(err)
