@@ -634,7 +634,8 @@ func menu() {
 		[ 2 ] Crear Base tpgossz (Manual)
 		[ 3 ] Remover PKs y FKs
 		[ 4 ] Realizar consumos de prueba
-		[ 5 ] Guardar datos (BoltDB)
+		[ 5 ] Realizar resumenes de prueba
+		[ 6 ] Guardar datos (BoltDB)
 
 		[ 0 ] Salir
 		
@@ -654,8 +655,9 @@ func menu() {
 		dropPKandFK()
 	case 4:
 		realizarConsumos()
-		realizarResumenes()
 	case 5:
+		realizarResumenes()
+	case 6:
 		generarBoltDB()
 	case 0:
 		exitBool = true
