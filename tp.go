@@ -82,7 +82,7 @@ func populateDatabase() {
 	addBusiness()
 	addTarjetas()
 	generateCierres()
-	//addConsumos()
+	addConsumos()
 	fmt.Println("Database populated!")
 }
 
