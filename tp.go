@@ -334,11 +334,7 @@ func addStoredProceduresTriggers() {
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
 
-func testeo(){
-	fmt.Println("inciando testeteo:")
-	select testeoconsumosVirtuales();
 
-}
 
 
 func addAutorizacionDeCompra() {
@@ -572,17 +568,23 @@ func add2RechazosPorExcesoLimiteTrigger() {
 	}
 }
 
-func testeoconsumosVirtuales() {
+func testeo(){
+	fmt.Println("inciando testeteo:")
+	select testeoConsumosVirtuales();
+
+}
+
+func testeoConsumosVirtuales() {
 	fmt.Println(" Adding 'Consumos Virtuales' Procedure and trigger")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns trigger as $$
 						DECLARE
 							unConsumo record;
 						BEGIN						
 							for unConsumo in select * from consumo loop
-								PERFORM autorizacion_de_compra(unConsumo.nrotarjeta,unConsumo.codseguridad,unConsumo.nrocomercio,unConsumo.monto);
+								PERFORM autorizacion_de_compra(unConsumo.nrotarjeta,unConsumo.codseguridad,										unConsumo.nrocomercio,unConsumo.monto);
 							end loop;
 						END;
-						$$ language plpgsql;;`)
+						$$ language plpgsql;`)
 	if err != nil {
 		log.Fatal(err)
 	}
