@@ -171,7 +171,6 @@ El procedimiento busca si se validan todas las condiciones antes de autorizar.
 							SELECT COUNT(nrooperacion)+1 INTO noperacion FROM compra;
 							SELECT COUNT(nrorechazo)+1 INTO nrechazo FROM rechazo;
 							SELECT current_date INTO fechaActual;
-						
 							SELECT * FROM tarjeta INTO tarjetaRecord WHERE nrotarjeta = nrotarjetax;
 						
 							if not found then
@@ -194,7 +193,6 @@ El procedimiento busca si se validan todas las condiciones antes de autorizar.
 							
 							SELECT SUM(monto) INTO montoCompraSum FROM compra WHERE nrotarjeta=nrotarjetax and pagado = false;
 							montoTotal := montoCompraSum + montox;
-						
 							IF tarjetaRecord.limitecompra < montoTotal THEN
 								SELECT current_timestamp into timeActual;
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox,'supera limite de tarjeta', 4);
@@ -227,9 +225,7 @@ todas las compras del periodo, y total a pagar).
 							ncierre record;
 							ncomercio record;
 							unaCompra record;
-
 							fechaEnDate date;
-
 							tarjetaEnText text;
 							ultimoDigito text;
 							deudaTotal int;
@@ -239,22 +235,16 @@ todas las compras del periodo, y total a pagar).
 
 						begin 
 							SELECT COUNT(nroresumen) INTO nresumen FROM cabecera;
-
 							SELECT * INTO ncliente FROM cliente WHERE nrocliente = nroclientex ;
 							SELECT * INTO ntarjeta FROM tarjeta WHERE nrocliente = nroclientex and estado = 'vigente'; 
 							tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
 							SELECT right(tarjetaEnText,1) INTO ultimoDigito; /*el ultimo digito*/
 							digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
-
-
 							SELECT * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
 							SELECT sum(monto) into deudaTotal from compra where nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
-
 							INSERT INTO cabecera VALUES (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
 
-
 							FOR unaCompra IN SELECT * FROM compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
-		
 								SELECT * INTO ncomercio FROM comercio WHERE nrocomercio = unaCompra.nrocomercio;
 								SELECT CAST (unaCompra.fecha AS date) INTO fechaEnDate;
 								SELECT COUNT(nrolinea) INTO nlinea FROM detalle;
