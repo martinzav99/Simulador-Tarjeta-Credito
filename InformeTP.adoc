@@ -117,7 +117,6 @@ entre las entidades.
 image::diagrama_base.jpg[]
 
 
-
 _Creando Tablas, PK's y FK's_
 
 Para agregar las Pk's y Fk's se utilizo el formato dado en clases (ver en implementacion).
@@ -166,11 +165,13 @@ El procedimiento busca si se validan todas las condiciones antes de autorizar.
 							nrechazo int;
 							noperacion int;
 							montoTotal int;
+						
 						begin
 							SELECT COUNT(nrooperacion)+1 INTO noperacion FROM compra;
 							SELECT COUNT(nrorechazo)+1 INTO nrechazo FROM rechazo;
 							SELECT current_date INTO fechaActual;
 							SELECT * FROM tarjeta INTO tarjetaRecord WHERE nrotarjeta = nrotarjetax;
+						
 							if not found then
 								SELECT current_timestamp INTO timeActual;
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'tarjeta no valida o no vigente', 0);
@@ -188,6 +189,7 @@ El procedimiento busca si se validan todas las condiciones antes de autorizar.
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'la tarjeta se encuentra suspendida', 3);
 								RETURN false;
 							end if;
+							
 							SELECT SUM(monto) INTO montoCompraSum FROM compra WHERE nrotarjeta=nrotarjetax and pagado = false;
 							montoTotal := montoCompraSum + montox;
 							IF tarjetaRecord.limitecompra < montoTotal THEN
@@ -195,9 +197,11 @@ El procedimiento busca si se validan todas las condiciones antes de autorizar.
 								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox,'supera limite de tarjeta', 4);
 								return false;
 							END IF;
+							
 							SELECT current_timestamp INTO timeActual;
 							INSERT INTO compra VALUES (noperacion, nrotarjetax, nrocomerciox, timeActual, montox, false);
 							RETURN true;
+						
 						END;
 						$$language plpgsql;`)
 	if err != nil {
@@ -227,6 +231,7 @@ todas las compras del periodo, y total a pagar).
 							nresumen int;
 							nlinea int;
 							digito int;
+
 						begin 
 							SELECT COUNT(nroresumen) INTO nresumen FROM cabecera;
 							SELECT * INTO ncliente FROM cliente WHERE nrocliente = nroclientex ;
@@ -237,6 +242,7 @@ todas las compras del periodo, y total a pagar).
 							SELECT * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
 							SELECT sum(monto) into deudaTotal from compra where nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
 							INSERT INTO cabecera VALUES (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
+
 							FOR unaCompra IN SELECT * FROM compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
 								SELECT * INTO ncomercio FROM comercio WHERE nrocomercio = unaCompra.nrocomercio;
 								SELECT CAST (unaCompra.fecha AS date) INTO fechaEnDate;
@@ -267,6 +273,7 @@ todas las compras del periodo, y total a pagar).
 							RETURN new;
 						END;
 						$$ language plpgsql;
+						
 						CREATE TRIGGER compra_rechazada
 						BEFORE INSERT ON rechazo
 						FOR EACH ROW
