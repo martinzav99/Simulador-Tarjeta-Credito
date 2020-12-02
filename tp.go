@@ -330,6 +330,7 @@ func addStoredProceduresTriggers() {
 	add2Compras1mMismoCpTrigger()
 	add2Compras5mDistintoCpTrigger()
 	add2RechazosPorExcesoLimiteTrigger()
+	addconsumosVirtuales()
 	//addOtroTrigger()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
@@ -564,6 +565,24 @@ func add2RechazosPorExcesoLimiteTrigger() {
 		log.Fatal(err)
 	}
 }
+
+func addconsumosVirtuales() {
+	fmt.Println(" Adding 'Consumos Virtuales' Procedure and trigger")
+	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns trigger as $$
+						DECLARE
+							unConsumo record;
+						BEGIN						
+							for unConsumo in select * from consumo loop
+								PERFORM autorizacion_de_compra(unConsumo.nrotarjeta,unConsumo.codseguridad,unConsumo.nrocomercio,unConsumo.monto);
+							end loop;
+						END;
+						$$ language plpgsql;;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+
 
 func menu() {
 	menuString :=
