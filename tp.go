@@ -567,13 +567,13 @@ func add2RechazosPorExcesoLimiteTrigger() {
 		log.Fatal(err)
 	}
 }
-
+/*
 func testeo(){
 	fmt.Println("inciando testeteo:")
 	select testeoConsumosVirtuales();
 
 }
-
+*/
 func testeoConsumosVirtuales() {
 	fmt.Println(" Adding 'Consumos Virtuales' Procedure and trigger")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns trigger as $$
@@ -620,7 +620,7 @@ func menu() {
 		dropPKandFK()
 	case 4:
 		fmt.Println("Hola, Test!")
-		testeo()
+		testeoConsumosVirtuales()
 	case 5:
 		generarBoltDB()
 	case 0:
