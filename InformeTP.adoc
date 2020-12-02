@@ -154,60 +154,55 @@ en este caso a través de cinco variables numéricas se puende constatar el moti
 número de comercio y monto—y crea una compra si de autoriza ó agrega un rechazo en el caso de rechazarla por algún motivo. 
 El procedimiento busca si se validan todas las condiciones antes de autorizar.
 
-*func addAutorizacionDeCompra()* {
-	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
-	_, err = db.Exec(`	CREATE OR REPLACE FUNCTION autorizacion_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
-						declare
-							montoCompraSum int;
-							tarjetaRecord record;
-							fechaActual date;
-							timeActual timestamp;
-							nrechazo int;
-							noperacion int;
-							montoTotal int;
-						
-						begin
-							SELECT COUNT(nrooperacion)+1 INTO noperacion FROM compra;
-							SELECT COUNT(nrorechazo)+1 INTO nrechazo FROM rechazo;
-							SELECT current_date INTO fechaActual;
-							SELECT * FROM tarjeta INTO tarjetaRecord WHERE nrotarjeta = nrotarjetax;
-						
-							if not found then
-								SELECT current_timestamp INTO timeActual;
-								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'tarjeta no valida o no vigente', 0);
-								return false;
-							elsif tarjetaRecord.codseguridad != codseguridadx THEN
-								SELECT current_timestamp INTO timeActual;
-								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'codigo de seguridad invalido', 1);
-								RETURN false;
-							elsif CAST(tarjetaRecord.validahasta as date) < fechaActual THEN /* arreglar */
-								SELECT current_timestamp INTO timeActual;
-								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'plazo de vigencia expirado', 2);
-								RETURN false;
-							elsif tarjetaRecord.estado = 'suspendida' THEN
-								SELECT current_timestamp INTO timeActual;
-								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'la tarjeta se encuentra suspendida', 3);
-								RETURN false;
-							end if;
-							
-							SELECT SUM(monto) INTO montoCompraSum FROM compra WHERE nrotarjeta=nrotarjetax and pagado = false;
-							montoTotal := montoCompraSum + montox;
-							IF tarjetaRecord.limitecompra < montoTotal THEN
-								SELECT current_timestamp into timeActual;
-								INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox,'supera limite de tarjeta', 4);
-								return false;
-							END IF;
-							
-							SELECT current_timestamp INTO timeActual;
-							INSERT INTO compra VALUES (noperacion, nrotarjetax, nrocomerciox, timeActual, montox, false);
-							RETURN true;
-						
-						END;
-						$$language plpgsql;`)
-	if err != nil {
-		log.Fatal(err)
+	*func addAutorizacionDeCompra()* {
+		fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
+		_, err = db.Exec(`	CREATE OR REPLACE FUNCTION autorizacion_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
+			declare
+				montoCompraSum int;
+				tarjetaRecord record;
+				fechaActual date;
+				timeActual timestamp;
+				nrechazo int;
+				noperacion int;
+				montoTotal int;
+			begin
+				SELECT COUNT(nrooperacion)+1 INTO noperacion FROM compra;
+				SELECT COUNT(nrorechazo)+1 INTO nrechazo FROM rechazo;
+				SELECT current_date INTO fechaActual;
+				SELECT * FROM tarjeta INTO tarjetaRecord WHERE nrotarjeta = nrotarjetax;
+				if not found then
+					SELECT current_timestamp INTO timeActual;
+					INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'tarjeta no valida o no vigente', 0);
+					return false;
+				elsif tarjetaRecord.codseguridad != codseguridadx THEN
+					SELECT current_timestamp INTO timeActual;
+					INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'codigo de seguridad invalido', 1);
+					RETURN false;
+				elsif CAST(tarjetaRecord.validahasta as date) < fechaActual THEN /* arreglar */
+					SELECT current_timestamp INTO timeActual;
+					INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'plazo de vigencia expirado', 2);
+					RETURN false;
+				elsif tarjetaRecord.estado = 'suspendida' THEN
+					SELECT current_timestamp INTO timeActual;
+					INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox, 'la tarjeta se encuentra suspendida', 3);
+					RETURN false;
+				end if;
+				SELECT SUM(monto) INTO montoCompraSum FROM compra WHERE nrotarjeta=nrotarjetax and pagado = false;
+				montoTotal := montoCompraSum + montox;
+				IF tarjetaRecord.limitecompra < montoTotal THEN
+					SELECT current_timestamp into timeActual;
+					INSERT INTO rechazo VALUES (nrechazo, nrotarjetax, nrocomerciox, timeActual, montox,'supera limite de tarjeta', 4);
+					return false;
+				END IF;
+				SELECT current_timestamp INTO timeActual;
+				INSERT INTO compra VALUES (noperacion, nrotarjetax, nrocomerciox, timeActual, montox, false);
+				RETURN true;
+			END;
+			$$language plpgsql;`)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-}
 
 *Función: Generación del Resumen* contiene la lógica que reciba
 como parámetros el número de cliente, y el periodo del año, y que guarda en las
@@ -215,73 +210,71 @@ tablas que corresponda los datos del resumen con la información pertinente (nom
 y apellido, dirección, número de tarjeta, periodo del resumen, fecha de vencimiento,
 todas las compras del periodo, y total a pagar).
 
-*func addGenerarResumen()* {
-	fmt.Println(" Adding 'Generar resumen' Procedure")
-	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
-						declare 
-							ncliente record;
-							ntarjeta record;
-							ncierre record;
-							ncomercio record;
-							unaCompra record;
-							fechaEnDate date;
-							tarjetaEnText text;
-							ultimoDigito text;
-							deudaTotal int;
-							nresumen int;
-							nlinea int;
-							digito int;
-
-						begin 
-							SELECT COUNT(nroresumen) INTO nresumen FROM cabecera;
-							SELECT * INTO ncliente FROM cliente WHERE nrocliente = nroclientex ;
-							SELECT * INTO ntarjeta FROM tarjeta WHERE nrocliente = nroclientex and estado = 'vigente'; 
-							tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
-							SELECT right(tarjetaEnText,1) INTO ultimoDigito; /*el ultimo digito*/
-							digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
-							SELECT * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
-							SELECT sum(monto) into deudaTotal from compra where nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
-							INSERT INTO cabecera VALUES (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
-
-							FOR unaCompra IN SELECT * FROM compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
-								SELECT * INTO ncomercio FROM comercio WHERE nrocomercio = unaCompra.nrocomercio;
-								SELECT CAST (unaCompra.fecha AS date) INTO fechaEnDate;
-								SELECT COUNT(nrolinea) INTO nlinea FROM detalle;
-								INSERT INTO detalle VALUES (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
-								unaCompra.pagado := true;
-							END loop;
-						END;
-						$$ language plpgsql;`)
-	if err != nil {
-		log.Fatal(err)
+	*func addGenerarResumen()* {
+		fmt.Println(" Adding 'Generar resumen' Procedure")
+		_, err = db.Exec(`  CREATE OR REPLACE FUNCTION generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
+			declare 
+				ncliente record;
+				ntarjeta record;
+				ncierre record;
+				ncomercio record;
+				unaCompra record;
+				fechaEnDate date;
+				tarjetaEnText text;
+				ultimoDigito text;
+				deudaTotal int;
+				nresumen int;
+				nlinea int;
+				digito int;
+			begin 
+				SELECT COUNT(nroresumen) INTO nresumen FROM cabecera;
+				SELECT * INTO ncliente FROM cliente WHERE nrocliente = nroclientex ;
+				SELECT * INTO ntarjeta FROM tarjeta WHERE nrocliente = nroclientex and estado = 'vigente'; 
+				tarjetaEnText := text (ntarjeta.nrotarjeta); /* paso a texto el numero de tarjeta*/
+				SELECT right(tarjetaEnText,1) INTO ultimoDigito; /*el ultimo digito*/
+				digito := to_number(ultimoDigito,'9');    /*9 es formato de mascara*/
+				SELECT * into ncierre from cierre where anio = aniox and mes = mesx and terminacion = digito; 
+				SELECT sum(monto) into deudaTotal from compra where nrotarjeta = ntarjeta.nrotarjeta and pagado = false;
+				INSERT INTO cabecera VALUES (nresumen,ncliente.nombre,ncliente.apellido,ncliente.domicilio,ntarjeta.nrotarjeta,ncierre.fechainicio,ncierre.fechacierre,ncierre.fechavto,deudaTotal);
+				FOR unaCompra IN SELECT * FROM compra WHERE nrotarjeta = ntarjeta.nrotarjeta loop
+					SELECT * INTO ncomercio FROM comercio WHERE nrocomercio = unaCompra.nrocomercio;
+					SELECT CAST (unaCompra.fecha AS date) INTO fechaEnDate;
+					SELECT COUNT(nrolinea) INTO nlinea FROM detalle;
+					INSERT INTO detalle VALUES (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
+					unaCompra.pagado := true;
+				END loop;
+			END;
+			$$ language plpgsql;`)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-}
 
 *Función que genera una alerta automaticamente* después de que se agregue un rechazo por compra rechazada
 
-*func addCompraRechazadaTrigger()* {
-	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and trigger")
-	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION alerta_compra_rechazada() RETURNS TRIGGER AS $$
-						DECLARE
-							nalerta int;
-						BEGIN
-							SELECT MAX(nroalerta) + 1 INTO nalerta FROM alerta;
-							IF nalerta ISNULL THEN 
-								nalerta := 1; 
-							END IF;
-								INSERT INTO alerta VALUES (nalerta, new.nrotarjeta, new.fecha, new.nrorechazo, 0, 'Compra Rechazada');
-							RETURN new;
-						END;
-						$$ language plpgsql;
-						
-						CREATE TRIGGER compra_rechazada
-						BEFORE INSERT ON rechazo
-						FOR EACH ROW
-						EXECUTE PROCEDURE alerta_compra_rechazada();`)
-	if err != nil {
-		log.Fatal(err)
+	*func addCompraRechazadaTrigger()* {
+		fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and trigger")
+		_, err = db.Exec(`  CREATE OR REPLACE FUNCTION alerta_compra_rechazada() RETURNS TRIGGER AS $$
+			DECLARE
+				nalerta int;
+			BEGIN
+				SELECT MAX(nroalerta) + 1 INTO nalerta FROM alerta;
+				IF nalerta ISNULL THEN 
+					nalerta := 1; 
+				END IF;
+					INSERT INTO alerta VALUES (nalerta, new.nrotarjeta, new.fecha, new.nrorechazo, 0, 'Compra Rechazada');
+				RETURN new;
+			END;
+			$$ language plpgsql;
+			
+			CREATE TRIGGER compra_rechazada
+			BEFORE INSERT ON rechazo
+			FOR EACH ROW
+			EXECUTE PROCEDURE alerta_compra_rechazada();`)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-}
 
 
 == Conclusiones
