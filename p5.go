@@ -51,7 +51,7 @@ type Compra struct {
 	Pagado       bool
 }
 
-func generarBoltDB() {
+func main() {
 	db, err := bolt.Open("tpgossz.db", 0600, nil)
 	if err != nil {
 		log.Fatal(err)
