@@ -36,31 +36,32 @@ se le agrega una tercer opcion que es para realizar pruebas de funcionamiento.
 Por ultimo , se encuentra la opcion de salir.
 
 
-Modelo de menu principal
+*Modelo de menu principal*
 
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
 		[ 3 ] Remover PKs y FKs
-		[ 4 ] test
+		[ 4 ] Realizar consumos de prueba
+		[ 5 ] Guardar datos (BoltDB)
 
 		[ 0 ] Salir
 
 		
-la primera opción es la encargada de crear la base de datos completa 
+La primera opción es la encargada de crear la base de datos completa 
 con tablas, PK's, FK's, clientes,negocios y funciones de forma automatica. 
 
-Entre las funciones se encuentran :
+*Entre las funciones se encuentran:*
 
-Autorizacion de compra: donde se verifica la existencia de una tarjeta 
+*Autorizacion de compra:* donde se verifica la existencia de una tarjeta 
 mediante su número y código de seguridad, el estado de vigencia y su límite
 de compra. Así, se puede validar la compra o generar un rechazo para luego
 cargar la información en su respectiva tabla dependiendo del resultado.
 
-Generar resumen: en la cual se devuelve la información detallada de un cliente
+*Generar resumen:* en la cual se devuelve la información detallada de un cliente
 y el total de gastos junto a infomación sobre todas sus compras realizadas en
 un periodo específico.
 
-Generar alertas: que posee una lógica para generar alertas por fraudes.
+*Generar alertas:* que posee una lógica para generar alertas por fraudes.
 Esta debe ejecutarse cada cierto tiempo de forma automática, donde las
 alertas a detectar se basan en la compra de productos en diferentes comercios
 dentro de un rango de tiempo dependiendo de si sucede en locales de igual o
@@ -74,10 +75,19 @@ para el funcionamiento, agregar los PK's y FK's, completar la base de datos con
 información (popular la base de datos), agregar funciones, y por último, 
 salir o desconectarse.
 
-En la tercera opción, podemos eliminar los PK's y FK's de todas las tablas existentes
+En la tercera opción podemos eliminar los PK's y FK's de todas las tablas existentes
 para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
 
-Modelo de menu secundario
+En la cuarta opción se crea una tabla con consumos virtuales para probar el sistema, 
+la misma contiene los atributos: nrotarjeta, codseguridad, nrocomercio, monto. Y se realiza
+un procedimiento de testeo, que pida autorización para todos los consumos virtuales.
+
+En la quinta opción, y por último, para poder comparar el modelo relacional con un modelo no 
+relacional NoSQL, se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
+cada entidad y de forma hardcodeada) en una base de datos NoSQL basada en JSON. Para ello, 
+utilizamos la base de datos BoltDB.
+
+*Modelo de menu secundario*
 
 		[ 1 ] Eliminar Base tpgossz
 		[ 2 ] Crear Base tpgossz
@@ -85,16 +95,14 @@ Modelo de menu secundario
 		[ 4 ] Crear tablas
 		[ 5 ] Agregar PKs y FKs
 		[ 6 ] Popular Base de datos
-		[ 7 ] Remover PKs y FKs
-		[ 8 ] Agregar Stored Procedures y Triggers
+		[ 7 ] Agregar Stored Procedures y Triggers
 
 		[ 0 ] Volver
 		
-
 Cada vez que el usuario elija una opción la función se ejecutará y hará un seguimiento
 con impresiones por pantalla para indicar su estado y correcto funcionamiento. 
 
-Por último, en caso de no elegir la opción de salida válida, se mostrará un mensaje
+En caso de no elegir la opción de salida válida, se mostrará un mensaje
 "No elegiste ninguno" y se volverá al menu para seleccionar la siguiente tarea.
     
 
@@ -132,12 +140,13 @@ Al momento de generar los rechazos encontramos mayor comodidad al implementar en
 la tabla Rechazo un codmotivo, que funciona de forma semejante al codalerta de la tabla Alerta,
 en este caso a través de cinco variables numéricas se puende constatar el motivo del rechazo.
 
-MOTIVOS:
-1. Tarjeta no valida o no vigente = 0
-2. Codigo de seguridad invalido = 1
-3. Plazo de vigencia expirado = 2
-4. La tarjeta se encuentra suspendida = 3
-5. Supera limite de tarjeta = 4
+*MOTIVOS:*
+
+- Tarjeta no valida o no vigente = 0
+- Codigo de seguridad invalido = 1
+- Plazo de vigencia expirado = 2
+- La tarjeta se encuentra suspendida = 3
+- Supera limite de tarjeta = 4
 
 == Implementación
 
