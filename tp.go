@@ -580,7 +580,7 @@ func testeo(){
 
 func testeoConsumosVirtuales() {
 	fmt.Println(" Cargando Consumos Virtuales")
-	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns trigger as $$
+	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns void as $$
 						DECLARE
 							unConsumo record;
 						BEGIN						
