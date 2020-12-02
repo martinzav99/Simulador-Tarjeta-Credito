@@ -136,9 +136,8 @@ fin de que la base de datos parezca mucho más realista: *https://herramientas-o
 
 _Implementación de "codmotivo" en la Tabla Rechazos_
 
-Al momento de generar los rechazos encontramos mayor comodidad al implementar en 
-la tabla Rechazo un *codmotivo*, que funciona de forma semejante al codalerta de la tabla Alerta,
-en este caso a través de cinco variables numéricas se puende constatar el motivo del rechazo.
+Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que habia sido rechazada una compra. Para hacer esto, decidimos que era mas conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
+en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
 
 *MOTIVOS:*
 
