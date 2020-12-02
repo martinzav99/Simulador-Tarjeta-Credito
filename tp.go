@@ -431,7 +431,7 @@ func addGenerarResumen() {
 		
 								SELECT * INTO ncomercio FROM comercio WHERE nrocomercio = unaCompra.nrocomercio;
 								SELECT CAST (unaCompra.fecha AS date) INTO fechaEnDate;
-								SELECT COUNT(nrolinea) INTO nlinea FROM detalle;
+								SELECT COUNT(nrolinea) INTO nlinea FROM detalle WHERE nroresumen = nresumen;
 								INSERT INTO detalle VALUES (nresumen,nlinea,fechaEnDate,ncomercio.nombre,unaCompra.monto);
 								unaCompra.pagado := true;
 							END loop;
@@ -580,6 +580,10 @@ func add2RechazosPorExcesoLimiteTrigger() {
 //	}
 //}
 
+
+
+
+
 func realizarConsumos() {
 	fmt.Println("Realizando consumos de prueba")
 	_, err = db.Exec(`SELECT procedimiento_testeo();`)
@@ -604,6 +608,23 @@ func addConsumosVirtuales() {
 		log.Fatal(err)
 	}
 }
+
+
+func realizarResumenes() {
+	fmt.Println("Realizando resumenes de prueba")
+	_, err = db.Exec(`SELECT generar_resumen(2,11,2020);
+					  SELECT generar_resumen(3,11,2020);
+					  SELECT generar_resumen(4,11,2020);
+					  SELECT generar_resumen(6,11,2020);`)
+						
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Resumenes de prueba realizados!")
+}
+
+
+
 
 func menu() {
 	menuString :=
@@ -633,6 +654,7 @@ func menu() {
 		dropPKandFK()
 	case 4:
 		realizarConsumos()
+		realizarResumenes()
 	case 5:
 		generarBoltDB()
 	case 0:
