@@ -330,10 +330,16 @@ func addStoredProceduresTriggers() {
 	add2Compras1mMismoCpTrigger()
 	add2Compras5mDistintoCpTrigger()
 	add2RechazosPorExcesoLimiteTrigger()
-	addconsumosVirtuales()
 	//addOtroTrigger()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
+
+func testeo(){
+	fmt.Println("inciando testeteo:")
+	select testeoconsumosVirtuales();
+
+}
+
 
 func addAutorizacionDeCompra() {
 	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
@@ -566,7 +572,7 @@ func add2RechazosPorExcesoLimiteTrigger() {
 	}
 }
 
-func addconsumosVirtuales() {
+func testeoconsumosVirtuales() {
 	fmt.Println(" Adding 'Consumos Virtuales' Procedure and trigger")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION consumos_virtuales() returns trigger as $$
 						DECLARE
@@ -612,6 +618,7 @@ func menu() {
 		dropPKandFK()
 	case 4:
 		fmt.Println("Hola, Test!")
+		testeo()
 	case 5:
 		generarBoltDB()
 	case 0:
