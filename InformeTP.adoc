@@ -1147,9 +1147,9 @@ peticiones simples con tablas pequeñas o poco relacionadas entre sí.
 
 Esta diferencia se ve remarcada con el uso de Boltdb, donde notamos que trabajar con postgres nos 
 permitía un mayor manejo e interacción con la base de datos, al permitirnos crear funciones como autorización 
-de compra y demás el simple hecho de llenar una tabla con datos de forma más sencilla. Por su contraparte, el uso
-de BoltDB lo vemos más orientado a una base de datos pequeña donde lo que se premie es una organización y visión
-sobre datos guardados sin tener actuar sobre ellos.   
+de compra y demás el simple hecho de llenar una tabla con datos de forma más sencilla. En cambio, notamos que 
+BoltDB parece más orientado a una base de datos pequeña, donde lo que se premie sea la organización y la visión
+sobre datos guardados, sin tener actuar sobre ellos.   
 
 En el caso de que tuvieramos que repetir el proyecto realizariamos pequeños cambios como: poder tener comandos 
 dentro del CLI que permitiecen al usuario ingresar clientes, negocios, consumos, etc. También es verdad que esta 
