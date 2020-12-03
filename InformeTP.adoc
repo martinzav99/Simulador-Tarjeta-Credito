@@ -78,11 +78,11 @@ salir o desconectarse.
 En la tercera opción podemos eliminar los PK's y FK's de todas las tablas existentes
 para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
 
-En la cuarta opción se ejecuta un procedimiento que en funcion de los datos cargados en
+La cuarta opción ejecuta un procedimiento que en funcion de los datos cargados en
 la tabla consumos ,sirve para probar las funciones del sistema y simular asi compras 
 validadas o rechazadas de diferentes personas.
 
-En la quinta opción , de manera similar se prueba una funcion que recibe sus datos de 
+La quinta opción , de manera similar se prueba una funcion que recibe sus datos de 
 forma harcodeda pero que guardan relacion con las compras aceptadas que se generaron 
 a causa de la opcion anterior. 
 
@@ -151,6 +151,15 @@ en este caso a través de cinco valores numéricos se puende constatar el motivo
 - Plazo de vigencia expirado = 2
 - La tarjeta se encuentra suspendida = 3
 - Supera limite de tarjeta = 4
+
+_Fk's innecesarias_
+
+En el desarrollo del trabajo , ocurrieron errores debido a que al momento de querer guardar un rechazo o una
+alerta relacionada a un numero de tarjeta invalido, se violaba el uso de las foreing keys.
+Debido a que el trabajo exige que se guarde cualquier intento de compra ,sea valida o no, decidimos elminar 
+la *FK nro tarjeta* que relacionaba la tabla tarjeta con la tabla compra y tambien, la que lo hacia con la tabla alerta.
+El diagrama mostrado previamente ,es el resultado final de las relaciones entre las tablas.
+
 
 == Implementación
 
@@ -1131,22 +1140,25 @@ Funcion que almacena los datos en distintos JSON, para posteriormente duardarlos
 
 == Conclusiones
 
-Una vez realizado el proyecto aprendimos el correcto manejo de SQL en Go, el uso de Postgres y la 
-administración de una base de datos relacionada con tarjetas de creditos con una simulación realista. 
-La comprensión de los temas incluidos en el trabajo práctico nos hicieron cambiar drásticamente nuestra 
-visión sobre los mismos, porque hasta el momento de iniciarlo, solo habías indagado en peticiones 
-simples con tablas pequeñas o poco relacionadas entre sí. 
+Una vez realizado el proyecto aprendimos el correcto manejo de SQL en Go, el uso de Postgres , un vistaso 
+a una base datos no relacional y la  administración de una base de datos relacionada con tarjetas de creditos 
+con una simulación realista. La comprensión de los temas incluidos en el trabajo práctico nos hicieron cambiar drásticamente nuestra visión sobre los mismos, porque hasta el momento de iniciarlo, solo habías indagado en peticiones simples con tablas pequeñas o poco relacionadas entre sí. 
 
-Al ir avanzando en nuestro trabajo confirmamos nuestras sospechas con respecto a los resultados obtenidos, 
-logrando un programa sólido con CLI (en inglés, command-line interface) que cumpliera con todo lo 
-requerido en el enunciado inicial, propuesto por los docentes a cargo.
+Esta diferencia se ve remarcada con el uso de Boltdb , donde notamos que trabajar con postgres nos 
+permitia un mayor manejo e interaccion con la base de datos al permitirnos crear funciones como autorizacion 
+de compra y demas o el simple hecho de llenar una tabla con datos de forma mas sencilla. Por su contraparte, el uso
+de Bolt lo vemos mas orientado a una base de datos pequena donde lo que se premie es una organizacion y vision
+sobre datos guardados sin tener actuar sobre ellos.   
+
 
 En el caso de que tuvieramos que repetir el proyecto realizariamos pequeños cambios como: poder tener comandos 
 dentro del CLI que permitiecen al usuario ingresar clientes, negocios, consumos, etc. También es verdad que esta 
 herramientas de trabajo es nueva para todos los integrantes, fue un poco intrincado el inicio del proyecto, pero
-una vez afianzado lo más básico del trabajo práctico (la conexión con el servidos, la creación de la base de datos 
-con sus tablas respectivas y sus PK's y FK's), lo demás dluyo con mayor facilidad para nosotros.
+una vez afianzado lo más básico del trabajo práctico (la conexión con el servidor, la creación de la base de datos 
+con sus tablas respectivas y sus PK's y FK's), lo demás fluyo con mayor facilidad para nosotros.
+
 
 Una vez observado el resultado del proyecto nos quedamos con ganas de implementar nuevas base de datos de mayor
 complejidad o con diferentes particularidades, también de hacer modificaciones sustanciales al código presentado 
-para mayor cantidad de funcionalidades para nuestro programa que creamos o para aumentar la escalabilidad del proyecto.
+para mayor cantidad de funcionalidades para nuestro programa que creamos o para aumentar la escalabilidad del
+proyecto.
