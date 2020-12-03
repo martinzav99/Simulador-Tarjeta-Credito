@@ -1150,14 +1150,6 @@ de compra y demas o el simple hecho de llenar una tabla con datos de forma mas s
 de Bolt lo vemos mas orientado a una base de datos pequena donde lo que se premie es una organizacion y vision
 sobre datos guardados sin tener actuar sobre ellos, esto debido a que su implementacion al querer igresar datos resulta bastante engorroso.  
 
-
-En el caso de que tuvieramos que repetir el proyecto realizariamos pequeños cambios como: poder tener comandos 
-dentro del CLI que permitiecen al usuario ingresar clientes, negocios, consumos, etc. También es verdad que esta 
-herramientas de trabajo es nueva para todos los integrantes, fue un poco intrincado el inicio del proyecto, pero
-una vez afianzado lo más básico del trabajo práctico (la conexión con el servidor, la creación de la base de datos 
-con sus tablas respectivas y sus PK's y FK's), lo demás fluyo con mayor facilidad para nosotros.
-
-
 Una vez observado el resultado del proyecto nos quedamos con ganas de implementar nuevas base de datos relacionales y no relacionales o con diferentes particularidades, también de hacer modificaciones sustanciales al código presentado 
 para mayor cantidad de funcionalidades para nuestro programa que creamos o para aumentar la escalabilidad del
 proyecto.
