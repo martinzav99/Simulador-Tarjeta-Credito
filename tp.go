@@ -566,24 +566,6 @@ func add2RechazosPorExcesoLimiteTrigger() {
 	}
 }
 
-//func testeo() {
-//	testeoConsumosVirtuales()
-//	fmt.Println("inciando testeteo de Consumos virtuales:")
-//	_, err = db.Exec(`
-//						--select * from compra;
-//						--select * from rechazo;
-//						select consumos_virtuales();
-//						`)
-//
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//}
-
-
-
-
-
 func realizarConsumos() {
 	fmt.Println("Realizando consumos de prueba")
 	_, err = db.Exec(`SELECT procedimiento_testeo();`)
@@ -1034,7 +1016,6 @@ func createUpdate(db *bolt.DB, bucketName string, key []byte, val []byte) error 
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -1047,6 +1028,5 @@ func readUnique(db *bolt.DB, bucketName string, key []byte) ([]byte, error) {
 		buf = b.Get(key)
 		return nil
 	})
-
 	return buf, err
 }
