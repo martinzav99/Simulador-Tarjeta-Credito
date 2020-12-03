@@ -659,7 +659,6 @@ func advancedMenu() {
 		[ 5 ] Agregar PKs y FKs
 		[ 6 ] Popular Base de datos
 		[ 7 ] Agregar Stored Procedures y Triggers
-		[ 8 ] test
 
 		[ 0 ] Volver
 		
@@ -685,9 +684,6 @@ func advancedMenu() {
 		populateDatabase()
 	case 7:
 		addStoredProceduresTriggers()
-	case 8:
-		fmt.Println("Hola, Test!")
-		//funcion a testear
 	case 0:
 		advancedMenuBool = false
 	default:
