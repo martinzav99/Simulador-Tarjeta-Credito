@@ -18,21 +18,20 @@ o alertas e incluso, información sobre la propia tarjeta y su propietario.
 El objetivo del programa es que reconozca y actúa ante situaciones tales como 
 autorización de compra, generar resumenes o alertar a los clientes de posibles
 problemas. Para ello, se deberá previamente crear una base de datos respetando 
-las propiedades de cada tabla , e instanciar datos competentes.
+las propiedades de cada tabla, e instanciar datos competentes.
 
 Además, como usuario tendrá la posibilidad de crear la base de datos manualmente
-y ver el paso a paso de su proceso o la opcion de que se realice todo automanicamente.
-Una de estas es borrar todas las identifiaciones primareas y foraneas (PK's y FK's) que
-solo se puede realizar mediente la opcion manual.
+y ver el "paso a paso" de cada proceso ejecutado o la opción de que se realice todo automáticamente.
+También se podrá borrar todas las identifiaciones primareas y foraneas (PK's y FK's).
  
 
 == Descripción
 
-El programa inicia mostrando un menú princpipal de bienvenida (CLI) para un manejo
-más ordenado con la base de datos. Donde se podra elegir entre crearla y cargarla
-con toda la informacion necesaria automaticamente o hacerlo manualmente. Tambien
-se le agrega una tercer opcion que es para realizar pruebas de funcionamiento.
-Por ultimo , se encuentra la opcion de salir.
+El programa inicia mostrando un menú principal de bienvenida (CLI) para un manejo
+más ordenado con la base de datos. Donde se podrá elegir entre crearla y cargarla
+con toda la informacion necesaria automaticamente o hacerlo manualmente. También
+se le agregan opciones para realizar pruebas de funcionamiento. Por último, se encuentra 
+la opción de salir.
 
 
 *Modelo de menu principal*
@@ -48,11 +47,11 @@ Por ultimo , se encuentra la opcion de salir.
 
 		
 La primera opción es la encargada de crear la base de datos completa 
-con tablas, PK's, FK's, clientes,negocios y funciones de forma automatica. 
+con tablas, PK's y FK's, también agregando clientes, negocios y funciones de forma automática. 
 
 *Entre las funciones se encuentran:*
 
-*Autorizacion de compra:* donde se verifica la existencia de una tarjeta 
+*Autorización de compra:* donde se verifica la existencia de una tarjeta 
 mediante su número y código de seguridad, el estado de vigencia y su límite
 de compra. Así, se puede validar la compra o generar un rechazo para luego
 cargar la información en su respectiva tabla dependiendo del resultado.
@@ -61,12 +60,12 @@ cargar la información en su respectiva tabla dependiendo del resultado.
 y el total de gastos junto a infomación sobre todas sus compras realizadas en
 un periodo específico.
 
-*Generar alertas:* que posee una lógica para generar alertas por fraudes.
+*Generar alertas:* que posee la lógica para generar alertas por fraudes.
 Esta debe ejecutarse cada cierto tiempo de forma automática, donde las
 alertas a detectar se basan en la compra de productos en diferentes comercios
-dentro de un rango de tiempo dependiendo de si sucede en locales de igual o
+dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
 distinto código postal. Luego, se guardan los datos en su respectiva tabla con
-un código identificador para saber que tipo de alerta se produjo.
+un código identificador, para saber que tipo de alerta se produjo.
 
 La segunda opción muestra un menu secundario con las opciones para realizar 
 las mismas acciones que la opción 1, pero con la posibilidad de eliminar la 
@@ -79,12 +78,12 @@ En la tercera opción podemos eliminar los PK's y FK's de todas las tablas exist
 para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
 
 La cuarta opción ejecuta un procedimiento que en funcion de los datos cargados en
-la tabla consumos ,sirve para probar las funciones del sistema y simular asi compras 
+la tabla consumos, sirve para probar las funciones del sistema y simular así compras 
 validadas o rechazadas de diferentes personas.
 
-La quinta opción , de manera similar se prueba una funcion que recibe sus datos de 
-forma harcodeda pero que guardan relacion con las compras aceptadas que se generaron 
-a causa de la opcion anterior. 
+La quinta opción, de manera similar se prueba una función que recibe sus datos de 
+forma hardcodeda, pero que guardan relación con las compras aceptadas que se generaron 
+a causa de la opción anterior. 
 
 En la sexta opción, y por último, para poder comparar el modelo relacional con un modelo no 
 relacional NoSQL, se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
@@ -103,7 +102,7 @@ utilizamos la base de datos BoltDB.
 
 		[ 0 ] Volver
 		
-Cada vez que el usuario elija una opción la función se ejecutará y hará un seguimiento
+Cada vez que el usuario elija una opción, la función se ejecutará y hará un seguimiento
 con impresiones por pantalla para indicar su estado y correcto funcionamiento. 
 
 En caso de no elegir la opción de salida válida, se mostrará un mensaje
@@ -124,8 +123,8 @@ image::Diagrama_base_v2.png[]
 
 _Creando Tablas, PK's y FK's_
 
-Para agregar las Pk's y Fk's se utilizo el formato dado en clases (ver en implementacion).
-En este caso, se realizo una funcion para agregar las pks y fks en sus respectivas
+Para agregar las PK's y FK's se utilizó el formato dado en clases (ver en implementación).
+En este caso, se realizó una función para agregar las PK's y FK's en sus respectivas
 tablas y otra para borrarlas. Resaltamos que, debido al diagrama realizado previamente, 
 fue mucho más fácil visualizar de forma rápida y precisa las identificaciones y sus relaciones.
 
@@ -136,29 +135,29 @@ de datos, en lugar de inventar y escribir manualmente, se obtuvo la
 información de paginas de internet con datos públicos y verdaderos.
 Donde algunos fueron modificados a conveniencia, para usarlo a modo de prueba en
 las proximas funciones a realizar. En el caso de los números de tarjetas de crédito y 
-los CVV, se utilizó un programa online que genera los mismo de forma aleatoria, con el
+los CVV, se utilizó un programa online que genera los mismos de forma aleatoria, con el
 fin de que la base de datos parezca mucho más realista: *https://herramientas-online.com/generador-tarjeta-credito-cvv.php* 
 
 _Implementación de "codmotivo" en la Tabla Rechazos_
 
-Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que habia sido rechazada una compra. Para hacer esto, decidimos que era mas conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
+Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que había sido rechazada una compra. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
 en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
 
 *MOTIVOS:*
 
-- Tarjeta no valida o no vigente = 0
-- Codigo de seguridad invalido = 1
+- Tarjeta no válida o no vigente = 0
+- Código de seguridad inválido = 1
 - Plazo de vigencia expirado = 2
 - La tarjeta se encuentra suspendida = 3
-- Supera limite de tarjeta = 4
+- Supera límite de tarjeta = 4
 
-_Fk's innecesarias_
+_FK's innecesarias_
 
-En el desarrollo del trabajo , ocurrieron errores debido a que al momento de querer guardar un rechazo o una
-alerta relacionada a un numero de tarjeta invalido, se violaba el uso de las foreing keys.
-Debido a que el trabajo exige que se guarde cualquier intento de compra ,sea valida o no, decidimos elminar 
-la *FK nro tarjeta* que relacionaba la tabla tarjeta con la tabla compra y tambien, la que lo hacia con la tabla alerta.
-El diagrama mostrado previamente ,es el resultado final de las relaciones entre las tablas.
+En el desarrollo del trabajo ocurrieron errores debido a que al momento de querer guardar un rechazo o una
+alerta relacionada a un número de tarjeta inválido, se violaba el uso de las foreing keys.
+Debido a que el trabajo exige que se guarde cualquier intento de compra, sea válida o no, decidimos eliminar 
+la *FK nro tarjeta* que relacionaba la tabla tarjeta con la tabla compra y también, la que lo hacía con la tabla alerta.
+El diagrama mostrado previamente, es el resultado final de las relaciones entre las tablas.
 
 
 == Implementación
@@ -1140,16 +1139,24 @@ Funcion que almacena los datos en distintos JSON, para posteriormente duardarlos
 
 == Conclusiones
 
-Una vez realizado el proyecto aprendimos el correcto manejo de SQL en Go, el uso de Postgres , un vistaso 
-a una base datos no relacional y la  administración de una base de datos relacionada con tarjetas de creditos 
-con una simulación realista. La comprensión de los temas incluidos en el trabajo práctico nos hicieron cambiar drásticamente nuestra visión sobre los mismos, porque hasta el momento de iniciarlo, solo habías indagado en peticiones simples con tablas pequeñas o poco relacionadas entre sí. 
+Una vez realizado el proyecto aprendimos el correcto manejo de SQL en Go, el uso de Postgres, un vistazo 
+a una base datos no relacional y la administración de una base de datos relacionada con tarjetas de crédito 
+con una simulación realista. La comprensión de los temas incluidos en el trabajo práctico nos hicieron cambiar 
+drásticamente nuestra visión sobre los mismos, porque hasta el momento de iniciarlo, solo habíamos indagado en 
+peticiones simples con tablas pequeñas o poco relacionadas entre sí. 
 
-Esta diferencia se ve remarcada con el uso de Boltdb , donde notamos que trabajar con postgres nos 
-permitia un mayor manejo e interaccion con la base de datos al permitirnos crear funciones como autorizacion 
-de compra y demas o el simple hecho de llenar una tabla con datos de forma mas sencilla. Por su contraparte, el uso
-de Bolt lo vemos mas orientado a una base de datos pequena donde lo que se premie es una organizacion y vision
-sobre datos guardados sin tener actuar sobre ellos, esto debido a que su implementacion al querer igresar datos resulta bastante engorroso.  
+Esta diferencia se ve remarcada con el uso de Boltdb, donde notamos que trabajar con postgres nos 
+permitía un mayor manejo e interacción con la base de datos, al permitirnos crear funciones como autorización 
+de compra y demás el simple hecho de llenar una tabla con datos de forma más sencilla. Por su contraparte, el uso
+de BoltDB lo vemos más orientado a una base de datos pequeña donde lo que se premie es una organización y visión
+sobre datos guardados sin tener actuar sobre ellos.   
 
-Una vez observado el resultado del proyecto nos quedamos con ganas de implementar nuevas base de datos relacionales y no relacionales o con diferentes particularidades, también de hacer modificaciones sustanciales al código presentado 
-para mayor cantidad de funcionalidades para nuestro programa que creamos o para aumentar la escalabilidad del
-proyecto.
+En el caso de que tuvieramos que repetir el proyecto realizariamos pequeños cambios como: poder tener comandos 
+dentro del CLI que permitiecen al usuario ingresar clientes, negocios, consumos, etc. También es verdad que esta 
+herramientas de trabajo fue nueva para todos los integrantes del equipo, por ello, fue un poco intrincado el inicio 
+del proyecto, pero una vez afianzado lo más básico del trabajo práctico (la conexión con el servidor, la creación de 
+la base de datos con sus tablas respectivas y sus PK's y FK's), lo demás fluyó con mayor facilidad para nosotros.
+
+Una vez observado el resultado del proyecto, nos quedamos con ganas de implementar nuevas base de datos de mayor
+complejidad o con diferentes particularidades, también de hacer modificaciones sustanciales al código presentado 
+para mayor cantidad de funcionalidades para el programa que creamos o para aumentar la escalabilidad del proyecto.
