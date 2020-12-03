@@ -1148,7 +1148,7 @@ Esta diferencia se ve remarcada con el uso de Boltdb , donde notamos que trabaja
 permitia un mayor manejo e interaccion con la base de datos al permitirnos crear funciones como autorizacion 
 de compra y demas o el simple hecho de llenar una tabla con datos de forma mas sencilla. Por su contraparte, el uso
 de Bolt lo vemos mas orientado a una base de datos pequena donde lo que se premie es una organizacion y vision
-sobre datos guardados sin tener actuar sobre ellos.   
+sobre datos guardados sin tener actuar sobre ellos, esto debido a que su implementacion al querer igresar datos resulta bastante engorroso.  
 
 
 En el caso de que tuvieramos que repetir el proyecto realizariamos pequeños cambios como: poder tener comandos 
@@ -1158,7 +1158,6 @@ una vez afianzado lo más básico del trabajo práctico (la conexión con el ser
 con sus tablas respectivas y sus PK's y FK's), lo demás fluyo con mayor facilidad para nosotros.
 
 
-Una vez observado el resultado del proyecto nos quedamos con ganas de implementar nuevas base de datos de mayor
-complejidad o con diferentes particularidades, también de hacer modificaciones sustanciales al código presentado 
+Una vez observado el resultado del proyecto nos quedamos con ganas de implementar nuevas base de datos relacionales y no relacionales o con diferentes particularidades, también de hacer modificaciones sustanciales al código presentado 
 para mayor cantidad de funcionalidades para nuestro programa que creamos o para aumentar la escalabilidad del
 proyecto.
