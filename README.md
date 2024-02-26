@@ -155,7 +155,9 @@ El diagrama mostrado previamente, es el resultado final de las relaciones entre 
 
 ## 3. Implementación 🔧
 
-```
+Importar librerias e inicializar variables
+
+```go
 	package main
 	import (
 		"database/sql"
@@ -176,11 +178,15 @@ El diagrama mostrado previamente, es el resultado final de las relaciones entre 
 		advancedMenuBool = false
 	)
 ```
-```
+
+Funcion principal
+_nota_ : _los comentarios son agregados para no colocar el codgo de esa implmentacion, sin embargo si se encuentra en el repositorio_
+
+```go
 	func main() {
-		defer exit()
-		login(user, password)
-		bienvenida()
+		defer exit() // mensaje de cierre de conexion
+		login(user, password) 
+		bienvenida() // mensaje de bienvenida al usuario   
 		for {
 			if advancedMenuBool {
 				advancedMenu()
@@ -193,12 +199,6 @@ El diagrama mostrado previamente, es el resultado final de las relaciones entre 
 		}
 	}
 
-	func bienvenida() {
-		fmt.Printf(`
-			Bienvenido %s!
-		`, user)
-	}
-
 	func login(user string, password string) {
 		fmt.Println("Connecting to postgres database...")
 		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
@@ -208,12 +208,74 @@ El diagrama mostrado previamente, es el resultado final de las relaciones entre 
 		fmt.Println("Connected to postgres!")
 	}
 
-	func exit() {
-		fmt.Println("Closing connection...")
-		db.Close()
-		fmt.Println("Closed!")
+```
+
+MENU CLI PRINCIPAL
+
+```go
+func menu() {
+		menuString := `` // aca se coloca el modelo del menu principal mostrado en la seccion 2 como string
+		fmt.Printf(menuString)
+		var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
+		fmt.Scan(&eleccion)
+		switch eleccion {
+		case 1:
+			autoCreateDatabase()
+		case 2:
+			advancedMenuBool = true
+		case 3:
+			dropPKandFK()
+		case 4:
+			realizarConsumos()
+		case 5:
+			realizarResumenes()
+		case 6:
+			generarBoltDB()
+		case 0:
+			exitBool = true
+			fmt.Println("Hasta Luego")
+		default:
+			fmt.Println("No elegiste ninguno")
+		}
 	}
 ```
+MENU CLI SECUNDARIO, donde se realizan las tareas de forma manual
+
+```go
+
+
+	func advancedMenu() {
+		menuString := `` // aca se coloca el modelo del menu secundario mostrado en la seccion 2 como string
+		fmt.Printf(menuString)
+		var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
+		fmt.Scan(&eleccion)
+		switch eleccion {
+		case 1:
+			dropDatabase()
+		case 2:
+			createDatabase()
+		case 3:
+			connectDatabase()
+		case 4:
+			createTables()
+		case 5:
+			addPKandFK()
+		case 6:
+			populateDatabase()
+		case 7:
+			addStoredProceduresTriggers()
+		case 0:
+			advancedMenuBool = false
+		default:
+			fmt.Println("No elegiste ninguno")
+		}
+	}
+
+```
+
+
+
+
 ```
 	func createTables() {
 		fmt.Println("Creating tables...")
@@ -699,85 +761,11 @@ Función que incia el proceso de testeo utilizando consumos virtuales
 		fmt.Println("Resumenes de prueba realizados!")
 	}
 
-MENU CLI PRINCIPAL
 
-	func menu() {
-		menuString :=
-			`
-				Menu principal
-			[ 1 ] Crear Base tpgossz (Auto)
-			[ 2 ] Crear Base tpgossz (Manual)
-			[ 3 ] Remover PKs y FKs
-			[ 4 ] Realizar consumos de prueba
-			[ 5 ] Realizar resumenes de prueba
-			[ 6 ] Guardar datos (BoltDB)
-			[ 0 ] Salir
-			Elige una opción
-			`
-		fmt.Printf(menuString)
-		var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
-		fmt.Scan(&eleccion)
-		switch eleccion {
-		case 1:
-			autoCreateDatabase()
-		case 2:
-			advancedMenuBool = true
-		case 3:
-			dropPKandFK()
-		case 4:
-			realizarConsumos()
-		case 5:
-			realizarResumenes()
-		case 6:
-			generarBoltDB()
-		case 0:
-			exitBool = true
-			fmt.Println("Hasta Luego")
-		default:
-			fmt.Println("No elegiste ninguno")
-		}
-	}
 
-MENU CLI SECUNDARIO, donde se realizan las tareas de forma manual
+	
 
-	func advancedMenu() {
-		menuString :=
-			`
-				Menu de creacion Manual
-			[ 1 ] Eliminar Base tpgossz
-			[ 2 ] Crear Base tpgossz
-			[ 3 ] Conectar con Base tpgossz
-			[ 4 ] Crear tablas
-			[ 5 ] Agregar PKs y FKs
-			[ 6 ] Popular Base de datos
-			[ 7 ] Agregar Stored Procedures y Triggers
-			[ 0 ] Volver
-			Elige una opción
-			`
-		fmt.Printf(menuString)
-		var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
-		fmt.Scan(&eleccion)
-		switch eleccion {
-		case 1:
-			dropDatabase()
-		case 2:
-			createDatabase()
-		case 3:
-			connectDatabase()
-		case 4:
-			createTables()
-		case 5:
-			addPKandFK()
-		case 6:
-			populateDatabase()
-		case 7:
-			addStoredProceduresTriggers()
-		case 0:
-			advancedMenuBool = false
-		default:
-			fmt.Println("No elegiste ninguno")
-		}
-	}
+
 
 	func autoCreateDatabase() {
 		dropDatabase()
