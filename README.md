@@ -118,8 +118,7 @@ debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
 entre las entidades. 
 
 .diagrama_base 
-image::Diagrama_base_v2.png[]
-
+![Screenshot](Diagrama_base_v2.png)
 
 _Creando Tablas, PK's y FK's_
 
