@@ -29,7 +29,7 @@ se le agregan opciones para realizar pruebas de funcionamiento. Por último, se 
 la opción de salir.
 
 
-**Modelo de menu principal**
+### 2.1 Modelo de menu principal
 
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
@@ -44,7 +44,7 @@ la opción de salir.
 Opción 1 : es la encargada de crear la base de datos completa con tablas, PK's y FK's,
 también agrega clientes, negocios y funciones de forma automática. 
 
-### Entre las funciones se encuentran:
+**Entre las funciones se encuentran:**
 
 _Autorización de compra:_ donde se verifica la existencia de una tarjeta 
 mediante su número y código de seguridad, el estado de vigencia y su límite
@@ -85,7 +85,7 @@ relacional NoSQL, se guardan los datos de clientes, tarjetas, comercios, y compr
 cada entidad y de forma hardcodeada) en una base de datos NoSQL basada en JSON. Para ello, 
 utilizamos la base de datos BoltDB.
 
-**Modelo de menu secundario**
+### 2.2 Modelo de menu secundario
 
 		[ 1 ] Eliminar Base tpgossz
 		[ 2 ] Crear Base tpgossz
@@ -104,7 +104,7 @@ En caso de no elegir la opción de salida válida, se mostrará un mensaje
 "No elegiste ninguno" y se volverá al menu para seleccionar la siguiente tarea.
     
 
-### Dificultades y Procedimientos
+### 2.3 Dificultades y Procedimientos
 
 _Inicio y Planificación del Proyecto_
 
