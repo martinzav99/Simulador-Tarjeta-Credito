@@ -20,7 +20,7 @@ y ver el "paso a paso" de cada proceso ejecutado o la opción de que se realice 
 También se podrá borrar todas las identifiaciones primareas y foraneas (PK's y FK's).
  
 
-## 2. Descripción
+## 2. Descripción 📋
 
 El programa inicia mostrando un menú principal de bienvenida (CLI) para un manejo
 más ordenado con la base de datos. Donde se podrá elegir entre crearla y cargarla
@@ -121,7 +121,7 @@ En este caso, se realizó una función para agregar las PK's y FK's en sus respe
 tablas y otra para borrarlas. Resaltamos que, debido al diagrama realizado previamente, 
 fue mucho más fácil visualizar de forma rápida y precisa las identificaciones y sus relaciones.
 
-**Instancia de Datos**
+_Instancia de Datos_
 
 Al momento de ingresar información sobre los comercios y clientes a la base 
 de datos, en lugar de inventar y escribir manualmente, se obtuvo la
@@ -131,12 +131,12 @@ las proximas funciones a realizar. En el caso de los números de tarjetas de cr�
 los CVV, se utilizó un programa online que genera los mismos de forma aleatoria, con el
 fin de que la base de datos parezca mucho más realista: *https://herramientas-online.com/generador-tarjeta-credito-cvv.php* 
 
-**Implementación de "codmotivo" en la Tabla Rechazos**
+_Implementación de "codmotivo" en la Tabla Rechazos_
 
 Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que había sido rechazada una compra. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
 en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
 
-### MOTIVOS:
+### Motivos:
 
 - Tarjeta no válida o no vigente = 0
 - Código de seguridad inválido = 1
@@ -153,8 +153,9 @@ la *FK nro tarjeta* que relacionaba la tabla tarjeta con la tabla compra y tambi
 El diagrama mostrado previamente, es el resultado final de las relaciones entre las tablas.
 
 
-## 3. Implementación
+## 3. Implementación 🔧
 
+```
 	package main
 	import (
 		"database/sql"
@@ -174,7 +175,8 @@ El diagrama mostrado previamente, es el resultado final de las relaciones entre 
 		exitBool         = false
 		advancedMenuBool = false
 	)
-
+```
+```
 	func main() {
 		defer exit()
 		login(user, password)
@@ -211,25 +213,27 @@ El diagrama mostrado previamente, es el resultado final de las relaciones entre 
 		db.Close()
 		fmt.Println("Closed!")
 	}
-
+```
+```
 	func createTables() {
 		fmt.Println("Creating tables...")
-		_, err = db.Exec(`	CREATE TABLE cliente (nrocliente int, nombre text, apellido text, domicilio text, telefono varchar(12));
-							CREATE TABLE tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));						
-							CREATE TABLE comercio (nrocomercio int, nombre text, domicilio text, codigopostal varchar(8), telefono varchar(12));
-							CREATE TABLE compra (nrooperacion int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), pagado boolean);
-							CREATE TABLE rechazo (nrorechazo int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), motivo text, codmotivo int);
-							CREATE TABLE cierre (anio int, mes int, terminacion int, fechainicio date, fechacierre date, fechavto date);
-							CREATE TABLE cabecera (nroresumen int, nombre text, apellido text, domicilio text, nrotarjeta varchar(16), desde date, hasta date, vence date, total decimal(8,2));
-							CREATE TABLE detalle (nroresumen int, nrolinea int, fecha date, nombrecomercio text, monto decimal(7,2));
-							CREATE TABLE alerta (nroalerta int, nrotarjeta varchar(16), fecha timestamp, nrorechazo int, codalerta int, descripcion text);
-							CREATE TABLE consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
+		_, err = db.Exec(
+  				`CREATE TABLE cliente (nrocliente int, nombre text, apellido text, domicilio text, telefono varchar(12));
+				 CREATE TABLE tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));					 CREATE TABLE comercio (nrocomercio int, nombre text, domicilio text, codigopostal varchar(8), telefono varchar(12));
+				 CREATE TABLE compra (nrooperacion int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), pagado boolean);
+				 CREATE TABLE rechazo (nrorechazo int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), motivo text, codmotivo int);
+				 CREATE TABLE cierre (anio int, mes int, terminacion int, fechainicio date, fechacierre date, fechavto date);
+				 CREATE TABLE cabecera (nroresumen int, nombre text, apellido text, domicilio text, nrotarjeta varchar(16), desde date, hasta date, vence date, total decimal(8,2));
+				 CREATE TABLE detalle (nroresumen int, nrolinea int, fecha date, nombrecomercio text, monto decimal(7,2));
+				 CREATE TABLE alerta (nroalerta int, nrotarjeta varchar(16), fecha timestamp, nrorechazo int, codalerta int, descripcion text);
+				 CREATE TABLE consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
 		if err != nil {
 			log.Fatal(err)
 		} else {
 			fmt.Println("Tables created succesfully!")
 		}
 	}
+```
 
 Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
 
@@ -1068,7 +1072,7 @@ Funcion que almacena los datos en distintos JSON, para posteriormente duardarlos
 	}
 
 
-## Conclusiones
+## 4. Conclusiones
 
 Una vez realizado el proyecto aprendimos el correcto manejo de SQL en Go, el uso de Postgres, un vistazo 
 a una base datos no relacional y la administración de una base de datos relacionada con tarjetas de crédito 
