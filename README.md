@@ -442,50 +442,54 @@ func addConsumos() {
 			...			
 			INSERT INTO consumo VALUES ('8680402479723030', '8214' , 3  , 600); --compra realizada correctamente cp B1221
 			INSERT INTO consumo VALUES ('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
-			INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00); --tarjeta anulada
+			INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00);`) --tarjeta anulada
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 ```
 
+```go
+func dropPKandFK() {
+	fmt.Println("Removing PKs and FKs...")
+	dropFKs()
+	dropPKs()
+	fmt.Println("PKs and FKs removed succesfully!")
+}
 
-
-	func dropPKandFK() {
-		fmt.Println("Removing PKs and FKs...")
-		dropFKs()
-		dropPKs()
-		fmt.Println("PKs and FKs removed succesfully!")
+func dropPKs() {
+	_, err = db.Exec(`
+			ALTER TABLE cliente 	DROP CONSTRAINT cliente_pk;
+			ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_pk;
+			ALTER TABLE comercio 	DROP CONSTRAINT comercio_pk;
+			ALTER TABLE compra 	DROP CONSTRAINT compra_pk;
+			ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_pk;
+			ALTER TABLE cierre 	DROP CONSTRAINT cierre_pk;
+			ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_pk;
+			ALTER TABLE detalle 	DROP CONSTRAINT detalle_pk;
+			ALTER TABLE alerta 	DROP CONSTRAINT alerta_pk;`)
+	if err != nil {
+		log.Fatal(err)
 	}
+}
 
-	func dropPKs() {
-		_, err = db.Exec(`	ALTER TABLE cliente 	DROP CONSTRAINT cliente_pk;
-							ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_pk;
-							ALTER TABLE comercio 	DROP CONSTRAINT comercio_pk;
-							ALTER TABLE compra 		DROP CONSTRAINT compra_pk;
-							ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_pk;
-							ALTER TABLE cierre 		DROP CONSTRAINT cierre_pk;
-							ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_pk;
-							ALTER TABLE detalle 	DROP CONSTRAINT detalle_pk;
-							ALTER TABLE alerta 		DROP CONSTRAINT alerta_pk;`)
-		if err != nil {
-			log.Fatal(err)
-		}
+func dropFKs() {
+	_, err = db.Exec(`
+			ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_nrocliente_fk;
+			--ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrotarjeta_fk;
+			ALTER TABLE compra 	DROP CONSTRAINT compra_nrotarjeta_fk;
+			--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrotarjeta_fk;
+			ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_nrotarjeta_fk;
+			--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrorechazo_fk;
+			ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrocomercio_fk;
+			ALTER TABLE compra 	DROP CONSTRAINT compra_nrocomercio_fk;`)
+	if err != nil {
+		log.Fatal(err)
 	}
+}
+```
 
-	func dropFKs() {
-		_, err = db.Exec(`	ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_nrocliente_fk;
-							--ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrotarjeta_fk;
-							ALTER TABLE compra 		DROP CONSTRAINT compra_nrotarjeta_fk;
-							--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrotarjeta_fk;
-							ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_nrotarjeta_fk;
-							--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrorechazo_fk;
-							ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrocomercio_fk;
-							ALTER TABLE compra 		DROP CONSTRAINT compra_nrocomercio_fk;`)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	
 
 Funcion que genera los cierres dependiendo de la fecha
 
