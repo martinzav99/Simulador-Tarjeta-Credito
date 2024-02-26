@@ -41,46 +41,46 @@ la opción de salir.
 		[ 0 ] Salir
 
 		
-La primera opción es la encargada de crear la base de datos completa 
-con tablas, PK's y FK's, también agregando clientes, negocios y funciones de forma automática. 
+Opción 1 : es la encargada de crear la base de datos completa con tablas, PK's y FK's,
+también agrega clientes, negocios y funciones de forma automática. 
 
 ### Entre las funciones se encuentran:
 
-**Autorización de compra:** donde se verifica la existencia de una tarjeta 
+_Autorización de compra:_ donde se verifica la existencia de una tarjeta 
 mediante su número y código de seguridad, el estado de vigencia y su límite
 de compra. Así, se puede validar la compra o generar un rechazo para luego
 cargar la información en su respectiva tabla dependiendo del resultado.
 
-**Generar resumen:** en la cual se devuelve la información detallada de un cliente
+_Generar resumen:_ en la cual se devuelve la información detallada de un cliente
 y el total de gastos junto a infomación sobre todas sus compras realizadas en
 un periodo específico.
 
-**Generar alertas:** que posee la lógica para generar alertas por fraudes.
+_Generar alertas:_ que posee la lógica para generar alertas por fraudes.
 Esta debe ejecutarse cada cierto tiempo de forma automática, donde las
 alertas a detectar se basan en la compra de productos en diferentes comercios
 dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
 distinto código postal. Luego, se guardan los datos en su respectiva tabla con
 un código identificador, para saber que tipo de alerta se produjo.
 
-La segunda opción muestra un menu secundario con las opciones para realizar 
+Opción 2: muestra un menu secundario con las opciones para realizar 
 las mismas acciones que la opción 1, pero con la posibilidad de eliminar la 
 base de datos creada, crearla manualmente, conectarse, crear las tablas requeridas 
 para el funcionamiento, agregar los PK's y FK's, completar la base de datos con 
 información (popular la base de datos), agregar funciones, y por último, 
 salir o desconectarse.
 
-En la tercera opción podemos eliminar los PK's y FK's de todas las tablas existentes
+Opción 3: podemos eliminar los PK's y FK's de todas las tablas existentes
 para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
 
-La cuarta opción ejecuta un procedimiento que en funcion de los datos cargados en
+Opción 4: ejecuta un procedimiento que en funcion de los datos cargados en
 la tabla consumos, sirve para probar las funciones del sistema y simular así compras 
 validadas o rechazadas de diferentes personas.
 
-La quinta opción, de manera similar se prueba una función que recibe sus datos de 
+Opción 5, de manera similar se prueba una función que recibe sus datos de 
 forma hardcodeda, pero que guardan relación con las compras aceptadas que se generaron 
 a causa de la opción anterior. 
 
-En la sexta opción, y por último, para poder comparar el modelo relacional con un modelo no 
+Opción 6, y por último, para poder comparar el modelo relacional con un modelo no 
 relacional NoSQL, se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
 cada entidad y de forma hardcodeada) en una base de datos NoSQL basada en JSON. Para ello, 
 utilizamos la base de datos BoltDB.
