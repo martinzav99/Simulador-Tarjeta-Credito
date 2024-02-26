@@ -1,13 +1,8 @@
 # Base de Datos: Trabajo Práctico 1
 Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>; Martin Zavalla <martin.zav99@gmail.com>
 v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
-:title-page:
-:numbered:
-:source-highlighter: coderay
-:tabsize: 4
 
-
-## Introducción
+## 1. Introducción
 
 En este trabajo se realizará una base de datos en postgreSQL mediante Go, 
 donde se representa un modelo de datos que se usa para almacenar
@@ -25,7 +20,7 @@ y ver el "paso a paso" de cada proceso ejecutado o la opción de que se realice 
 También se podrá borrar todas las identifiaciones primareas y foraneas (PK's y FK's).
  
 
-## Descripción
+## 2. Descripción
 
 El programa inicia mostrando un menú principal de bienvenida (CLI) para un manejo
 más ordenado con la base de datos. Donde se podrá elegir entre crearla y cargarla
@@ -34,7 +29,7 @@ se le agregan opciones para realizar pruebas de funcionamiento. Por último, se 
 la opción de salir.
 
 
-*Modelo de menu principal*
+**Modelo de menu principal**
 
 		[ 1 ] Crear Base tpgossz (Auto)
 		[ 2 ] Crear Base tpgossz (Manual)
@@ -49,18 +44,18 @@ la opción de salir.
 La primera opción es la encargada de crear la base de datos completa 
 con tablas, PK's y FK's, también agregando clientes, negocios y funciones de forma automática. 
 
-*Entre las funciones se encuentran:*
+### Entre las funciones se encuentran:
 
-*Autorización de compra:* donde se verifica la existencia de una tarjeta 
+**Autorización de compra:** donde se verifica la existencia de una tarjeta 
 mediante su número y código de seguridad, el estado de vigencia y su límite
 de compra. Así, se puede validar la compra o generar un rechazo para luego
 cargar la información en su respectiva tabla dependiendo del resultado.
 
-*Generar resumen:* en la cual se devuelve la información detallada de un cliente
+**Generar resumen:** en la cual se devuelve la información detallada de un cliente
 y el total de gastos junto a infomación sobre todas sus compras realizadas en
 un periodo específico.
 
-*Generar alertas:* que posee la lógica para generar alertas por fraudes.
+**Generar alertas:** que posee la lógica para generar alertas por fraudes.
 Esta debe ejecutarse cada cierto tiempo de forma automática, donde las
 alertas a detectar se basan en la compra de productos en diferentes comercios
 dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
@@ -90,7 +85,7 @@ relacional NoSQL, se guardan los datos de clientes, tarjetas, comercios, y compr
 cada entidad y de forma hardcodeada) en una base de datos NoSQL basada en JSON. Para ello, 
 utilizamos la base de datos BoltDB.
 
-*Modelo de menu secundario*
+**Modelo de menu secundario**
 
 		[ 1 ] Eliminar Base tpgossz
 		[ 2 ] Crear Base tpgossz
@@ -117,7 +112,6 @@ Para empezar a modelar la base de datos decidimos utilizar el programa *lucidcha
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
 entre las entidades. 
 
-.diagrama_base 
 ![Screenshot](Diagrama_base_v2.png)
 
 _Creando Tablas, PK's y FK's_
@@ -127,7 +121,7 @@ En este caso, se realizó una función para agregar las PK's y FK's en sus respe
 tablas y otra para borrarlas. Resaltamos que, debido al diagrama realizado previamente, 
 fue mucho más fácil visualizar de forma rápida y precisa las identificaciones y sus relaciones.
 
-_Instancia de Datos_
+**Instancia de Datos**
 
 Al momento de ingresar información sobre los comercios y clientes a la base 
 de datos, en lugar de inventar y escribir manualmente, se obtuvo la
@@ -137,12 +131,12 @@ las proximas funciones a realizar. En el caso de los números de tarjetas de cr�
 los CVV, se utilizó un programa online que genera los mismos de forma aleatoria, con el
 fin de que la base de datos parezca mucho más realista: *https://herramientas-online.com/generador-tarjeta-credito-cvv.php* 
 
-_Implementación de "codmotivo" en la Tabla Rechazos_
+**Implementación de "codmotivo" en la Tabla Rechazos**
 
 Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que había sido rechazada una compra. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
 en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
 
-*MOTIVOS:*
+### MOTIVOS:
 
 - Tarjeta no válida o no vigente = 0
 - Código de seguridad inválido = 1
@@ -159,7 +153,7 @@ la *FK nro tarjeta* que relacionaba la tabla tarjeta con la tabla compra y tambi
 El diagrama mostrado previamente, es el resultado final de las relaciones entre las tablas.
 
 
-## Implementación
+## 3. Implementación
 
 	package main
 	import (
