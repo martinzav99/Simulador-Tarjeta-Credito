@@ -183,42 +183,41 @@ Funcion principal
 _nota_ : _los comentarios son agregados para no colocar el codgo de esa implmentacion, sin embargo si se encuentra en el repositorio_
 
 ```go
-	func main() {
-		defer exit() // mensaje de cierre de conexion
-		login(user, password) 
-		bienvenida() // mensaje de bienvenida al usuario   
-		for {
-			if advancedMenuBool {
-				advancedMenu()
-			} else {
-				menu()
-			}
-			if exitBool == true {
-				break
-			}
+func main() {
+	defer exit() // mensaje de cierre de conexion
+	login(user, password) 
+	bienvenida() // mensaje de bienvenida al usuario   
+	for {
+		if advancedMenuBool {
+			advancedMenu()
+		} else {
+			menu()
+		}
+		if exitBool == true {
+			break
 		}
 	}
+}
 
-	func login(user string, password string) {
-		fmt.Println("Connecting to postgres database...")
-		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("Connected to postgres!")
+func login(user string, password string) {
+	fmt.Println("Connecting to postgres database...")
+	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
 	}
-
+	fmt.Println("Connected to postgres!")
+}
 ```
 
 MENU CLI PRINCIPAL
 
 ```go
 func menu() {
-		menuString := `` // aca se coloca el modelo del menu principal mostrado en la seccion 2 como string
-		fmt.Printf(menuString)
-		var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
-		fmt.Scan(&eleccion)
-		switch eleccion {
+	menuString := `` // aca se coloca el modelo del menu principal mostrado en la seccion 2 como string
+	fmt.Printf(menuString)
+	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
+	fmt.Scan(&eleccion)
+	switch eleccion {
 		case 1:
 			autoCreateDatabase()
 		case 2:
@@ -236,20 +235,18 @@ func menu() {
 			fmt.Println("Hasta Luego")
 		default:
 			fmt.Println("No elegiste ninguno")
-		}
 	}
+}
 ```
 MENU CLI SECUNDARIO, donde se realizan las tareas de forma manual
 
 ```go
-
-
-	func advancedMenu() {
-		menuString := `` // aca se coloca el modelo del menu secundario mostrado en la seccion 2 como string
-		fmt.Printf(menuString)
-		var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
-		fmt.Scan(&eleccion)
-		switch eleccion {
+func advancedMenu() {
+	menuString := `` // aca se coloca el modelo del menu secundario mostrado en la seccion 2 como string
+	fmt.Printf(menuString)
+	var eleccion int //Declarar variable y tipo antes de escanear, esto es obligatorio
+	fmt.Scan(&eleccion)
+	switch eleccion {
 		case 1:
 			dropDatabase()
 		case 2:
@@ -268,144 +265,191 @@ MENU CLI SECUNDARIO, donde se realizan las tareas de forma manual
 			advancedMenuBool = false
 		default:
 			fmt.Println("No elegiste ninguno")
-		}
 	}
-
+}
 ```
-
-
 
 
 ```go
-	func createTables() {
-		fmt.Println("Creating tables...")
-		_, err = db.Exec(
-  				`CREATE TABLE cliente (nrocliente int, nombre text, apellido text, domicilio text, telefono varchar(12));
-				 CREATE TABLE tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));					 CREATE TABLE comercio (nrocomercio int, nombre text, domicilio text, codigopostal varchar(8), telefono varchar(12));
-				 CREATE TABLE compra (nrooperacion int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), pagado boolean);
-				 CREATE TABLE rechazo (nrorechazo int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), motivo text, codmotivo int);
-				 CREATE TABLE cierre (anio int, mes int, terminacion int, fechainicio date, fechacierre date, fechavto date);
-				 CREATE TABLE cabecera (nroresumen int, nombre text, apellido text, domicilio text, nrotarjeta varchar(16), desde date, hasta date, vence date, total decimal(8,2));
-				 CREATE TABLE detalle (nroresumen int, nrolinea int, fecha date, nombrecomercio text, monto decimal(7,2));
-				 CREATE TABLE alerta (nroalerta int, nrotarjeta varchar(16), fecha timestamp, nrorechazo int, codalerta int, descripcion text);
-				 CREATE TABLE consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
+
+func autoCreateDatabase() {
+	dropDatabase()
+	createDatabase()
+	connectDatabase()
+	createTables()
+	addPKandFK()
+	populateDatabase()
+	addStoredProceduresTriggers()
+	fmt.Println("\nReady to work!")
+}
+
+func dropDatabase() {
+	fmt.Println("Dropping tpgossz database if exists...")
+	checkIfUsersConnected()
+	_, err = db.Exec(`drop database if exists tpgossz;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("tpgossz database dropped!")
+}
+
+func createDatabase() {
+	fmt.Println("Creating tpgossz Database...")
+	_, err = db.Exec(`CREATE DATABASE tpgossz;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("tpgossz database created succesfully!")
+}
+
+func connectDatabase() {
+	fmt.Println("Connecting to tpgossz database...")
+	//https://notathoughtexperiment.me/blog/how-to-do-create-database-dbname-if-not-exists-in-postgres-in-golang/
+	row := db.QueryRow(`SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = 'tpgossz');`)
+	var exists bool
+	err = row.Scan(&exists)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if exists == false {
+		fmt.Println("tpgossz database doesn't exist!")
+		createDatabase()
+	} else {
+		db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=tpgossz sslmode=disable")
 		if err != nil {
 			log.Fatal(err)
-		} else {
-			fmt.Println("Tables created succesfully!")
+			exit()
 		}
+		fmt.Println("Connected tpgossz!")
 	}
+}
+
+func createTables() {
+	fmt.Println("Creating tables...")
+	_, err = db.Exec(
+		`CREATE TABLE cliente (nrocliente int, nombre text, apellido text, domicilio text, telefono varchar(12));
+		 CREATE TABLE tarjeta (nrotarjeta varchar(16), nrocliente int, validadesde varchar(6), validahasta varchar(6),codseguridad varchar(4), limitecompra decimal(8,2), estado varchar(10));					 CREATE TABLE comercio (nrocomercio int, nombre text, domicilio text, codigopostal varchar(8), telefono varchar(12));
+		 CREATE TABLE compra (nrooperacion int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), pagado boolean);
+		 CREATE TABLE rechazo (nrorechazo int, nrotarjeta varchar(16), nrocomercio int, fecha timestamp, monto decimal(7,2), motivo text, codmotivo int);
+		 CREATE TABLE cierre (anio int, mes int, terminacion int, fechainicio date, fechacierre date, fechavto date);
+		 CREATE TABLE cabecera (nroresumen int, nombre text, apellido text, domicilio text, nrotarjeta varchar(16), desde date, hasta date, vence date, total decimal(8,2));
+ 		 CREATE TABLE detalle (nroresumen int, nrolinea int, fecha date, nombrecomercio text, monto decimal(7,2));
+		 CREATE TABLE alerta (nroalerta int, nrotarjeta varchar(16), fecha timestamp, nrorechazo int, codalerta int, descripcion text);
+		 CREATE TABLE consumo (nrotarjeta varchar(16), codseguridad varchar(4), nrocomercio int, monto decimal(7,2));`)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("Tables created succesfully!")
+	}
+}
 ```
+
+```go
+func addPKandFK() {
+	fmt.Println("Adding PKs and FKs...")
+	addPKs()
+	addFKs()
+	fmt.Println("PKs and FKs added succesfully!")
+}
+
+func addPKs() {
+	_, err = db.Exec(`
+			ALTER TABLE cliente ADD CONSTRAINT cliente_pk PRIMARY KEY (nrocliente);
+			ALTER TABLE tarjeta ADD CONSTRAINT tarjeta_pk PRIMARY KEY (nrotarjeta);
+			ALTER TABLE comercio ADD CONSTRAINT comercio_pk PRIMARY KEY (nrocomercio);
+			ALTER TABLE compra ADD CONSTRAINT compra_pk PRIMARY KEY (nrooperacion);
+			ALTER TABLE rechazo ADD CONSTRAINT rechazo_pk PRIMARY KEY (nrorechazo);
+			ALTER TABLE cierre ADD CONSTRAINT cierre_pk PRIMARY KEY (anio, mes, terminacion);
+			ALTER TABLE cabecera ADD CONSTRAINT cabecera_pk PRIMARY KEY (nroresumen);
+			ALTER TABLE detalle ADD CONSTRAINT detalle_pk PRIMARY KEY (nroresumen, nrolinea);
+			ALTER TABLE alerta ADD CONSTRAINT alerta_pk PRIMARY KEY (nroalerta);`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func addFKs() {
+	_, err = db.Exec(`
+			ALTER TABLE 	tarjeta ADD CONSTRAINT tarjeta_nrocliente_fk 	FOREIGN KEY (nrocliente) REFERENCES cliente (nrocliente);
+			--ALTER TABLE 	rechazo ADD CONSTRAINT rechazo_nrotarjeta_fk 	FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+			ALTER TABLE 	compra ADD CONSTRAINT compra_nrotarjeta_fk 		FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+			--ALTER TABLE 	alerta ADD CONSTRAINT alerta_nrotarjeta_fk 		FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+			ALTER TABLE 	cabecera ADD CONSTRAINT cabecera_nrotarjeta_fk 	FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
+			--ALTER TABLE 	alerta ADD CONSTRAINT alerta_nrorechazo_fk 		FOREIGN KEY (nrorechazo) REFERENCES rechazo (nrorechazo);
+			ALTER TABLE 	rechazo ADD CONSTRAINT rechazo_nrocomercio_fk 	FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);
+			ALTER TABLE 	compra ADD CONSTRAINT compra_nrocomercio_fk 	FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
 
 Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
 
-	
-
 ```go
 func populateDatabase() {
-		fmt.Println("Populating Database...")
-		addClients()
-		addBusiness()
-		addTarjetas()
-		generateCierres()
-		addConsumos()
-		fmt.Println("Database populated!")
+	fmt.Println("Populating Database...")
+	addClients()
+	addBusiness()
+	addTarjetas()
+	generateCierres()
+	addConsumos()
+	fmt.Println("Database populated!")
 }
-```
 
-```go
 func addClients() {
-		_, err = db.Exec(`
-				INSERT INTO cliente VALUES (1, 'Leandro', 	'Sosa', 	'Marco Sastre 4540',	'541152774600');
- 				INSERT INTO cliente VALUES (2, 'Leonardo', 	'Sanabria', 'Gaspar Campos 1815',	'541148611570');
-				....
-				INSERT INTO cliente VALUES (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 		'541194127656');`)
-		if err != nil {
-			log.Fatal(err)
-		}
+	_, err = db.Exec(`
+			INSERT INTO cliente VALUES (1, 'Leandro', 'Sosa', 'Marco Sastre 4540', '541152774600');
+			INSERT INTO cliente VALUES (2, 'Leonardo', 'Sanabria', 'Gaspar Campos 1815', '541148611570');
+			....
+			INSERT INTO cliente VALUES (20, 'Lautaro', 'Rolon', 'Azcuenaga 1913',  '541194127656');`)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
-```
 
-```go
 func addBusiness() {
-		_, err = db.Exec(`
-				INSERT INTO comercio VALUES (1, 'Farmacia Tell','Juncal 699', 'B1663', '541157274612');
-				INSERT INTO comercio VALUES (2, 'Optica Bedini','Peron 781', 'B1871', '541174654172');
-				....
-				INSERT INTO comercio VALUES (21, 'Piero', 'Tribulato 1333', 'B1201', '541142147877');`)
-		if err != nil {
-			log.Fatal(err)
-		}
+	_, err = db.Exec(`
+			INSERT INTO comercio VALUES (1, 'Farmacia Tell','Juncal 699', 'B1663', '541157274612');
+			INSERT INTO comercio VALUES (2, 'Optica Bedini','Peron 781', 'B1871', '541174654172');
+			....
+			INSERT INTO comercio VALUES (21, 'Piero', 'Tribulato 1333', 'B1201', '541142147877');`)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
-```
 
-```go
 func addTarjetas() {
-		_, err = db.Exec(`	
-  				INSERT INTO tarjeta VALUES ('5555899304583399', 1, '200911', '250221', '1234', 100000.90, 'vigente');
-				INSERT INTO tarjeta VALUES ('5269399188431044', 2, '190918', '240928', '0334', 50000,  'vigente');
-				...
-				INSERT INTO tarjeta VALUES ('6326855100263642', 1, '180607', '230627', '9821', 450000.78, 'suspendida');
-				INSERT INTO tarjeta VALUES ('8203564386694367', 2, '140728', '190728', '0912', 9000.99, 'anulada');`)
-		if err != nil {
-			log.Fatal(err)
-		}
+	_, err = db.Exec(`	
+			INSERT INTO tarjeta VALUES ('5555899304583399', 1, '200911', '250221', '1234', 100000.90, 'vigente');
+			INSERT INTO tarjeta VALUES ('5269399188431044', 2, '190918', '240928', '0334', 50000,  'vigente');
+			...
+			INSERT INTO tarjeta VALUES ('6326855100263642', 1, '180607', '230627', '9821', 450000.78, 'suspendida');
+			INSERT INTO tarjeta VALUES ('8203564386694367', 2, '140728', '190728', '0912', 9000.99, 'anulada');`)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func addConsumos() {
+	_, err = db.Exec(`  
+			INSERT INTO consumo VALUES ('8680402479723030', '1'    , 10 , 600); --codigo de seguridad invalido
+			INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
+			INSERT INTO consumo VALUES ('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
+			INSERT INTO consumo VALUES ('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
+			INSERT INTO consumo VALUES ('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
+			...			
+			INSERT INTO consumo VALUES ('8680402479723030', '8214' , 3  , 600); --compra realizada correctamente cp B1221
+			INSERT INTO consumo VALUES ('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
+			INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00); --tarjeta anulada
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 
-```go
-func addConsumos() {
-		_, err = db.Exec(`  
-  				INSERT INTO consumo VALUES ('8680402479723030', '1'    , 10 , 600); --codigo de seguridad invalido
-				INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
-				INSERT INTO consumo VALUES ('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
-				INSERT INTO consumo VALUES ('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
-				INSERT INTO consumo VALUES ('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
-       				...			
-				INSERT INTO consumo VALUES ('8680402479723030', '8214' , 3  , 600); --compra realizada correctamente cp B1221
-				INSERT INTO consumo VALUES ('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
-				INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00); --tarjeta anulada
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-```
-	
-	func addPKandFK() {
-		fmt.Println("Adding PKs and FKs...")
-		addPKs()
-		addFKs()
-		fmt.Println("PKs and FKs added succesfully!")
-	}
 
-	func addPKs() {
-		_, err = db.Exec(`	ALTER TABLE cliente ADD CONSTRAINT cliente_pk PRIMARY KEY (nrocliente);
-							ALTER TABLE tarjeta ADD CONSTRAINT tarjeta_pk PRIMARY KEY (nrotarjeta);
-							ALTER TABLE comercio ADD CONSTRAINT comercio_pk PRIMARY KEY (nrocomercio);
-							ALTER TABLE compra ADD CONSTRAINT compra_pk PRIMARY KEY (nrooperacion);
-							ALTER TABLE rechazo ADD CONSTRAINT rechazo_pk PRIMARY KEY (nrorechazo);
-							ALTER TABLE cierre ADD CONSTRAINT cierre_pk PRIMARY KEY (anio, mes, terminacion);
-							ALTER TABLE cabecera ADD CONSTRAINT cabecera_pk PRIMARY KEY (nroresumen);
-							ALTER TABLE detalle ADD CONSTRAINT detalle_pk PRIMARY KEY (nroresumen, nrolinea);
-							ALTER TABLE alerta ADD CONSTRAINT alerta_pk PRIMARY KEY (nroalerta);`)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	func addFKs() {
-		_, err = db.Exec(`	ALTER TABLE 	tarjeta ADD CONSTRAINT tarjeta_nrocliente_fk 	FOREIGN KEY (nrocliente) REFERENCES cliente (nrocliente);
-							--ALTER TABLE 	rechazo ADD CONSTRAINT rechazo_nrotarjeta_fk 	FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-							ALTER TABLE 	compra ADD CONSTRAINT compra_nrotarjeta_fk 		FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-							--ALTER TABLE 	alerta ADD CONSTRAINT alerta_nrotarjeta_fk 		FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-							ALTER TABLE 	cabecera ADD CONSTRAINT cabecera_nrotarjeta_fk 	FOREIGN KEY (nrotarjeta) REFERENCES tarjeta (nrotarjeta);
-							--ALTER TABLE 	alerta ADD CONSTRAINT alerta_nrorechazo_fk 		FOREIGN KEY (nrorechazo) REFERENCES rechazo (nrorechazo);
-							ALTER TABLE 	rechazo ADD CONSTRAINT rechazo_nrocomercio_fk 	FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);
-							ALTER TABLE 	compra ADD CONSTRAINT compra_nrocomercio_fk 	FOREIGN KEY (nrocomercio) REFERENCES comercio (nrocomercio);`)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
 
 	func dropPKandFK() {
 		fmt.Println("Removing PKs and FKs...")
@@ -750,57 +794,7 @@ Función que incia el proceso de testeo utilizando consumos virtuales
 
 
 
-	func autoCreateDatabase() {
-		dropDatabase()
-		createDatabase()
-		connectDatabase()
-		createTables()
-		addPKandFK()
-		populateDatabase()
-		addStoredProceduresTriggers()
-		fmt.Println("\nReady to work!")
-	}
-
-	func dropDatabase() {
-		fmt.Println("Dropping tpgossz database if exists...")
-		checkIfUsersConnected()
-		_, err = db.Exec(`drop database if exists tpgossz;`)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("tpgossz database dropped!")
-	}
-
-	func createDatabase() {
-		fmt.Println("Creating tpgossz Database...")
-		_, err = db.Exec(`CREATE DATABASE tpgossz;`)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("tpgossz database created succesfully!")
-	}
-
-	func connectDatabase() {
-		fmt.Println("Connecting to tpgossz database...")
-		//https://notathoughtexperiment.me/blog/how-to-do-create-database-dbname-if-not-exists-in-postgres-in-golang/
-		row := db.QueryRow(`SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = 'tpgossz');`)
-		var exists bool
-		err = row.Scan(&exists)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if exists == false {
-			fmt.Println("tpgossz database doesn't exist!")
-			createDatabase()
-		} else {
-			db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=tpgossz sslmode=disable")
-			if err != nil {
-				log.Fatal(err)
-				exit()
-			}
-			fmt.Println("Connected tpgossz!")
-		}
-	}
+	
 
 chequea si hay algún usuario conectado a la base, en el caso de haber lo/s desconecta
 
