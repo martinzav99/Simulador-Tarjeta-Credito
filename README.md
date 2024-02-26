@@ -1,4 +1,4 @@
-= Base de Datos: Trabajo Práctico 1
+# Base de Datos: Trabajo Práctico 1
 Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>; Martin Zavalla <martin.zav99@gmail.com>
 v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
 :title-page:
@@ -7,7 +7,7 @@ v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
 :tabsize: 4
 
 
-== Introducción
+## Introducción
 
 En este trabajo se realizará una base de datos en postgreSQL mediante Go, 
 donde se representa un modelo de datos que se usa para almacenar
@@ -25,7 +25,7 @@ y ver el "paso a paso" de cada proceso ejecutado o la opción de que se realice 
 También se podrá borrar todas las identifiaciones primareas y foraneas (PK's y FK's).
  
 
-== Descripción
+## Descripción
 
 El programa inicia mostrando un menú principal de bienvenida (CLI) para un manejo
 más ordenado con la base de datos. Donde se podrá elegir entre crearla y cargarla
@@ -109,7 +109,7 @@ En caso de no elegir la opción de salida válida, se mostrará un mensaje
 "No elegiste ninguno" y se volverá al menu para seleccionar la siguiente tarea.
     
 
-=== Dificultades y Procedimientos
+### Dificultades y Procedimientos
 
 _Inicio y Planificación del Proyecto_
 
@@ -160,7 +160,7 @@ la *FK nro tarjeta* que relacionaba la tabla tarjeta con la tabla compra y tambi
 El diagrama mostrado previamente, es el resultado final de las relaciones entre las tablas.
 
 
-== Implementación
+## Implementación
 
 	package main
 	import (
@@ -306,24 +306,7 @@ Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
 	func addTarjetas() {
 		_, err = db.Exec(`	INSERT INTO tarjeta VALUES ('5555899304583399', 1, 	'200911', '250221',	'1234', 100000.90, 'vigente');
 							INSERT INTO tarjeta VALUES ('5269399188431044', 2, 	'190918', '240928',	'0334', 50000, 	'vigente');
-							INSERT INTO tarjeta VALUES ('8680402479723030', 3, 	'180322', '230322',	'8214', 700000.12, 	'vigente');
-							INSERT INTO tarjeta VALUES ('7760048064179840', 4, 	'170211', '220221',	'4134', 100000.85, 	'vigente');
-							INSERT INTO tarjeta VALUES ('6317807399246634', 5, 	'200121', '250121',	'2324', 800000.22, 	'vigente');
-							INSERT INTO tarjeta VALUES ('2913395189972781', 6, 	'180819', '230828',	'4321', 900000.38, 	'vigente');
-							INSERT INTO tarjeta VALUES ('4681981280484337', 7,	'201121', '251121',	'8765', 100000.58, 	'vigente');
-							INSERT INTO tarjeta VALUES ('9387191057338602', 8, 	'160910', '210920',	'1253', 650000.85, 'vigente');
-							INSERT INTO tarjeta VALUES ('2503782418139215', 9, 	'161226', '211226',	'8367', 100000.87, 	'vigente');
-							INSERT INTO tarjeta VALUES ('4462725109757091', 10, '200901', '250921',	'6754', 20000.14, 	'vigente');
-							INSERT INTO tarjeta VALUES ('2954596377708750', 11, '180911', '230921',	'7852', 200000.50, 'vigente');
-							INSERT INTO tarjeta VALUES ('6231348143458624', 12, '161221', '211221',	'9873', 54000.25, 	'vigente');
-							INSERT INTO tarjeta VALUES ('4919235066192653', 13, '190911', '240921',	'6753', 10000.00, 	'vigente');
-							INSERT INTO tarjeta VALUES ('3742481627352427', 14, '170928', '220928',	'9801', 45000.56, 	'vigente');
-							INSERT INTO tarjeta VALUES ('2884720084187620', 15, '180111', '230121',	'9876', 500000.75, 	'vigente');
-							INSERT INTO tarjeta VALUES ('2340669528486435', 16, '170923', '220923',	'6752', 9000.80, 	'vigente');
-							INSERT INTO tarjeta VALUES ('2377527131015460', 17, '190912', '240922',	'0987', 100000.23, 	'vigente');
-							INSERT INTO tarjeta VALUES ('8472072142547842', 18, '200421', '250421',	'6987', 650000.00, 	'vigente');
-							INSERT INTO tarjeta VALUES ('3573172713553770', 19, '180216', '230226',	'0981', 220000.25, 	'vigente');
-							INSERT INTO tarjeta VALUES ('5552648744023638', 20, '170425', '220425',	'8974', 100000.45, 	'vigente');
+							...
 							INSERT INTO tarjeta VALUES ('6326855100263642', 1, 	'180607', '230627',	'9821', 450000.78, 	'suspendida');
 							INSERT INTO tarjeta VALUES ('8203564386694367', 2, 	'140728', '190728',	'0912', 9000.99, 	'anulada');`)
 		if err != nil {
@@ -333,59 +316,14 @@ Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
 
 	func addConsumos() {
 		_, err = db.Exec(`  INSERT INTO consumo VALUES ('8680402479723030', '1'    , 10 , 600); --codigo de seguridad invalido
-							INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
-							INSERT INTO consumo VALUES ('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
-							INSERT INTO consumo VALUES ('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
-							INSERT INTO consumo VALUES ('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
-							INSERT INTO consumo VALUES ('8680402479723030', '8214' , 3  , 600); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('8680402479723030', '8214' , 16 , 600); --compra realizada correctamente cp C1017
-							INSERT INTO consumo VALUES ('8680402479723030', '8214' , 10 , 600); --compra realizada correctamente cp C1827
-							INSERT INTO consumo VALUES ('8680402479723030', '8214' , 15 , 600); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('7760048064179840', '4134' , 12 , 2000); --compra realizada correctamente cp C1012
-							INSERT INTO consumo VALUES ('7760048064179840', '1111' , 2  , 5000); --codigo de seguridad invalido
-							INSERT INTO consumo VALUES ('7760048064179840', '1111' , 4  , 66000.90); --supera el limite de tarjeta
-							INSERT INTO consumo VALUES ('2913395189972781', '4321' , 13 , 20560.00); --compra realizada correctamente cp C1026
-							INSERT INTO consumo VALUES ('4681981280484337', '8765' , 14 , 15000.50); --compra realizada correctamente cp C1008
-							INSERT INTO consumo VALUES ('9387191057338602', '1253' , 15 , 600.00); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('2503782418139215', '8367' , 16 , 6500.45); --compra realizada correctamente cp C1017
-							INSERT INTO consumo VALUES ('4462725109757091', '6754' , 17 , 8001.45); --compra realizada correctamente cp C1222
-							INSERT INTO consumo VALUES ('2954596377708750', '7852' , 18 , 12000.70); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('6231348143458624', '9873' , 19 , 900.55); --compra realizada correctamente cp B1224
-							INSERT INTO consumo VALUES ('4919235066192653', '6753' , 20 , 7000.90); --compra realizada correctamente cp B1199
-							INSERT INTO consumo VALUES ('3742481627352427', '9801' , 1  , 700.95); --compra realizada correctamente cp B1663
-							INSERT INTO consumo VALUES ('2884720084187620', '9876' , 2  , 1300.70); --compra realizada correctamente cp B1871
-							INSERT INTO consumo VALUES ('2340669528486435', '6752' , 3  , 66600.20); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('2377527131015460', '0987' , 4  , 9000.00); --compra realizada correctamente cp B1636
-							INSERT INTO consumo VALUES ('8472072142547842', '6987' , 5  , 7240.70); --compra realizada correctamente cp B1663
-							INSERT INTO consumo VALUES ('3573172713553770', '0981' , 6  , 700.95); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('5552648744023638', '8974' , 7  , 3100.70); --compra realizada correctamente cp B1613
-							INSERT INTO consumo VALUES ('6326855100263642', '9821' , 8  , 50200.40); --tarjeta suspendida
-							INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00); --tarjeta anulada
-							INSERT INTO consumo VALUES ('5555899304583399', '6987' , 11 , 18500.80); --compra realizada correctamente cp C1827
-							INSERT INTO consumo VALUES ('5555899304583399', '6987' , 12 , 26000.00); --supera el limite de tarjeta
-							INSERT INTO consumo VALUES ('5555899304583399', '6987' , 13 , 2540.90); --compra realizada correctamente cp C1026
-							INSERT INTO consumo VALUES ('5269399188431044', '0334' , 14 , 5600.50); --compra realizada correctamente cp C1008
-							INSERT INTO consumo VALUES ('7760048064179840', '4134' , 15 , 8000.00); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('6317807399246634', '2324' , 16 , 5000.40); --compra realizada correctamente cp C1017
-							INSERT INTO consumo VALUES ('2913395189972781', '4321' , 17 , 50500.20); --compra realizada correctamente cp C1222
-							INSERT INTO consumo VALUES ('4681981280484337', '8765' , 18 , 5440.10); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('9387191057338602', '1253' , 19 , 5000.40); --compra realizada correctamente cp B1224
-							INSERT INTO consumo VALUES ('2503782418139215', '8367' , 20 , 5000.20); --compra realizada correctamente cp B1199
-							INSERT INTO consumo VALUES ('4462725109757091', '6754' , 21 , 5440.10); --compra realizada correctamente cp B1201
-							INSERT INTO consumo VALUES ('2954596377708750', '7852' , 1  , 2000.20); --compra realizada correctamente cp B1663
-							INSERT INTO consumo VALUES ('6231348143458624', '9873' , 2  , 7440.10); --compra realizada correctamente cp B1871
-							INSERT INTO consumo VALUES ('4919235066192653', '6753' , 3  , 2000.40); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('3742481627352427', '9801' , 4  , 50.50); --compra realizada correctamente cp B1636
-							INSERT INTO consumo VALUES ('2884720084187620', '9876' , 5  , 440.80); --compra realizada correctamente cp B1663
-							INSERT INTO consumo VALUES ('2340669528486435', '6752' , 6  , 4000.20); --compra realizada correctamente cp B1221
-							INSERT INTO consumo VALUES ('2377527131015460', '0987' , 7  , 880.16); --compra realizada correctamente cp B1613
-							INSERT INTO consumo VALUES ('8472072142547842', '6987' , 8  , 7000.40); --compra realizada correctamente cp B1850
-							INSERT INTO consumo VALUES ('3573172713553770', '0981' , 9  , 950.60); --compra realizada correctamente cp B1613
-							INSERT INTO consumo VALUES ('5552648744023638', '8974' , 10 , 1990.00); --compra realizada correctamente cp C1827
-							INSERT INTO consumo VALUES ('6326855100263642', '9821' , 11 , 400.40); --tarjeta suspendida
-							INSERT INTO consumo VALUES ('8203564386694367', '0912' , 12 , 800.16);`)
+				    INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
+				    INSERT INTO consumo VALUES ('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
+				    INSERT INTO consumo VALUES ('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
+				    INSERT INTO consumo VALUES ('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
+       				    ...			
+				    INSERT INTO consumo VALUES ('8680402479723030', '8214' , 3  , 600); --compra realizada correctamente cp B1221
+				    INSERT INTO consumo VALUES ('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
+				    INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00); --tarjeta anulada
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -1137,7 +1075,7 @@ Funcion que almacena los datos en distintos JSON, para posteriormente duardarlos
 	}
 
 
-== Conclusiones
+## Conclusiones
 
 Una vez realizado el proyecto aprendimos el correcto manejo de SQL en Go, el uso de Postgres, un vistazo 
 a una base datos no relacional y la administración de una base de datos relacionada con tarjetas de crédito 
