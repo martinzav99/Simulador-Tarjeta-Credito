@@ -276,7 +276,7 @@ MENU CLI SECUNDARIO, donde se realizan las tareas de forma manual
 
 
 
-```
+```go
 	func createTables() {
 		fmt.Println("Creating tables...")
 		_, err = db.Exec(
@@ -299,7 +299,10 @@ MENU CLI SECUNDARIO, donde se realizan las tareas de forma manual
 
 Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
 
-	func populateDatabase() {
+	
+
+```go
+func populateDatabase() {
 		fmt.Println("Populating Database...")
 		addClients()
 		addBusiness()
@@ -307,87 +310,67 @@ Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
 		generateCierres()
 		addConsumos()
 		fmt.Println("Database populated!")
-	}
+}
+```
 
-	func addClients() {
-		_, err = db.Exec(`	INSERT INTO cliente VALUES (1, 'Leandro', 	'Sosa', 	'Marco Sastre 4540',	'541152774600');
-							INSERT INTO cliente VALUES (2, 'Leonardo', 	'Sanabria', 'Gaspar Campos 1815',	'541148611570');
-							INSERT INTO cliente VALUES (3, 'Florencia', 'Knol', 	'Zapiola 2825', 		'541148913800');
-							INSERT INTO cliente VALUES (4, 'Romina', 	'Subelza', 	'Libertad 3113', 		'541149422726');
-							INSERT INTO cliente VALUES (5, 'Marisa', 	'Sanchez', 	'Italia 812', 			'541143819523');
-							INSERT INTO cliente VALUES (6, 'Leonardo', 	'Sanabria', 'Gaspar Campos 1815',	'541143344001');
-							INSERT INTO cliente VALUES (7, 'Sebastian', 'Saavedra', 'Juncal 1139', 			'541147735133');
-							INSERT INTO cliente VALUES (8, 'Matias', 	'Palermo', 	'Godoy Cruz 2725', 		'541143344001');
-							INSERT INTO cliente VALUES (9, 'Alejandro', 'Belgrano', 'Obligado 2727', 		'541152774600');
-							INSERT INTO cliente VALUES (10, 'Florencia', 'Diotallevi', 'Ecuador 282', 		'541148341571');
-							INSERT INTO cliente VALUES (11, 'Camila', 	'Pipke', 	'Reconquista 914', 		'541148913800');
-							INSERT INTO cliente VALUES (12, 'Melisa', 	'Quevedo', 	'La Plata 4215', 		'541149422726');
-							INSERT INTO cliente VALUES (13, 'Micaela', 	'Valle', 	'Pasco 860', 			'541162722494');
-							INSERT INTO cliente VALUES (14, 'Abigail', 	'Gerez', 	'Pellegrini 2312',		'541143344057');
-							INSERT INTO cliente VALUES (15, 'Celeste', 	'Herenu', 	'Rivadavia 1592', 		'541172422755');
-							INSERT INTO cliente VALUES (16, 'Andrea', 	'Bernal', 	'Alvear 4215', 			'541143123003');
-							INSERT INTO cliente VALUES (17, 'Aldana', 	'Ramos', 	'Cevallos 261', 		'541143727636');
-							INSERT INTO cliente VALUES (18, 'Antonella', 'Herrera', 'Gascon 1241', 			'541148631232');
-							INSERT INTO cliente VALUES (19, 'Pedro', 	'Rafele', 	'Urquiza 1241', 		'541144927876');
-							INSERT INTO cliente VALUES (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 		'541194127656');`)
+```go
+func addClients() {
+		_, err = db.Exec(`
+				INSERT INTO cliente VALUES (1, 'Leandro', 	'Sosa', 	'Marco Sastre 4540',	'541152774600');
+ 				INSERT INTO cliente VALUES (2, 'Leonardo', 	'Sanabria', 'Gaspar Campos 1815',	'541148611570');
+				....
+				INSERT INTO cliente VALUES (20, 'Lautaro', 	'Rolon', 	'Azcuenaga 1913', 		'541194127656');`)
+		if err != nil {
+			log.Fatal(err)
+		}
+}
+```
+
+```go
+func addBusiness() {
+		_, err = db.Exec(`
+				INSERT INTO comercio VALUES (1, 'Farmacia Tell','Juncal 699', 'B1663', '541157274612');
+				INSERT INTO comercio VALUES (2, 'Optica Bedini','Peron 781', 'B1871', '541174654172');
+				....
+				INSERT INTO comercio VALUES (21, 'Piero', 'Tribulato 1333', 'B1201', '541142147877');`)
+		if err != nil {
+			log.Fatal(err)
+		}
+}
+```
+
+```go
+func addTarjetas() {
+		_, err = db.Exec(`	
+  				INSERT INTO tarjeta VALUES ('5555899304583399', 1, '200911', '250221', '1234', 100000.90, 'vigente');
+				INSERT INTO tarjeta VALUES ('5269399188431044', 2, '190918', '240928', '0334', 50000,  'vigente');
+				...
+				INSERT INTO tarjeta VALUES ('6326855100263642', 1, '180607', '230627', '9821', 450000.78, 'suspendida');
+				INSERT INTO tarjeta VALUES ('8203564386694367', 2, '140728', '190728', '0912', 9000.99, 'anulada');`)
+		if err != nil {
+			log.Fatal(err)
+		}
+}
+```
+
+```go
+func addConsumos() {
+		_, err = db.Exec(`  
+  				INSERT INTO consumo VALUES ('8680402479723030', '1'    , 10 , 600); --codigo de seguridad invalido
+				INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
+				INSERT INTO consumo VALUES ('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
+				INSERT INTO consumo VALUES ('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
+				INSERT INTO consumo VALUES ('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
+       				...			
+				INSERT INTO consumo VALUES ('8680402479723030', '8214' , 3  , 600); --compra realizada correctamente cp B1221
+				INSERT INTO consumo VALUES ('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
+				INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00); --tarjeta anulada
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-
-	func addBusiness() {
-		_, err = db.Exec(`	INSERT INTO comercio VALUES (1, 'Farmacia Tell','Juncal 699',		'B1663',	'541157274612');
-							INSERT INTO comercio VALUES (2, 'Optica Bedini','Peron 781', 		'B1871',	'541174654172');
-							INSERT INTO comercio VALUES (3, 'Terravision',	'Urquiza 1361',	 	'B1221',	'541183910808');
-							INSERT INTO comercio VALUES (4, 'Optica Lutz', 	'Libertad 3113', 	'B1636',	'541149476322');
-							INSERT INTO comercio VALUES (5, 'Chatelet', 	'Italia 812', 		'B1663',	'541140715725');
-							INSERT INTO comercio VALUES (6, 'Magoya', 		'Peron 1601', 		'B1221',	'541153682324');
-							INSERT INTO comercio VALUES (7, 'Mayo Resto', 	'Mitre 1319', 		'B1613',	'541198035313');
-							INSERT INTO comercio VALUES (8, 'Macowens', 	'Gascon 1481', 		'B1850', 	'541143565021');
-							INSERT INTO comercio VALUES (9, 'Mundo Peluche','Balbin 1645', 		'B1613',	'541152604684');
-							INSERT INTO comercio VALUES (10, 'Sonia Novias','Sarmiento 1468', 	'C1827',	'541158573111');
-							INSERT INTO comercio VALUES (11, 'Lentes Novar','Rivadavia 5802', 	'B1221',	'541141213088');
-							INSERT INTO comercio VALUES (12, 'TatuArte', 	'Paunero 1564', 	'C1012',	'541149433826');
-							INSERT INTO comercio VALUES (13, 'Kosiuko', 	'Marco Sastre 1840','C1026',	'541180712494');
-							INSERT INTO comercio VALUES (14, 'Ossira', 		'Paunero 545', 		'C1008',	'541143314057');
-							INSERT INTO comercio VALUES (15, 'Blindado Bar','Ecuador 5451', 	'B1221',	'541105927551');
-							INSERT INTO comercio VALUES (16, 'Epic Shop', 	'Alvear 6014', 		'C1017',	'541143128703');
-							INSERT INTO comercio VALUES (17, 'XS Resto', 	'Pasco 1261', 		'C1222',	'541143027636');
-							INSERT INTO comercio VALUES (18, 'Hipervision', 'Libertad 1241', 	'B1221',	'541189151232');
-							INSERT INTO comercio VALUES (19, 'Cibernet', 	'Urquiza 1241', 	'B1224',	'541144945876');
-							INSERT INTO comercio VALUES (20, 'Crazy World', 'Zapiola 1086', 	'B1199',	'541175085786');
-							INSERT INTO comercio VALUES (21, 'Piero', 		'Tribulato 1333', 	'B1201',	'541142147877');`)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	func addTarjetas() {
-		_, err = db.Exec(`	INSERT INTO tarjeta VALUES ('5555899304583399', 1, 	'200911', '250221',	'1234', 100000.90, 'vigente');
-							INSERT INTO tarjeta VALUES ('5269399188431044', 2, 	'190918', '240928',	'0334', 50000, 	'vigente');
-							...
-							INSERT INTO tarjeta VALUES ('6326855100263642', 1, 	'180607', '230627',	'9821', 450000.78, 	'suspendida');
-							INSERT INTO tarjeta VALUES ('8203564386694367', 2, 	'140728', '190728',	'0912', 9000.99, 	'anulada');`)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	func addConsumos() {
-		_, err = db.Exec(`  INSERT INTO consumo VALUES ('8680402479723030', '1'    , 10 , 600); --codigo de seguridad invalido
-				    INSERT INTO consumo VALUES ('8680402479723055', '8214' , 10 , 600); --tarjeta no valida o no vigente
-				    INSERT INTO consumo VALUES ('6326855100263642', '9821' , 10 , 600); --tarjeta suspendida
-				    INSERT INTO consumo VALUES ('8203564386694367', '0912' , 10 , 600); --tarjeta plazo de vigencia expirado
-				    INSERT INTO consumo VALUES ('5269399188431044', '0334' , 10 , 50001); --supera el limite de tarjeta
-       				    ...			
-				    INSERT INTO consumo VALUES ('8680402479723030', '8214' , 3  , 600); --compra realizada correctamente cp B1221
-				    INSERT INTO consumo VALUES ('8680402479723030', '8214' , 11 , 600); --compra realizada correctamente cp B1221
-				    INSERT INTO consumo VALUES ('8203564386694367', '0912' , 9  , 16500.00); --tarjeta anulada
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
+```
+	
 	func addPKandFK() {
 		fmt.Println("Adding PKs and FKs...")
 		addPKs()
