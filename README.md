@@ -1,6 +1,4 @@
-# Base de Datos: Trabajo Práctico 1
-Martin Sosa <@gmail.com>; Maxi Schmidt <@gmail.com>; Martin Zavalla <martin.zav99@gmail.com>
-v1, {docdate}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
+# Base de Datos: Trabajo Práctico 
 
 ## 1. Introducción
 
