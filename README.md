@@ -440,47 +440,6 @@ func addConsumos() {
 ```
 
 ```go
-func dropPKandFK() {
-	fmt.Println("Removing PKs and FKs...")
-	dropFKs()
-	dropPKs()
-	fmt.Println("PKs and FKs removed succesfully!")
-}
-
-func dropPKs() {
-	_, err = db.Exec(`
-			ALTER TABLE cliente 	DROP CONSTRAINT cliente_pk;
-			ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_pk;
-			ALTER TABLE comercio 	DROP CONSTRAINT comercio_pk;
-			ALTER TABLE compra 	DROP CONSTRAINT compra_pk;
-			ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_pk;
-			ALTER TABLE cierre 	DROP CONSTRAINT cierre_pk;
-			ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_pk;
-			ALTER TABLE detalle 	DROP CONSTRAINT detalle_pk;
-			ALTER TABLE alerta 	DROP CONSTRAINT alerta_pk;`)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func dropFKs() {
-	_, err = db.Exec(`
-			ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_nrocliente_fk;
-			--ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrotarjeta_fk;
-			ALTER TABLE compra 	DROP CONSTRAINT compra_nrotarjeta_fk;
-			--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrotarjeta_fk;
-			ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_nrotarjeta_fk;
-			--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrorechazo_fk;
-			ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrocomercio_fk;
-			ALTER TABLE compra 	DROP CONSTRAINT compra_nrocomercio_fk;`)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-```
-
-
-```go
 
 func addStoredProceduresTriggers() {
 	fmt.Println("Adding Stored Procedures and Triggers...")
@@ -737,30 +696,78 @@ func addConsumosVirtuales() {
 		log.Fatal(err)
 	}
 }
-
 ```
 
+CASE 3
+```go
+func dropPKandFK() {
+	fmt.Println("Removing PKs and FKs...")
+	dropFKs()
+	dropPKs()
+	fmt.Println("PKs and FKs removed succesfully!")
+}
 
-	func realizarConsumos() {
-		fmt.Println("Realizando consumos de prueba")
-		_, err = db.Exec(`SELECT procedimiento_testeo();`)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("Consumos de prueba realizados!")
+func dropPKs() {
+	_, err = db.Exec(`
+			ALTER TABLE cliente 	DROP CONSTRAINT cliente_pk;
+			ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_pk;
+			ALTER TABLE comercio 	DROP CONSTRAINT comercio_pk;
+			ALTER TABLE compra 	DROP CONSTRAINT compra_pk;
+			ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_pk;
+			ALTER TABLE cierre 	DROP CONSTRAINT cierre_pk;
+			ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_pk;
+			ALTER TABLE detalle 	DROP CONSTRAINT detalle_pk;
+			ALTER TABLE alerta 	DROP CONSTRAINT alerta_pk;`)
+	if err != nil {
+		log.Fatal(err)
 	}
+}
 
-	func realizarResumenes() {
-		fmt.Println("Realizando resumenes de prueba")
-		_, err = db.Exec(`SELECT generar_resumen(2,11,2020);
-						SELECT generar_resumen(3,11,2020);
-						SELECT generar_resumen(4,11,2020);
-						SELECT generar_resumen(6,11,2020);`)			
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("Resumenes de prueba realizados!")
+func dropFKs() {
+	_, err = db.Exec(`
+			ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_nrocliente_fk;
+			--ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrotarjeta_fk;
+			ALTER TABLE compra 	DROP CONSTRAINT compra_nrotarjeta_fk;
+			--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrotarjeta_fk;
+			ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_nrotarjeta_fk;
+			--ALTER TABLE alerta 	DROP CONSTRAINT alerta_nrorechazo_fk;
+			ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrocomercio_fk;
+			ALTER TABLE compra 	DROP CONSTRAINT compra_nrocomercio_fk;`)
+	if err != nil {
+		log.Fatal(err)
 	}
+}
+```
+CASE 4
+```go
+func realizarConsumos() {
+	fmt.Println("Realizando consumos de prueba")
+	_, err = db.Exec(`SELECT procedimiento_testeo();`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Consumos de prueba realizados!")
+}
+```
+CASE 5
+```go
+func realizarResumenes() {
+	fmt.Println("Realizando resumenes de prueba")
+	_, err = db.Exec(`
+		SELECT generar_resumen(2,11,2020);
+		SELECT generar_resumen(3,11,2020);
+		SELECT generar_resumen(4,11,2020);
+		SELECT generar_resumen(6,11,2020);`)
+			
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Resumenes de prueba realizados!")
+}
+```
+	
+
+	
 
 
 //////////////////////////////////////////////////////////////////////////////5. JSON y Bases de datos NoSQL
