@@ -129,7 +129,6 @@ fin de que la base de datos parezca mucho más realista: *https://herramientas-o
 Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que había sido rechazada una compra. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
 en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
 
-Motivos:
 - Tarjeta no válida o no vigente = 0
 - Código de seguridad inválido = 1
 - Plazo de vigencia expirado = 2
