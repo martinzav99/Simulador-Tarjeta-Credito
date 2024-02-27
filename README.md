@@ -60,8 +60,8 @@ dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
 distinto código postal. Luego, se guardan los datos en su respectiva tabla con
 un código identificador, para saber que tipo de alerta se produjo.
 
-**Opción 2:** Realiza lo mismo que la opcion 1 pero es el usuario el que las va
-activado de una en una.
+**Opción 2:** Realiza lo mismo que la opcion 1 pero es el usuario el va
+activado de una en una las acciones.
 
 **Opción 3:** Elimina los PK's y FK's de todas las tablas existentes
 para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
@@ -99,7 +99,7 @@ En caso de no elegir la opción de salida válida, se mostrará un mensaje
 
 ### 2.3 Dificultades y Procedimientos
 
-_Inicio y Planificación del Proyecto_
+-_Inicio y Planificación del Proyecto_
 
 Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
@@ -107,14 +107,14 @@ entre las entidades.
 
 ![Screenshot](Diagrama_base_v2.png)
 
-_Creando Tablas, PK's y FK's_
+-_Creando Tablas, PK's y FK's_
 
 Para agregar las PK's y FK's se utilizó el formato dado en clases (ver en implementación).
 En este caso, se realizó una función para agregar las PK's y FK's en sus respectivas
 tablas y otra para borrarlas. Resaltamos que, debido al diagrama realizado previamente, 
 fue mucho más fácil visualizar de forma rápida y precisa las identificaciones y sus relaciones.
 
-_Instancia de Datos_
+-_Instancia de Datos_
 
 Al momento de ingresar información sobre los comercios y clientes a la base 
 de datos, en lugar de inventar y escribir manualmente, se obtuvo la
@@ -124,7 +124,7 @@ las proximas funciones a realizar. En el caso de los números de tarjetas de cr�
 los CVV, se utilizó un programa online que genera los mismos de forma aleatoria, con el
 fin de que la base de datos parezca mucho más realista: *https://herramientas-online.com/generador-tarjeta-credito-cvv.php* 
 
-_Implementación de "codmotivo" en la Tabla Rechazos_
+-_Implementación de "codmotivo" en la Tabla Rechazos_
 
 Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que había sido rechazada una compra. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
 en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
@@ -136,7 +136,7 @@ Motivos:
 - La tarjeta se encuentra suspendida = 3
 - Supera límite de tarjeta = 4
 
-_FK's innecesarias_
+-_FK's innecesarias_
 
 En el desarrollo del trabajo ocurrieron errores debido a que al momento de querer guardar un rechazo o una
 alerta relacionada a un número de tarjeta inválido, se violaba el uso de las foreing keys.
