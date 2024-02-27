@@ -39,7 +39,7 @@ la opción de salir.
 		[ 0 ] Salir
 
 		
-**Opción 1 :** es la encargada de crear la base de datos completa con tablas, PK's y FK's,
+**Opción 1 :** Crea la base de datos completa con tablas, PK's y FK's,
 también agrega clientes, negocios y funciones de forma automática. 
 
 _Funciones agregadas:_
@@ -60,28 +60,23 @@ dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
 distinto código postal. Luego, se guardan los datos en su respectiva tabla con
 un código identificador, para saber que tipo de alerta se produjo.
 
-**Opción 2:** muestra un menu secundario con las opciones para realizar 
-las mismas acciones que la opción 1, pero con la posibilidad de eliminar la 
-base de datos creada, crearla manualmente, conectarse, crear las tablas requeridas 
-para el funcionamiento, agregar los PK's y FK's, completar la base de datos con 
-información (popular la base de datos), agregar funciones, y por último, 
-salir o desconectarse.
+**Opción 2:** Realiza lo mismo que la opcion 1 pero es el usuario el que las va
+activado de una en una.
 
-**Opción 3:** podemos eliminar los PK's y FK's de todas las tablas existentes
+**Opción 3:** Elimina los PK's y FK's de todas las tablas existentes
 para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
 
-**Opción 4:** ejecuta un procedimiento que en funcion de los datos cargados en
+**Opción 4:** Ejecuta un procedimiento que en funcion de los datos cargados en
 la tabla consumos, sirve para probar las funciones del sistema y simular así compras 
 validadas o rechazadas de diferentes personas.
 
-**Opción 5:** de manera similar se prueba una función que recibe sus datos de 
-forma hardcodeda, pero que guardan relación con las compras aceptadas que se generaron 
-a causa de la opción anterior. 
+**Opción 5:** Prueba una función que recibe sus datos de forma hardcodeda, 
+pero que guardan relación con las compras aceptadas que se generaron a causa de 
+la opción anterior. 
 
-**Opción 6**, y por último, para poder comparar el modelo relacional con un modelo no 
-relacional NoSQL, se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
-cada entidad y de forma hardcodeada) en una base de datos NoSQL basada en JSON. Para ello, 
-utilizamos la base de datos BoltDB.
+**Opción 6:** Permite ver una comparacion entre el modelo relacional con un modelo NoSQL,
+se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
+cada entidad y de forma hardcodeada). Para ello, utilizamos la base de datos BoltDB.
 
 ### 2.2 Modelo de menu secundario
 
@@ -134,8 +129,7 @@ _Implementación de "codmotivo" en la Tabla Rechazos_
 Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que había sido rechazada una compra. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
 en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
 
-### Motivos:
-
+Motivos:
 - Tarjeta no válida o no vigente = 0
 - Código de seguridad inválido = 1
 - Plazo de vigencia expirado = 2
