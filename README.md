@@ -409,6 +409,7 @@ func addConsumos() {
 _nota 2: los puntos suspensivos son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio._
 
 ##### Agregar funciones de autorización de compra, generar resumen y generar alertas
+
 ```go
 func addStoredProceduresTriggers() {
 	fmt.Println("Adding Stored Procedures and Triggers...")
@@ -421,11 +422,14 @@ func addStoredProceduresTriggers() {
 	addConsumosVirtuales()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
+```
 
-//Función: Autorización de compra, recibe los datos de una compra—número de tarjeta, código de seguridad,
-//número de comercio y monto—y crea una compra si de autoriza ó agrega un rechazo en el caso de rechazarla por algún motivo.
-//El procedimiento busca si se validan todas las condiciones antes de autorizar.
+_Autorización de compra:_ donde se verifica la existencia de una tarjeta 
+mediante su número y código de seguridad, el estado de vigencia y su límite
+de compra. Así, se puede validar la compra o generar un rechazo para luego
+cargar la información en su respectiva tabla dependiendo del resultado.
 
+```go
 func addAutorizacionDeCompra() {
 	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
 	_, err = db.Exec(`	CREATE OR REPLACE FUNCTION autorizacion_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
@@ -475,12 +479,12 @@ func addAutorizacionDeCompra() {
 		log.Fatal(err)
 	}
 }
+```
+_Generar resumen:_ en la cual se devuelve la información detallada de un cliente
+y el total de gastos junto a infomación sobre todas sus compras realizadas en
+un periodo específico.
 
-//Función: Generación del Resumen contiene la lógica que reciba como parámetros el número de cliente, y el periodo del
-//año, y que guarda en las tablas que corresponda los datos del resumen con la información pertinente 
-//(nombre y apellido, dirección, número de tarjeta, periodo del resumen, fecha de vencimiento, todas las compras del
-//periodo, y total a pagar).
-
+```go
 func addGenerarResumen() {
 	fmt.Println(" Adding 'Generar resumen' Procedure")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
@@ -520,9 +524,16 @@ func addGenerarResumen() {
 		log.Fatal(err)
 	}
 }
+```
+_Generar alertas:_ que posee la lógica para generar alertas por fraudes.
+Esta debe ejecutarse cada cierto tiempo de forma automática, donde las
+alertas a detectar se basan en la compra de productos en diferentes comercios
+dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
+distinto código postal. Luego, se guardan los datos en su respectiva tabla con
+un código identificador, para saber que tipo de alerta se produjo.
 
-/*Función que genera una alerta automaticamente después de que se agregue un rechazo por compra rechazada*/
-
+Función que genera una alerta automaticamente después de que se agregue un rechazo por compra rechazada
+```go
 func addCompraRechazadaTrigger() {
 	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and trigger")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION alerta_compra_rechazada() RETURNS TRIGGER AS $$
@@ -667,7 +678,7 @@ func addConsumosVirtuales() {
 }
 ```
 
-CASE 3
+#### CASE 3
 ```go
 func dropPKandFK() {
 	fmt.Println("Removing PKs and FKs...")
@@ -707,7 +718,7 @@ func dropFKs() {
 	}
 }
 ```
-CASE 4
+#### CASE 4
 ```go
 func realizarConsumos() {
 	fmt.Println("Realizando consumos de prueba")
@@ -718,7 +729,7 @@ func realizarConsumos() {
 	fmt.Println("Consumos de prueba realizados!")
 }
 ```
-CASE 5
+#### CASE 5
 ```go
 func realizarResumenes() {
 	fmt.Println("Realizando resumenes de prueba")
