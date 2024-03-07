@@ -128,8 +128,8 @@ El diagrama mostrado previamente, es el resultado final de las relaciones entre 
 
 ## 3. Implementación 🔧
 
-Importar librerias e inicializar variables
-
+### Inicializar variables e Importar librerias  
+Las variables sirven para conectarse a la base de datos postgreSQL. Por otro lado se importo las librerias necesarias para las conecciones tanto para la base de datos SQL y no SQL
 ```go
 	package main
 	import (
@@ -152,7 +152,7 @@ Importar librerias e inicializar variables
 	)
 ```
 
-Funcion principal
+### Funcion principal
 _nota_ : _los comentarios son agregados para no colocar el codgo de esa implmentacion, sin embargo si se encuentra en el repositorio_
 
 ```go
