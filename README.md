@@ -83,7 +83,7 @@ En caso de no elegir la opción de salida válida, se mostrará un mensaje
 
 -_Inicio y Planificación del Proyecto_
 
-Para empezar a modelar la base de datos decidimos utilizar el programa *lucidchart*
+**Para** empezar a **modelar la base de datos** decidimos utilizar el programa **_lucidchart_**
 debido a que nos permitio de forma mas comoda organizar y ordenar las relaciones
 entre las entidades. 
 
@@ -99,16 +99,16 @@ fue mucho más fácil visualizar de forma rápida y precisa las identificaciones
 -_Instancia de Datos_
 
 Al momento de ingresar información sobre los comercios y clientes a la base 
-de datos, en lugar de inventar y escribir manualmente, se obtuvo la
+de datos, **en lugar de inventar y escribir manualmente**, se obtuvo la
 información de paginas de internet con datos públicos y verdaderos.
 Donde algunos fueron modificados a conveniencia, para usarlo a modo de prueba en
 las proximas funciones a realizar. En el caso de los números de tarjetas de crédito y 
-los CVV, se utilizó un programa online que genera los mismos de forma aleatoria, con el
+los CVV, **se utilizó un programa online** que genera los mismos de forma aleatoria, con el
 fin de que la base de datos parezca mucho más realista: *https://herramientas-online.com/generador-tarjeta-credito-cvv.php* 
 
 -_Implementación de "codmotivo" en la Tabla Rechazos_
 
-Al momento de generar los rechazos nos dimos cuenta que necesitabamos diferenciar por que había sido rechazada una compra. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
+Al momento de generar los rechazos nos dimos cuenta que **necesitabamos diferenciar por que había sido rechazada una compra**. Para hacer esto, decidimos que era más conveniente evaluar un integer (codigo de motivo) que un string (descripcion del motivo). Por lo que decidimos agregar a la tabla Rechazo una columna adicional, *codmotivo*, que funciona de forma semejante a la columna codalerta de la tabla Alerta,
 en este caso a través de cinco valores numéricos se puende constatar el motivo del rechazo.
 
 - Tarjeta no válida o no vigente = 0
@@ -121,8 +121,8 @@ en este caso a través de cinco valores numéricos se puende constatar el motivo
 
 En el desarrollo del trabajo ocurrieron errores debido a que al momento de querer guardar un rechazo o una
 alerta relacionada a un número de tarjeta inválido, se violaba el uso de las foreing keys.
-Debido a que el trabajo exige que se guarde cualquier intento de compra, sea válida o no, decidimos eliminar 
-la *FK nro tarjeta* que relacionaba la tabla tarjeta con la tabla compra y también, la que lo hacía con la tabla alerta.
+Debido a que el trabajo exige que se guarde cualquier intento de compra, sea válida o no, **decidimos eliminar 
+la _FK nro tarjeta_** que relacionaba la tabla tarjeta con la tabla compra y también, la que lo hacía con la tabla alerta.
 El diagrama mostrado previamente, es el resultado final de las relaciones entre las tablas.
 
 
