@@ -2,25 +2,25 @@
 
 ## 1. Introducción
 
-En este trabajo se realizará una base de datos en postgreSQL mediante Go, 
+En este trabajo **se realizará una base de datos en postgreSQL mediante Go**, 
 donde se representa un modelo de datos que se usa para almacenar
 informacion relativa a clientes de tarjetas de credito, donde se destacan los detalles
 de compra, total de gastos, infomación del comercio y el producto, rechazos
 o alertas e incluso, información sobre la propia tarjeta y su propietario.
 
-El objetivo del programa es que reconozca y actúa ante situaciones tales como 
+**El objetivo del programa** es que reconozca y **actúa ante situaciones tales como 
 autorización de compra, generar resumenes o alertar a los clientes de posibles
-problemas. Para ello, se deberá previamente crear una base de datos respetando 
+problemas**. Para ello, se deberá previamente crear una base de datos respetando 
 las propiedades de cada tabla, e instanciar datos competentes.
 
-Además, como usuario tendrá la posibilidad de crear la base de datos manualmente
-y ver el "paso a paso" de cada proceso ejecutado o la opción de que se realice todo automáticamente.
+Además, **el usuario tendrá la posibilidad de crear la base de datos manualmente
+y ver el "paso a paso"** de cada proceso ejecutado o la opción de que se realice todo automáticamente.
 También se podrá borrar todas las identifiaciones primareas y foraneas (PK's y FK's).
  
 
 ## 2. Descripción 📋
 
-El programa inicia mostrando un menú principal de bienvenida (CLI) para un manejo
+**El programa inicia mostrando un menú principal de bienvenida** (CLI) para un manejo
 más ordenado con la base de datos. Donde se podrá elegir entre crearla y cargarla
 con toda la informacion necesaria automaticamente o hacerlo manualmente. También
 se le agregan opciones para realizar pruebas de funcionamiento. Por último, se encuentra 
@@ -39,10 +39,10 @@ la opción de salir.
 		[ 0 ] Salir
 
 		
-**Opción 1 :** Crea la base de datos completa con tablas, PK's y FK's,
-también agrega clientes, negocios y funciones de forma automática. 
+**Opción 1 :** **Crea la base de datos completa** con tablas, PK's y FK's,
+**también agrega** clientes, negocios y **funciones** de forma automática. 
 
-_Funciones agregadas:_
+**_Funciones agregadas:_**
 
 _Autorización de compra:_ donde se verifica la existencia de una tarjeta 
 mediante su número y código de seguridad, el estado de vigencia y su límite
@@ -60,22 +60,22 @@ dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
 distinto código postal. Luego, se guardan los datos en su respectiva tabla con
 un código identificador, para saber que tipo de alerta se produjo.
 
-**Opción 2:** Realiza lo mismo que la opcion 1 pero es el usuario el va
-activado de una en una las acciones.
+**Opción 2:** Permite al **usuario realizar manualmente los acciones** que se realizan
+de forma automatica en la opcion 1.
 
 **Opción 3:** Elimina los PK's y FK's de todas las tablas existentes
-para visualizar posibles inconvenientes al no poseer y prescindir de las mismas.
+**para visualizar posibles inconvenientes** al no poseer y prescindir de las mismas.
 
-**Opción 4:** Ejecuta un procedimiento que en funcion de los datos cargados en
-la tabla consumos, sirve para probar las funciones del sistema y simular así compras 
-validadas o rechazadas de diferentes personas.
+**Opción 4:** Ejecuta un procedimiento que **en funcion de los datos cargados en
+la tabla consumos**, sirve para probar las funciones del sistema y **simular así compras 
+validadas o rechazadas** de diferentes personas.
 
 **Opción 5:** Prueba una función que recibe sus datos de forma hardcodeda, 
-pero que guardan relación con las compras aceptadas que se generaron a causa de 
+pero que **guardan relación con las compras aceptadas** que se generaron a causa de 
 la opción anterior. 
 
-**Opción 6:** Permite ver una comparacion entre el modelo relacional con un modelo NoSQL,
-se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
+**Opción 6:** Sirve para realizar una **comparación entre el modelo relacional con un
+modelo NoSQL**, se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
 cada entidad y de forma hardcodeada). Para ello, utilizamos la base de datos BoltDB.
 
 ### 2.2 Modelo de menu secundario
