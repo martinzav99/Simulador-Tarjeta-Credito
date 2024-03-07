@@ -39,7 +39,7 @@ la opción de salir.
 		[ 0 ] Salir
 
 		
-**Opción 1 :** **Crea la base de datos completa** con tablas, PK's y FK's,
+Opción 1 : **Crea la base de datos completa** con tablas, PK's y FK's,
 **también agrega** clientes, negocios y **funciones** de forma automática. 
 
 **_Funciones agregadas:_**
@@ -60,21 +60,21 @@ dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
 distinto código postal. Luego, se guardan los datos en su respectiva tabla con
 un código identificador, para saber que tipo de alerta se produjo.
 
-**Opción 2:** Permite al **usuario realizar manualmente los acciones** que se realizan
+Opción 2: Permite al **usuario realizar manualmente los acciones** que se realizan
 de forma automatica en la opcion 1.
 
-**Opción 3:** Elimina los PK's y FK's de todas las tablas existentes
+Opción 3: Elimina los PK's y FK's de todas las tablas existentes
 **para visualizar posibles inconvenientes** al no poseer y prescindir de las mismas.
 
-**Opción 4:** Ejecuta un procedimiento que **en funcion de los datos cargados en
+Opción 4: Ejecuta un procedimiento que **en funcion de los datos cargados en
 la tabla consumos**, sirve para probar las funciones del sistema y **simular así compras 
 validadas o rechazadas** de diferentes personas.
 
-**Opción 5:** Prueba una función que recibe sus datos de forma hardcodeda, 
+Opción 5: Prueba una función que recibe sus datos de forma hardcodeda, 
 pero que **guardan relación con las compras aceptadas** que se generaron a causa de 
 la opción anterior. 
 
-**Opción 6:** Sirve para realizar una **comparación entre el modelo relacional con un
+Opción 6: Sirve para realizar una **comparación entre el modelo relacional con un
 modelo NoSQL**, se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
 cada entidad y de forma hardcodeada). Para ello, utilizamos la base de datos BoltDB.
 
