@@ -39,24 +39,24 @@ la opción de salir.
 		[ 0 ] Salir
 
 		
-**Opción 1:** Permite **crear la base de datos completa** con tablas, PK's y FK's,
+[1] Permite **crear la base de datos completa** con tablas, PK's y FK's,
 **también agrega** clientes, negocios y **funciones** de forma automática. 
 
-**Opción 2:** Permite al **usuario realizar manualmente los acciones** que se realizan
+[2] Permite al **usuario realizar manualmente los acciones** que se realizan
 de forma automatica en la opcion 1.
 
-**Opción 3:** Elimina los PK's y FK's de todas las tablas existentes
+[3] Elimina los PK's y FK's de todas las tablas existentes
 **para visualizar posibles inconvenientes** al no poseer y prescindir de las mismas.
 
-**Opción 4:** Ejecuta un procedimiento que **en funcion de los datos cargados en
+[4] Ejecuta un procedimiento que **en funcion de los datos cargados en
 la tabla consumos**, sirve para probar las funciones del sistema y **simular así compras 
 validadas o rechazadas** de diferentes personas.
 
-**Opción 5:** Prueba una función que recibe sus datos de forma hardcodeda, 
+[5] Prueba una función que recibe sus datos de forma hardcodeda, 
 pero que **guardan relación con las compras aceptadas** que se generaron a causa de 
 la opción anterior. 
 
-**Opción 6:** Sirve para realizar una **comparación entre el modelo relacional con un
+[6] Sirve para realizar una **comparación entre el modelo relacional con un
 modelo NoSQL**, se guardan los datos de clientes, tarjetas, comercios, y compras (tres por 
 cada entidad y de forma hardcodeada). Para ello, utilizamos la base de datos BoltDB.
 
