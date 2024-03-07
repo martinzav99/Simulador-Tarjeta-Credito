@@ -173,7 +173,7 @@ func main() {
 ```
 _nota: los comentarios son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio_
 
-### MENU CLI PRINCIPAL
+### Menu principal
 ```go
 func menu() {
 	menuString := `` // aca se coloca el modelo del menu principal mostrado en la seccion 2 como string
@@ -202,6 +202,9 @@ func menu() {
 }
 ```
 #### CASE 1
+Dividiremos este segemento en 4 partes. De esta manera se podra observar de forma ordenada las funciones que contengan sub-funciones o metodos auxiliares
+
+##### Eliminar, crear, conectar a la BBDD y crear tablas
 ```go
 func autoCreateDatabase() {
 	dropDatabase()
@@ -274,7 +277,7 @@ func createTables() {
 	}
 }
 ```
-
+##### Agregar las primary key y las foreing key 
 ```go
 func addPKandFK() {
 	fmt.Println("Adding PKs and FKs...")
@@ -316,7 +319,7 @@ func addFKs() {
 ```
 
 
-##### Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
+##### Agregar datos de clientes, negocios, tarjetas, consumos. Tambien se agrega un función que genera los cierres
 
 ```go
 func populateDatabase() {
@@ -402,9 +405,8 @@ func addConsumos() {
 	}
 }
 ```
-
+##### Agregar funciones de autorización de compra, generar resumen y generar alertas
 ```go
-
 func addStoredProceduresTriggers() {
 	fmt.Println("Adding Stored Procedures and Triggers...")
 	addAutorizacionDeCompra()
