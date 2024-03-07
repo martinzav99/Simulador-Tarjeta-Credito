@@ -171,7 +171,7 @@ func main() {
 	}
 }
 ```
-_nota: los comentarios son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio_
+_nota: los comentarios son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio._
 
 ### Menu principal
 ```go
@@ -406,6 +406,8 @@ func addConsumos() {
 	}
 }
 ```
+_nota 2: los puntos suspensivos son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio._
+
 ##### Agregar funciones de autorización de compra, generar resumen y generar alertas
 ```go
 func addStoredProceduresTriggers() {
@@ -420,9 +422,9 @@ func addStoredProceduresTriggers() {
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
 
-/* Función: Autorización de compra, recibe los datos de una compra—número de tarjeta, código de seguridad,
-número de comercio y monto—y crea una compra si de autoriza ó agrega un rechazo en el caso de rechazarla por algún motivo.
-El procedimiento busca si se validan todas las condiciones antes de autorizar.*/
+//Función: Autorización de compra, recibe los datos de una compra—número de tarjeta, código de seguridad,
+//número de comercio y monto—y crea una compra si de autoriza ó agrega un rechazo en el caso de rechazarla por algún motivo.
+//El procedimiento busca si se validan todas las condiciones antes de autorizar.
 
 func addAutorizacionDeCompra() {
 	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
@@ -474,10 +476,10 @@ func addAutorizacionDeCompra() {
 	}
 }
 
-/*Función: Generación del Resumen contiene la lógica que reciba como parámetros el número de cliente, y el periodo del
-año, y que guarda en las tablas que corresponda los datos del resumen con la información pertinente 
-(nombre y apellido, dirección, número de tarjeta, periodo del resumen, fecha de vencimiento, todas las compras del
-periodo, y total a pagar).*/
+//Función: Generación del Resumen contiene la lógica que reciba como parámetros el número de cliente, y el periodo del
+//año, y que guarda en las tablas que corresponda los datos del resumen con la información pertinente 
+//(nombre y apellido, dirección, número de tarjeta, periodo del resumen, fecha de vencimiento, todas las compras del
+//periodo, y total a pagar).
 
 func addGenerarResumen() {
 	fmt.Println(" Adding 'Generar resumen' Procedure")
