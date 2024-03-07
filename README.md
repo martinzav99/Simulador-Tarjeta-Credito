@@ -204,7 +204,7 @@ func menu() {
 #### CASE 1
 Dividiremos este segemento en 4 partes. De esta manera se podra observar de forma ordenada las funciones que contengan sub-funciones o metodos auxiliares
 
-##### Case 1 - Eliminar, crear, conectar a la BBDD y crear tablas
+##### Case 1.1 - Eliminar, crear, conectar a la BBDD y crear tablas
 ```go
 func autoCreateDatabase() {
 	dropDatabase()
@@ -278,7 +278,7 @@ func createTables() {
 	}
 }
 ```
-##### Case 1 - Agregar las primary key y las foreing key 
+##### Case 1.2 - Agregar las primary key y las foreing key 
 ```go
 func addPKandFK() {
 	fmt.Println("Adding PKs and FKs...")
@@ -320,7 +320,7 @@ func addFKs() {
 ```
 
 
-##### Case 1 - Agregar datos de clientes, negocios, tarjetas, consumos. Tambien se agrega un función que genera los cierres
+##### Case 1.3 - Agregar datos de clientes, negocios, tarjetas, consumos. Tambien se agrega un función que genera los cierres
 
 ```go
 func populateDatabase() {
@@ -408,7 +408,7 @@ func addConsumos() {
 ```
 _nota 2: los puntos suspensivos son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio._
 
-##### Case 1 - Agregar funciones de autorización de compra, generar resumen y generar alertas
+##### Case 1.4 - Agregar funciones de autorización de compra, generar resumen y generar alertas
 
 ```go
 func addStoredProceduresTriggers() {
