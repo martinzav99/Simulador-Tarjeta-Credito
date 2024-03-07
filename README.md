@@ -42,14 +42,14 @@ la opción de salir.
 [1] Permite **crear la base de datos completa** con tablas, PK's y FK's,
 **también agrega** clientes, negocios y **funciones** de forma automática. 
 
-[2] Permite al **usuario realizar manualmente los acciones** que se realizan
+[2] Permite al usuario **realizar manualmente los acciones** que se realizan
 de forma automatica en la opcion 1.
 
 [3] Elimina los PK's y FK's de todas las tablas existentes
 **para visualizar posibles inconvenientes** al no poseer y prescindir de las mismas.
 
-[4] Ejecuta un procedimiento que **en funcion de los datos cargados en
-la tabla consumos**, sirve para probar las funciones del sistema y **simular así compras 
+[4] Ejecuta un procedimiento que **en funcion de los datos** cargados **en
+la tabla consumos**, sirve para probar las funciones del sistema y **simular** así **compras 
 validadas o rechazadas** de diferentes personas.
 
 [5] Prueba una función que recibe sus datos de forma hardcodeda, 
