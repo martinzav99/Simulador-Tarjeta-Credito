@@ -153,12 +153,11 @@ Las variables sirven para conectarse a la base de datos postgreSQL. Por otro lad
 ```
 
 ### Funcion principal
-_nota_ : _los comentarios son agregados para no colocar el codgo de esa implmentacion, sin embargo si se encuentra en el repositorio_
 
 ```go
 func main() {
 	defer exit() // mensaje de cierre de conexion
-	login(user, password) 
+	login(user, password) // conexion a la BBDD postgreSQL
 	bienvenida() // mensaje de bienvenida al usuario   
 	for {
 		if advancedMenuBool {
@@ -171,19 +170,10 @@ func main() {
 		}
 	}
 }
-
-func login(user string, password string) {
-	fmt.Println("Connecting to postgres database...")
-	db, err = sql.Open("postgres", "user="+user+" password="+password+" host=localhost dbname=postgres sslmode=disable")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Connected to postgres!")
-}
 ```
+_nota: los comentarios son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio_
 
-MENU CLI PRINCIPAL
-
+### MENU CLI PRINCIPAL
 ```go
 func menu() {
 	menuString := `` // aca se coloca el modelo del menu principal mostrado en la seccion 2 como string
@@ -211,9 +201,8 @@ func menu() {
 	}
 }
 ```
-CASE 1
+#### CASE 1
 ```go
-
 func autoCreateDatabase() {
 	dropDatabase()
 	createDatabase()
@@ -327,7 +316,7 @@ func addFKs() {
 ```
 
 
-Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
+##### Función que agrega clientes, negocios, tarjetas, consumos y genera los cierres
 
 ```go
 func populateDatabase() {
