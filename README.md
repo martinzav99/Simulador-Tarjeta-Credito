@@ -204,7 +204,7 @@ func menu() {
 #### CASE 1
 Dividiremos este segemento en 4 partes. De esta manera se podra observar de forma ordenada las funciones que contengan sub-funciones o metodos auxiliares
 
-##### Eliminar, crear, conectar a la BBDD y crear tablas
+##### Case 1 - Eliminar, crear, conectar a la BBDD y crear tablas
 ```go
 func autoCreateDatabase() {
 	dropDatabase()
@@ -278,7 +278,7 @@ func createTables() {
 	}
 }
 ```
-##### Agregar las primary key y las foreing key 
+##### Case 1 - Agregar las primary key y las foreing key 
 ```go
 func addPKandFK() {
 	fmt.Println("Adding PKs and FKs...")
@@ -320,7 +320,7 @@ func addFKs() {
 ```
 
 
-##### Agregar datos de clientes, negocios, tarjetas, consumos. Tambien se agrega un función que genera los cierres
+##### Case 1 - Agregar datos de clientes, negocios, tarjetas, consumos. Tambien se agrega un función que genera los cierres
 
 ```go
 func populateDatabase() {
@@ -408,7 +408,7 @@ func addConsumos() {
 ```
 _nota 2: los puntos suspensivos son agregados para evitar alargar esta seccion, sin embargo el codigo se encuentra en el repositorio._
 
-##### Agregar funciones de autorización de compra, generar resumen y generar alertas
+##### Case 1 - Agregar funciones de autorización de compra, generar resumen y generar alertas
 
 ```go
 func addStoredProceduresTriggers() {
@@ -422,14 +422,14 @@ func addStoredProceduresTriggers() {
 	addConsumosVirtuales()
 	fmt.Println("Done adding Stored Procedures and Triggers!")
 }
-```
 
+/*
 _Autorización de compra:_ donde se verifica la existencia de una tarjeta 
 mediante su número y código de seguridad, el estado de vigencia y su límite
 de compra. Así, se puede validar la compra o generar un rechazo para luego
 cargar la información en su respectiva tabla dependiendo del resultado.
+*/
 
-```go
 func addAutorizacionDeCompra() {
 	fmt.Println(" Adding 'Autorizacion De Compra' Procedure")
 	_, err = db.Exec(`	CREATE OR REPLACE FUNCTION autorizacion_de_compra(nrotarjetax char , codseguridadx char , nrocomerciox int , montox decimal) returns boolean as $$
@@ -479,12 +479,13 @@ func addAutorizacionDeCompra() {
 		log.Fatal(err)
 	}
 }
-```
+
+/*
 _Generar resumen:_ en la cual se devuelve la información detallada de un cliente
 y el total de gastos junto a infomación sobre todas sus compras realizadas en
 un periodo específico.
+*/
 
-```go
 func addGenerarResumen() {
 	fmt.Println(" Adding 'Generar resumen' Procedure")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION generar_resumen(nroclientex int , mesx int , aniox int) returns void as $$
@@ -524,16 +525,18 @@ func addGenerarResumen() {
 		log.Fatal(err)
 	}
 }
-```
+
+/*
 _Generar alertas:_ que posee la lógica para generar alertas por fraudes.
 Esta debe ejecutarse cada cierto tiempo de forma automática, donde las
 alertas a detectar se basan en la compra de productos en diferentes comercios
 dentro de un rango de tiempo dependiendo de si suceden en locales de igual o
 distinto código postal. Luego, se guardan los datos en su respectiva tabla con
 un código identificador, para saber que tipo de alerta se produjo.
+*/
 
-Función que genera una alerta automaticamente después de que se agregue un rechazo por compra rechazada
-```go
+//Función que genera una alerta automaticamente después de que se agregue un rechazo por compra rechazada
+
 func addCompraRechazadaTrigger() {
 	fmt.Println(" Adding 'Alerta Compra Rechazada' Procedure and trigger")
 	_, err = db.Exec(`  CREATE OR REPLACE FUNCTION alerta_compra_rechazada() RETURNS TRIGGER AS $$
@@ -557,7 +560,7 @@ func addCompraRechazadaTrigger() {
 	}
 }
 
-/*Función que genera una alerta al haber 2 compras realizadas en un lapso menor de un minuto con el mismo codigo postal*/
+//Función que genera una alerta al haber 2 compras realizadas en un lapso menor de un minuto con el mismo codigo postal
 
 func add2Compras1mMismoCpTrigger() {
 	fmt.Println(" Adding 'Alerta Compra 1m mismo CP' Procedure and trigger")
@@ -591,7 +594,7 @@ func add2Compras1mMismoCpTrigger() {
 	}
 }
 
-// Función que genera una alerta al haber 2 compras realizadas en un lapso menor de 5 minutos con distinto codigo postal
+//Función que genera una alerta al haber 2 compras realizadas en un lapso menor de 5 minutos con distinto codigo postal
 
 func add2Compras5mDistintoCpTrigger() {
 	fmt.Println(" Adding 'Alerta Compra 5m distinto CP' Procedure and trigger")
@@ -625,7 +628,7 @@ func add2Compras5mDistintoCpTrigger() {
 	}
 }
 
-// Función que genera una alerta al intentar hacer una compra en donde se exceda el monto máximo de la tarjeta
+//Función que genera una alerta al intentar hacer una compra en donde se exceda el monto máximo de la tarjeta
 
 func add2RechazosPorExcesoLimiteTrigger() {
 	fmt.Println(" Adding 'Alerta 2 compras rechazadas exceso limite' Procedure and trigger")
@@ -659,7 +662,7 @@ func add2RechazosPorExcesoLimiteTrigger() {
 	}
 }
 
-// Función que incia el proceso de testeo utilizando consumos virtuales
+//Función que incia el proceso de testeo utilizando consumos virtuales
 
 func addConsumosVirtuales() {
 	fmt.Println(" Adding 'Consumos Virtuales' Procedure")
@@ -677,6 +680,8 @@ func addConsumosVirtuales() {
 	}
 }
 ```
+#### CASE 2
+Mismo codigo que case 1
 
 #### CASE 3
 ```go
